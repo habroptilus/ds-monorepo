@@ -10,6 +10,7 @@ from tools.features.generators.group_features import GroupFeatures
 
 
 class FeatureGeneratorsFactory(FactoryBase):
+    """特徴量生成器のFactoryクラス."""
 
     def __init__(self, features_dir, custom_members=None):
         str2model = {
@@ -23,14 +24,5 @@ class FeatureGeneratorsFactory(FactoryBase):
             "dec": DecompositionFeatures,
             "group": GroupFeatures
         }
-        self.features_dir = features_dir
-        super().__init__(str2model, custom_members)
-
-    def get_params(self, params=None):
-        if params is None:
-            params = {}
-        params["features_dir"] = self.features_dir
-        return params
-
-    def run(self, model_str, params):
-        return super().run(model_str, params)
+        shared_params = {"features_dir": features_dir}
+        super().__init__(str2model, custom_members, shared_params)

@@ -5,10 +5,24 @@ from tools.models.base.lgbm_base import _LgbmClassifier
 class LgbmBinaryClassifier(BinaryClassifierBase):
     """目的関数がLoglossのlgbm2値分類モデル."""
 
-    def __init__(self, target_col, verbose_eval, early_stopping_rounds, lgbm_params, class_weight):
+    def __init__(self, target_col, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
+                 reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),
+                 n_estimators=2000, depth=5, seed=None, class_weight="balanced"):
         super().__init__(target_col)
-        lgbm_params["objective"] = "binary"
-        lgbm_params["metrics"] = "binary_logloss"
+        lgbm_params = {
+            "colsample_bytree": colsample_bytree,
+            "reg_alpha": reg_alpha,
+            "reg_lambda": reg_lambda,
+            "subsample": subsample,
+            "min_child_weight": min_child_weight,
+            "num_leaves": num_leaves,
+            "random_state": seed,
+            "n_estimators": n_estimators,
+            "max_depth": depth,
+            "objective":  "binary",
+            "metrics":  "binary_logloss"
+        }
+
         self.model = _LgbmClassifier(
             verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
 
@@ -32,10 +46,23 @@ class LgbmBinaryClassifier(BinaryClassifierBase):
 class LgbmMultiClassifier(MultiClassifierBase):
     """目的関数がLoglossのlgbm多値分類モデル."""
 
-    def __init__(self, target_col, verbose_eval, early_stopping_rounds, lgbm_params, class_weight):
+    def __init__(self, target_col, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
+                 reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),
+                 n_estimators=2000, depth=5, seed=None, class_weight="balanced"):
         super().__init__(target_col)
-        lgbm_params["objective"] = "multiclass"
-        lgbm_params["metrics"] = "multi_logloss"
+        lgbm_params = {
+            "colsample_bytree": colsample_bytree,
+            "reg_alpha": reg_alpha,
+            "reg_lambda": reg_lambda,
+            "subsample": subsample,
+            "min_child_weight": min_child_weight,
+            "num_leaves": num_leaves,
+            "random_state": seed,
+            "n_estimators": n_estimators,
+            "max_depth": depth,
+            "objective": "multiclass",
+            "metrics":  "multi_logloss"
+        }
         self.model = _LgbmClassifier(
             verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
 
