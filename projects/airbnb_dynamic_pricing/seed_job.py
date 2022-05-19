@@ -1,5 +1,4 @@
 from tools.jobs.job_base import BasicSeedJob
-from custom.feature_generators import ReviewedMonth, MinNightsAvailability, PreprocessName, RulebaseName
 
 if __name__ == "__main__":
     target_col = "y"
@@ -147,13 +146,6 @@ if __name__ == "__main__":
         # その他
         {"model_str": "reviewed_month"}
     ]
-
-    custom_members = {
-        "reviewed_month": ReviewedMonth,
-        "min_nights_availability": MinNightsAvailability,
-        "rulebase_name": RulebaseName,
-        "preprocess_name":  PreprocessName
-    }
 
     register_from = "custom.feature_generators"
     output = BasicSeedJob(train_path, test_path, features_dir, register_from, features_settings, target_col, unused_cols, seed,
