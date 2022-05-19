@@ -4,7 +4,14 @@ from abc import ABCMeta
 
 
 class FactoryBase(metaclass=ABCMeta):
-    """Factoryクラスの基底クラス."""
+    """Factoryクラスの基底クラス.
+
+    以下の機能を提供する.
+    * モデルフラグを受け取って引数を渡してモデルをインスタンス化して返す.
+    * 必要のないパラメータを渡しても問題ないようにしている.(ここをエラーにするオプションをつけてもよいがtodo)
+    * 必要なパラメータがない場合、かつモデル側がデフォルト引数を持っている場合、WARNINGを出す.
+    継承して利用する場合は__init__をオーバーライドするだけ.
+    """
 
     def __init__(self, str2model, custom_members, shared_params=None):
         """str2modelを引数にすることを強制する.
