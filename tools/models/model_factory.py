@@ -12,7 +12,7 @@ from tools.core.factory_base import FactoryBase
 class ModelFactory(FactoryBase):
     """予測モデル用ファクトリクラス."""
 
-    def __init__(self, target_col, custom_members=None):
+    def __init__(self, target_col, register_from=None):
         str2model = {
             "lgbm_rmsle": LgbmRmsleRegressor,
             "lgbm_rmse": LgbmRmseRegressor,
@@ -34,4 +34,4 @@ class ModelFactory(FactoryBase):
             "avg_reg": AveragingRegressor
         }
         shared_params = {"target_col": target_col}
-        super().__init__(str2model, custom_members, shared_params)
+        super().__init__(str2model, register_from, shared_params)

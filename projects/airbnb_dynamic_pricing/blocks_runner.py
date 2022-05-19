@@ -8,9 +8,13 @@ target_col = "y"
 evaluator_flag = "rmsle"
 features_dir = "data/features"
 seed = 42
+trainer_str = "basic"
+fold_gen_str = "group"
+fold_num = 5
+
 
 trainer_factory_settings = {
-    "model_str": "basic",
+    "model_str": trainer_str,
     "params": {
         "target_col": target_col,
         "seed": seed
@@ -20,7 +24,7 @@ trainer_factory_settings = {
 folds_gen_factory_settings = {
     "model_str": "group",  # kfold, stratified, group, stratified_group
     "params": {
-        "fold_num": 5,
+        "fold_num": fold_num,
         "seed": seed,
         "target_col": "y",
         "key_col": "host_id"
@@ -176,10 +180,10 @@ settings = [
 train = pd.read_csv("data/train_data.csv")
 test = pd.read_csv("data/test_data.csv")
 
-
-blocks_runner = BlocksRunner(target_col=target_col, features_dir=features_dir, custom_members=custom_members, features_settings=settings,
+register_from = "custom.feature_generators"
+blocks_runner = BlocksRunner(target_col=target_col, features_dir=features_dir, register_from=register_from, features_settings=settings,
                              unused_cols=unused_cols, folds_gen_factory_settings=folds_gen_factory_settings, model_factory_settings=model_factory_settings,
-                             trainer_factory_settings=trainer_factory_settings, evaluator_flag=evaluator_flag)
+                             trainer_factory_settings=trainer_factory_settings, evaluator_str=evaluator_flag)
 
 output = blocks_runner.run(train, test)
 

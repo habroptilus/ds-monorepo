@@ -2,6 +2,7 @@ from .evaluator_base import RmsleEvaluator, RmseEvaluator, MaeEvaluator, AucEval
 
 
 class EvaluatorFactory:
+    # TODO : FactoryBaseを継承する
     def run(self, flag):
         if flag == "rmsle":
             return RmsleEvaluator(flag)
