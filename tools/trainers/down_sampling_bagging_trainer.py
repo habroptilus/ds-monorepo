@@ -7,7 +7,7 @@ import pandas as pd
 class DownSamplingBaggingTrainer:
     """downsampling+baggingを行う"""
 
-    def __init__(self, target_col, bagging_num, base_class, seed, allow_less_than_base):
+    def __init__(self, target_col, base_class, bagging_num=5, seed=None, allow_less_than_base=True):
         self.target_col = target_col
         self.bagging_num = bagging_num
         self.sampler = ImbalancedClassDownSampler(

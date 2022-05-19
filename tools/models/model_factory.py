@@ -10,28 +10,9 @@ from tools.core.factory_base import FactoryBase
 
 
 class ModelFactory(FactoryBase):
-    def __init__(self, custom_members=None):
-        # これfactoryからmodel側に移す
-        self.default_params = {
-            "verbose_eval": 100,
-            "early_stopping_rounds": 100,
-            "class_weight": "balanced",
-            "lgbm_params": {
-                "colsample_bytree": 0.8,
-                "reg_alpha": 0,
-                "reg_lambda": 0,
-                "subsample": 0.8,
-                "min_child_weight": 1.0,
-                "num_leaves": int(2 ** 5 * 0.7)
-            },
-            "catb_params": {
-                'learning_rate': 0.1,
-                'random_strength': 1,
-                'bagging_temperature': 0.1,
-                'od_type': "IncToDec",
-                'od_wait': 10
-            }
-        }
+    """予測モデル用ファクトリクラス."""
+
+    def __init__(self, target_col, custom_members=None):
         str2model = {
             "lgbm_rmsle": LgbmRmsleRegressor,
             "lgbm_rmse": LgbmRmseRegressor,
@@ -52,23 +33,5 @@ class ModelFactory(FactoryBase):
             "avg_multi": AveragingMultiClassifier,
             "avg_reg": AveragingRegressor
         }
-        super().__init__(str2model, custom_members)
-
-    def run(self, model_str, target_col, params=None, depth=5, n_estimators=2000, seed=None):
-        """todo: これもmodelのデフォルトパラメータをここに置くのはおかしい"""
-        return super().run(model_str, target_col, params, depth, n_estimators, seed)
-
-    def get_params(self, target_col, params, depth, n_estimators, seed):
-        result = self.default_params.copy()
-        if params:
-            print(f"Params updated with {params}")
-            self.params.update(params)
-        result["target_col"] = target_col
-        result["seed"] = seed
-        result["lgbm_params"]["random_state"] = seed
-        result["catb_params"]["random_seed"] = seed
-        result["lgbm_params"]["n_estimators"] = n_estimators
-        result["catb_params"]["num_boost_round"] = n_estimators
-        result["lgbm_params"]["max_depth"] = depth
-        result["catb_params"]["depth"] = depth
-        return result
+        shared_params = {"target_col": target_col}
+        super().__init__(str2model, custom_members, shared_params)

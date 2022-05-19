@@ -1,4 +1,3 @@
-from pickle import FALSE
 import pandas as pd
 import numpy as np
 from abc import ABCMeta, abstractmethod
@@ -8,16 +7,17 @@ from tools.core.blocks import ModelingBlock
 class _EnsembleRunnerBase(metaclass=ABCMeta):
     """アンサンブルを行う基底クラス.継承して実装する."""
 
-    def __init__(self, target_col, unused_cols, folds_gen_settings, model_params, trainer_params, evaluator_flag, use_original_cols=False):
+    def __init__(self, target_col, unused_cols, folds_gen_factory_settings, model_factory_settings,
+                 trainer_factory_settings, evaluator_flag, use_original_cols=False):
         """
         use_original_colsがFalseだとunused_colsはtestのカラムで置き換えられる
         """
         self.target_col = target_col
         self.use_original_cols = use_original_cols
         self.unused_cols = unused_cols
-        self.folds_gen_settings = folds_gen_settings
-        self.model_params = model_params
-        self.trainer_params = trainer_params
+        self.folds_gen_factory_settings = folds_gen_factory_settings
+        self.model_factory_settings = model_factory_settings
+        self.trainer_factory_settings = trainer_factory_settings
         self.evaluator_flag = evaluator_flag
 
     def run(self, output_list, train, test):
@@ -38,7 +38,7 @@ class _EnsembleRunnerBase(metaclass=ABCMeta):
             unused_cols = self.unused_cols
 
         modeling_block = ModelingBlock(
-            self.target_col, unused_cols, self.folds_gen_settings, self.model_params, self.trainer_params, self.evaluator_flag)
+            self.target_col, unused_cols, self.folds_gen_factory_settings, self.model_factory_settings, self.trainer_factory_settings, self.evaluator_flag)
 
         return modeling_block.run(train_df, test_df)
 

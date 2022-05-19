@@ -8,14 +8,14 @@ from tools.features.features_aggregator import FeaturesAggregator
 
 
 class ModelingBlock:
-    def __init__(self, target_col, unused_cols, folds_gen_settings, model_params, trainer_params, evaluator_flag):
-        self.folds_generator = FoldsGeneratorFactory().run(**folds_gen_settings)
+    def __init__(self, target_col, unused_cols, folds_gen_factory_settings, model_factory_settings, trainer_factory_settings, evaluator_flag):
+        self.folds_generator = FoldsGeneratorFactory().run(**folds_gen_factory_settings)
         self.unused_cols = unused_cols
-        trainer = TrainerFactory().run(**trainer_params)
-        model_factory = ModelFactory()
+        trainer = TrainerFactory().run(**trainer_factory_settings)
+        model_factory = ModelFactory(target_col)
         evaluator = EvaluatorFactory().run(evaluator_flag)
         self.cv_runner = CrossValidationRunner(pred_oof=True, target_col=target_col, model_factory=model_factory,
-                                               model_params=model_params, trainer=trainer, evaluator=evaluator)
+                                               model_params=model_factory_settings, trainer=trainer, evaluator=evaluator)
 
     def run(self, train, test):
         folds = self.folds_generator.run(train)
@@ -39,11 +39,11 @@ class DatagenBlock:
 
 
 class BlocksRunner:
-    def __init__(self, features_dir, custom_members, features_settings, target_col, unused_cols, folds_gen_settings, model_params, trainer_params, evaluator_flag):
+    def __init__(self, features_dir, custom_members, features_settings, target_col, unused_cols, folds_gen_factory_settings, model_factory_settings, trainer_factory_settings,  evaluator_flag):
         self.datagen_block = DatagenBlock(
             target_col, features_dir, custom_members, features_settings)
         self.modeling_block = ModelingBlock(
-            target_col, unused_cols, folds_gen_settings, model_params, trainer_params, evaluator_flag)
+            target_col, unused_cols, folds_gen_factory_settings, model_factory_settings, trainer_factory_settings, evaluator_flag)
 
     def run(self, train, test):
         train, test = self.datagen_block.run(train, test)

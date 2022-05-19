@@ -5,7 +5,7 @@ from tools.core.factory_base import FactoryBase
 
 
 class EnsembleRunnerFactory(FactoryBase):
-    def __init__(self):
+    def __init__(self, custom_members=None):
         str2model = {
             "lgbm_rmsle": LgbmRmsleEnsemble,
             "linear_rmsle": LinearRmsleEnsemble,
@@ -19,10 +19,4 @@ class EnsembleRunnerFactory(FactoryBase):
             "lr_multi": LinearMultiEnsemble,
             "avg_multi": AveragingMultiEnsemble
         }
-        super().__init__(str2model)
-
-    def get_params(self, params=None):
-        return params or {}
-
-    def run(self, model_str, params):
-        return super().run(model_str, params)
+        super().__init__(str2model, custom_members)

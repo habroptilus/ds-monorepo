@@ -5,8 +5,22 @@ from tools.models.base.lgbm_base import _LgbmRegressor, _LgbmRmsleRegressor
 class LgbmRmsleRegressor(RegressorBase):
     """目的関数がRMSLEのlgbm回帰モデル."""
 
-    def __init__(self, target_col, verbose_eval, early_stopping_rounds, lgbm_params):
+    def __init__(self, target_col, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
+                 reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),
+                 n_estimators=2000, depth=5, seed=None):
         super().__init__(target_col)
+        lgbm_params = {
+            "colsample_bytree": colsample_bytree,
+            "reg_alpha": reg_alpha,
+            "reg_lambda": reg_lambda,
+            "subsample": subsample,
+            "min_child_weight": min_child_weight,
+            "num_leaves": num_leaves,
+            "random_state": seed,
+            "n_estimators": n_estimators,
+            "max_depth": depth
+        }
+
         self.model = _LgbmRmsleRegressor(
             verbose_eval, early_stopping_rounds, lgbm_params)
 
@@ -32,10 +46,23 @@ class LgbmRmsleRegressor(RegressorBase):
 class LgbmRmseRegressor(RegressorBase):
     """目的関数がRMSEのlgbm回帰モデル."""
 
-    def __init__(self, target_col, verbose_eval, early_stopping_rounds, lgbm_params):
+    def __init__(self, target_col, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
+                 reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),
+                 n_estimators=2000, depth=5, seed=None):
         super().__init__(target_col)
-        lgbm_params["objective"] = "regression"
-        lgbm_params["metrics"] = "rmse"
+        lgbm_params = {
+            "colsample_bytree": colsample_bytree,
+            "reg_alpha": reg_alpha,
+            "reg_lambda": reg_lambda,
+            "subsample": subsample,
+            "min_child_weight": min_child_weight,
+            "num_leaves": num_leaves,
+            "random_state": seed,
+            "n_estimators": n_estimators,
+            "max_depth": depth,
+            "objective": "regression",
+            "metrics": "rmse"
+        }
         self.model = _LgbmRegressor(
             verbose_eval, early_stopping_rounds, lgbm_params)
 
@@ -59,10 +86,23 @@ class LgbmRmseRegressor(RegressorBase):
 class LgbmMaeRegressor(RegressorBase):
     """目的関数がMAEのlgbm回帰モデル."""
 
-    def __init__(self, target_col, verbose_eval, early_stopping_rounds, lgbm_params):
+    def __init__(self, target_col, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
+                 reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),
+                 n_estimators=2000, depth=5, seed=None):
         super().__init__(target_col)
-        lgbm_params["objective"] = "regression_l1"
-        lgbm_params["metrics"] = "mae"
+        lgbm_params = {
+            "colsample_bytree": colsample_bytree,
+            "reg_alpha": reg_alpha,
+            "reg_lambda": reg_lambda,
+            "subsample": subsample,
+            "min_child_weight": min_child_weight,
+            "num_leaves": num_leaves,
+            "random_state": seed,
+            "n_estimators": n_estimators,
+            "max_depth": depth,
+            "objective": "regression_l1",
+            "metrics": "mae"
+        }
         self.model = _LgbmRegressor(
             verbose_eval, early_stopping_rounds, lgbm_params)
 
