@@ -1,4 +1,5 @@
 from tools.core.blocks import BlocksRunner
+from tools.ensemble.stacking_runner import StackingRunner
 from abc import ABCMeta, abstractmethod
 import pandas as pd
 
@@ -92,5 +93,55 @@ class BasicSeedJob:
     def run(self):
         train = pd.read_csv(self.train_path)
         test = pd.read_csv(self.test_path)
-        output = self.blocks_runner.run(train, test)
-        return output
+        return self.blocks_runner.run(train, test)
+
+
+class StackingJob:
+    """stackingを行う.パラメータを揃えてStackingRunnerを走らせるだけ.
+
+    stackingの他の実装をしたくなることがなさそうなのでベースクラスはつくらずにこのまま.
+    """
+
+    def __init__(self, target_col, stacking_settings, train_path="data/train_data.csv", test_path="data/test_data.csv", unused_cols=None, trainer_str="basic",
+                 seed=None, base_class=3,
+                 bagging_num=5, allow_less_than_base=True, folds_gen_str="kfold", fold_num=5, group_key_col="group_key_col", use_original_cols=False):
+
+        unused_cols = [] if unused_cols is None else unused_cols
+
+        trainer_factory_settings = {
+            "model_str": trainer_str,
+            "params": {
+                "target_col": target_col,
+                "seed": seed,
+                "base_class": base_class,
+                "bagging_num": bagging_num,
+                "allow_less_than_base": allow_less_than_base
+            }
+        }
+
+        folds_gen_factory_settings = {
+            "model_str": folds_gen_str,  # kfold, stratified, group, stratified_group
+            "params": {
+                "fold_num": fold_num,
+                "seed": seed,
+                "target_col": target_col,
+                "key_col": group_key_col
+            }
+        }
+        shared = {
+            "target_col": target_col,
+            "unused_cols": unused_cols,
+            "folds_gen_factory_settings": folds_gen_factory_settings,
+            "trainer_factory_settings": trainer_factory_settings,
+            "use_original_cols": use_original_cols
+        }
+
+        self.stacking_runner = StackingRunner(stacking_settings, shared)
+
+        self.train_path = train_path
+        self.test_path = test_path
+
+    def run(self, output_list):
+        train = pd.read_csv(self.train_path)
+        test = pd.read_csv(self.test_path)
+        return self.stacking_runner.run(output_list, train, test)

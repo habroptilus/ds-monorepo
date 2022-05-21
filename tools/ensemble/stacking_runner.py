@@ -4,7 +4,7 @@ from tools.ensemble.ensemble_runner_factory import EnsembleRunnerFactory
 class StackingRunner:
     """1段目の出力を受け取り,複数のアンサンブルをまとめて実行する(stacking)."""
 
-    def __init__(self, settings, shared_params):
+    def __init__(self, stacking_settings, shared):
         """
         :shared_params: ensemble runner生成に渡す共通のパラメータ.
         :settings : どのモデルを使って何層stackingするかの設定. List[str] or List[dict]
@@ -36,8 +36,8 @@ class StackingRunner:
         基本的にはshared_paramsがデフォルトで設定され、個別のensemble_runnerに設定を渡した時にはそのdictで上書きされる.
         出力はsettingsと同じshape
         """
-        self.settings = settings
-        self.shared_params = shared_params
+        self.settings = stacking_settings
+        self.shared_params = shared
         self.factory = EnsembleRunnerFactory()
 
     def run(self, output_list, train, test):
@@ -46,6 +46,9 @@ class StackingRunner:
         for i, layer in enumerate(self.settings):
             print(f"Layer {i+1}")
             layer_results = []
+            if type(layer) is not list:
+                raise Exception(
+                    f"Invalid type of layer: {type(layer), layer}. The type should be list.")
             for ensemble_item in layer:
                 if isinstance(ensemble_item, dict):
                     ensemble_flag = ensemble_item["model"]

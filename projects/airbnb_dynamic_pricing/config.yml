@@ -190,3 +190,15 @@ jobs:
   params:
     seed: 1
 
+stacking:
+  shared:
+    "use_original_cols": False
+  stacking_settings:
+  - 
+    - avg_rmsle
+    - linear_rmsle
+    - ridge_rmsle
+    - lgbm_rmsle
+  - 
+    - avg_rmsle
+
