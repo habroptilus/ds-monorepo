@@ -1,179 +1,192 @@
-target_col: y
-seed: 42
-folds_gen_str: group
-group_key_col: host_id
-model_str: lgbm_rmsle
-evaluator_str: rmsle
-unused_cols: 
- - id 
- - host_id
- - name
- - last_review
- - last_review_day
-features_settings:
-  - model_str: datetime
-    params:
-      input_col: last_review
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: preprocess_name
-      - model_str: wc_vec
-        params:
-          decomposer_str: svd
-          input_col: name_preprocessed
-          n_components: 32
-          random_state: 42
-          vectorizer_str: tfidf
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: preprocess_name
-      - model_str: wc_vec
-        params:
-          decomposer_str: nmf
-          input_col: name_preprocessed
-          n_components: 10
-          random_state: 42
-          vectorizer_str: tfidf
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: preprocess_name
-      - model_str: wc_vec
-        params:
-          decomposer_str: svd
-          input_col: name_preprocessed
-          n_components: 32
-          random_state: 42
-          vectorizer_str: bow
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: preprocess_name
-      - model_str: wc_vec
-        params:
-          decomposer_str: nmf
-          input_col: name_preprocessed
-          n_components: 10
-          random_state: 42
-          vectorizer_str: bow
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: preprocess_name
-      - model_str: bert
-        params:
-          input_col: name_preprocessed
-          max_len: 128
-          model_name: bert-base-multilingual-uncased
-      - model_str: dec
-        params:
-          col_mark: bert
-          decomposer_str: pca
-          n_components: 20
-          random_state: 42
-      use_prev_only: true
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: preprocess_name
-      - model_str: bert
-        params:
-          input_col: name_preprocessed
-          max_len: 128
-          model_name: bert-base-multilingual-uncased
-      - model_str: dec
-        params:
-          col_mark: bert
-          decomposer_str: umap
-          n_components: 10
-          random_state: 42
-      use_prev_only: true
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: preprocess_name
-      - model_str: rulebase_name
-  - model_str: extra_join
-    params:
-      csv_path: data/nearest_station.csv
-      join_on: id
-  - model_str: extra_join
-    params:
-      csv_path: data/dist_under_counts.csv
-      join_on: id
-  - model_str: extra_join
-    params:
-      csv_path: data/nearest_terminal.csv
-      join_on: id
-  - model_str: cluster
-    params:
-      input_cols:
-      - latitude
-      - longitude
-      model_str: gmm
-      n_clusters: 10
-      random_state: 42
-  - model_str: cluster
-    params:
-      input_cols:
-      - latitude
-      - longitude
-      model_str: kmeans
-      n_clusters: 10
-      random_state: 42
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: extra_join
-        params:
-          csv_path: data/nearest_station.csv
-          join_on: id
-      - model_str: cluster
-        params:
-          input_cols:
-          - sta_latitude
-          - sta_longitude
-          model_str: kmeans
-          n_clusters: 10
-          random_state: 42
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: extra_join
-        params:
-          csv_path: data/nearest_station.csv
-          join_on: id
-      - model_str: cluster
-        params:
-          input_cols:
-          - sta_latitude
-          - sta_longitude
-          model_str: gmm
-          n_clusters: 10
-          random_state: 42
-  - model_str: pipeline
-    params:
-      feature_generators:
-      - model_str: extra_join
-        params:
-          csv_path: data/nearest_station.csv
-          join_on: id
-      - model_str: group
-        params:
-          group_key: station_name
-          input_cols:
-          - minimum_nights
-          - number_of_reviews
-          - availability_365
-      - model_str: dec
-        params:
-          col_mark: station_group
-          decomposer_str: umap
-          n_components: 10
-          random_state: 42
-      use_prev_only:
-      - false
-      - true
-  - model_str: reviewed_month
+shared:
+  target_col: y
+  seed: 42
+  folds_gen_str: group
+  group_key_col: host_id
+  model_str: lgbm_rmsle
+  evaluator_str: rmsle
+  unused_cols: 
+  - id 
+  - host_id
+  - name
+  - last_review
+  - last_review_day
+  features_settings:
+    - model_str: datetime
+      params:
+        input_col: last_review
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: preprocess_name
+        - model_str: wc_vec
+          params:
+            decomposer_str: svd
+            input_col: name_preprocessed
+            n_components: 32
+            random_state: 42
+            vectorizer_str: tfidf
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: preprocess_name
+        - model_str: wc_vec
+          params:
+            decomposer_str: nmf
+            input_col: name_preprocessed
+            n_components: 10
+            random_state: 42
+            vectorizer_str: tfidf
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: preprocess_name
+        - model_str: wc_vec
+          params:
+            decomposer_str: svd
+            input_col: name_preprocessed
+            n_components: 32
+            random_state: 42
+            vectorizer_str: bow
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: preprocess_name
+        - model_str: wc_vec
+          params:
+            decomposer_str: nmf
+            input_col: name_preprocessed
+            n_components: 10
+            random_state: 42
+            vectorizer_str: bow
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: preprocess_name
+        - model_str: bert
+          params:
+            input_col: name_preprocessed
+            max_len: 128
+            model_name: bert-base-multilingual-uncased
+        - model_str: dec
+          params:
+            col_mark: bert
+            decomposer_str: pca
+            n_components: 20
+            random_state: 42
+        use_prev_only: true
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: preprocess_name
+        - model_str: bert
+          params:
+            input_col: name_preprocessed
+            max_len: 128
+            model_name: bert-base-multilingual-uncased
+        - model_str: dec
+          params:
+            col_mark: bert
+            decomposer_str: umap
+            n_components: 10
+            random_state: 42
+        use_prev_only: true
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: preprocess_name
+        - model_str: rulebase_name
+    - model_str: extra_join
+      params:
+        csv_path: data/nearest_station.csv
+        join_on: id
+    - model_str: extra_join
+      params:
+        csv_path: data/dist_under_counts.csv
+        join_on: id
+    - model_str: extra_join
+      params:
+        csv_path: data/nearest_terminal.csv
+        join_on: id
+    - model_str: cluster
+      params:
+        input_cols:
+        - latitude
+        - longitude
+        model_str: gmm
+        n_clusters: 10
+        random_state: 42
+    - model_str: cluster
+      params:
+        input_cols:
+        - latitude
+        - longitude
+        model_str: kmeans
+        n_clusters: 10
+        random_state: 42
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: extra_join
+          params:
+            csv_path: data/nearest_station.csv
+            join_on: id
+        - model_str: cluster
+          params:
+            input_cols:
+            - sta_latitude
+            - sta_longitude
+            model_str: kmeans
+            n_clusters: 10
+            random_state: 42
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: extra_join
+          params:
+            csv_path: data/nearest_station.csv
+            join_on: id
+        - model_str: cluster
+          params:
+            input_cols:
+            - sta_latitude
+            - sta_longitude
+            model_str: gmm
+            n_clusters: 10
+            random_state: 42
+    - model_str: pipeline
+      params:
+        feature_generators:
+        - model_str: extra_join
+          params:
+            csv_path: data/nearest_station.csv
+            join_on: id
+        - model_str: group
+          params:
+            group_key: station_name
+            input_cols:
+            - minimum_nights
+            - number_of_reviews
+            - availability_365
+        - model_str: dec
+          params:
+            col_mark: station_group
+            decomposer_str: umap
+            n_components: 10
+            random_state: 42
+        use_prev_only:
+        - false
+        - true
+    - model_str: reviewed_month
+
+jobs:
+- name: seed42
+  params: 
+    seed: 42
+- name: seed43
+  params:
+    seed: 43
+- name: seed01
+  params:
+    seed: 1
+
