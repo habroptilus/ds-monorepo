@@ -21,14 +21,17 @@ class BasicSeedJob:
     :評価
     """
 
-    def __init__(self, train_path, test_path, features_dir, register_from, features_settings, target_col, unused_cols,
-                 fold_num, group_key_col, trainer_str, model_str, folds_gen_str, evaluator_str,
+    def __init__(self, target_col, model_str, evaluator_str, features_settings=None, unused_cols=None,
+                 folds_gen_str="kfold", fold_num=5, group_key_col="group_key_col", trainer_str="basic",
+                 train_path="data/train_data.csv", test_path="data/test_data.csv", features_dir="data/features",
+                 register_from="custom.feature_generators",
                  base_class=3, bagging_num=5, allow_less_than_base=True, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
                  reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),
                  n_estimators=2000, depth=5, seed=None, learning_rate=0.1,
                  random_strength=1, bagging_temperature=0.1, od_type="IncToDec", od_wait=10, class_weight="balanced"):
 
-        # TODO: デフォルトの値をここで与えるべきなのか、ここはNoneにすべきなのか. dry or damp?
+        features_settings = [] if features_settings is None else features_settings
+        unused_cols = [] if unused_cols is None else unused_cols
 
         trainer_factory_settings = {
             "model_str": trainer_str,

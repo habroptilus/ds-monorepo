@@ -1,15 +1,8 @@
 target_col: y
-features_dir: data/features
 seed: 42
-trainer_str: basic
 folds_gen_str: group
-fold_num: 5
-depth: 5
-train_path: data/train_data.csv
-test_path: data/test_data.csv
 group_key_col: host_id
 model_str: lgbm_rmsle
-folds_gen_str: group
 evaluator_str: rmsle
 unused_cols: 
  - id 
@@ -17,7 +10,6 @@ unused_cols:
  - name
  - last_review
  - last_review_day
-n_estimators: 2000
 features_settings:
   - model_str: datetime
     params:
@@ -185,4 +177,3 @@ features_settings:
       - false
       - true
   - model_str: reviewed_month
-register_from: custom.feature_generators
