@@ -1,5 +1,6 @@
 import numpy as np
 from tools.models.model_base import RegressorBase, BinaryClassifierBase, MultiClassifierBase
+from tools.core.data import Predictions
 
 
 class CrossValidationRunner:
@@ -64,9 +65,11 @@ class CrossValidationRunner:
                 output["oof_raw_pred"] = pred_valid_df["oof_raw_pred"].to_list()
 
         # 評価
+        predictions = Predictions(
+            pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
         output["evaluator"] = self.evaluator.return_flag()
         output["score"] = self.evaluator.run(
-            labeled[self.target_col], output["oof_pred"], output["oof_raw_pred"])
+            labeled[self.target_col], predictions)
 
         return output
 
@@ -106,3 +109,10 @@ class CrossValidationRunner:
             return np.argmax(preds, axis=1)
         else:
             raise Exception(f"Invalid output shape: {preds.shape}")
+
+    def get_predictions(self, test_df):
+        """raw_predとpredを作ってpredictionsを返す.
+
+        内部的にはfinal_outputとraw_outputを呼び出すだけ.
+        """
+        return Predictions(list(self.final_output(test_df)), list(self.raw_output(test_df)))

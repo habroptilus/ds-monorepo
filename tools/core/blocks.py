@@ -24,8 +24,9 @@ class ModelingBlock:
         train = train.drop(self.unused_cols, axis=1)
         test = test.drop(self.unused_cols, axis=1)
         output = self.cv_runner.run(train, folds)
-        output["raw_pred"] = list(self.cv_runner.raw_output(test))
-        output["pred"] = list(self.cv_runner.final_output(test))
+        predictions = self.cv_runner.get_predictions(test)
+        output["raw_pred"] = predictions.raw_pred
+        output["pred"] = predictions.pred
         return output
 
 

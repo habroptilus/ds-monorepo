@@ -1,84 +1,71 @@
 import numpy as np
 from sklearn.metrics import (mean_absolute_error, mean_squared_error,
                              mean_squared_log_error, roc_auc_score, accuracy_score, f1_score)
+from tools.core.data import Predictions
+from typing import List
+from abc import ABCMeta, abstractmethod
 
 
-class EvaluatorBase:
+class EvaluatorBase(metaclass=ABCMeta):
     """評価計算クラスの基底."""
 
-    def __init__(self, flag):
-        self.flag = flag
-
-    def run(self, y, pred, raw_pred):
-        y = np.array(y)
-        pred = np.array(pred)
-        raw_pred = np.array(raw_pred)
-        including_null_rows = np.isnan(pred)
-
-        if including_null_rows.sum() > 0:
-            print("[Waring] prediction have nan. So drop before evaluation.")
-            pred = pred[~including_null_rows]
-            raw_pred = raw_pred[~including_null_rows]
-            y = y[~including_null_rows]
-        return self._run(y, pred, raw_pred)
-
-    def _run(self, df):
-        raise Exception("Implement please.")
+    @abstractmethod
+    def run(self, y: List, predictions: Predictions):
+        raise Exception("Not implemented error.")
 
     def return_flag(self):
         return self.flag
 
-    def get_direction(self):
-        # 基本minimizeなので、maximizeのときは書き換える
-        return "minimize"
-
 
 class RmsleEvaluator(EvaluatorBase):
     """RMSLEで評価する."""
+    direction = "minimize"
+    flag = "rmsle"
 
-    def _run(self,  y, pred, raw_pred):
-        return np.sqrt(mean_squared_log_error(y, pred))
+    def run(self, y, predictions):
+        return np.sqrt(mean_squared_log_error(y, predictions.pred))
 
 
 class RmseEvaluator(EvaluatorBase):
     """RMSEで評価する."""
+    direction = "minimize"
+    flag = "rmse"
 
-    def _run(self,  y, pred, raw_pred):
-        return np.sqrt(mean_squared_error(y, pred))
+    def run(self, y, predictions):
+        return np.sqrt(mean_squared_error(y, predictions.pred))
 
 
 class MaeEvaluator(EvaluatorBase):
     """MAEで評価する."""
+    direction = "minimize"
+    flag = "mae"
 
-    def _run(self,  y, pred, raw_pred):
-        return mean_absolute_error(y, pred)
+    def run(self, y, predictions):
+        return mean_absolute_error(y, predictions.pred)
 
 
 class AucEvaluator(EvaluatorBase):
     """AUCで評価する."""
+    direction = "maximize"
+    flag = "auc"
 
-    def _run(self,  y, pred, raw_pred):
-        return roc_auc_score(y, raw_pred)
-
-    def get_direction(self):
-        return "maximize"
+    def run(self, y, predictions):
+        return roc_auc_score(y, predictions.raw_pred)
 
 
 class AccuracyEvaluator(EvaluatorBase):
     """Accuracyで評価する."""
+    direction = "maximize"
+    flag = "accuracy"
 
-    def _run(self,  y, pred, raw_pred):
-        return accuracy_score(y, pred)
-
-    def get_direction(self):
-        return "maximize"
+    def run(self, y, predictions):
+        return accuracy_score(y, predictions.pred)
 
 
 class MacroF1Evaluator(EvaluatorBase):
     """macro f1_scoreで評価する."""
+    direction = "maximize"
+    flag = "macro_f1"
 
-    def _run(self, y, pred, raw_pred):
-        return f1_score(y, pred, average='macro')
-
-    def get_direction(self):
-        return "maximize"
+    def run(self, y,  predictions):
+        return f1_score(y, predictions.pred, average='macro')
