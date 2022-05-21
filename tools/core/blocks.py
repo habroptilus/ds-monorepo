@@ -43,7 +43,9 @@ class DatagenBlock:
 
 
 class BlocksRunner:
+    """学習データ作成からモデル生成、評価まで行う."""
     # TODO  register_fromは今はfeatures_genだけだが、modelとかもカスタムモデルを使えるようにしたい
+
     def __init__(self, features_dir, register_from, features_settings, target_col, unused_cols, folds_gen_factory_settings, model_factory_settings,
                  trainer_factory_settings,  evaluator_str):
         self.datagen_block = DatagenBlock(

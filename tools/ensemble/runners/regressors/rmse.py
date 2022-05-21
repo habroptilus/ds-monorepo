@@ -1,3 +1,4 @@
+"""RMSE用のアンサンブル."""
 from tools.ensemble.ensemble_runner_base import EnsembleRunnerBase
 
 
@@ -5,7 +6,7 @@ class RidgeRmseEnsemble(EnsembleRunnerBase):
     """RidgeRmseを使ってアンサンブルする."""
 
     def __init__(self, target_col, unused_cols, folds_gen_factory_settings,
-                 trainer_factory_settings,  use_original_cols):
+                 trainer_factory_settings, use_original_cols):
         model_params = {
             "model_str": "ridge_rmse",
         }

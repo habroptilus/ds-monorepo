@@ -5,6 +5,8 @@ from tools.core.factory_base import FactoryBase
 
 
 class EnsembleRunnerFactory(FactoryBase):
+    """アンサンブル実行クラスのFactory."""
+
     def __init__(self, register_from=None):
         str2model = {
             "lgbm_rmsle": LgbmRmsleEnsemble,

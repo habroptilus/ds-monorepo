@@ -2,7 +2,7 @@ from tools.ensemble.ensemble_runner_factory import EnsembleRunnerFactory
 
 
 class StackingRunner:
-    """1段目の出力を受け取り,stackingを実行する."""
+    """1段目の出力を受け取り,複数のアンサンブルをまとめて実行する(stacking)."""
 
     def __init__(self, settings, shared_params):
         """

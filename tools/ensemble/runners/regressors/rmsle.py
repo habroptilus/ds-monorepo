@@ -1,3 +1,4 @@
+"""RMSLE用の回帰アンサンブル."""
 from tools.ensemble.ensemble_runner_base import EnsembleRunnerBase, LrRmsleEnsembleRunnerBase
 
 

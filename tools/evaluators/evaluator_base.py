@@ -4,6 +4,8 @@ from sklearn.metrics import (mean_absolute_error, mean_squared_error,
 
 
 class EvaluatorBase:
+    """評価計算クラスの基底."""
+
     def __init__(self, flag):
         self.flag = flag
 
