@@ -21,15 +21,23 @@ class BasicSeedJob:
     :評価
     """
 
-    def __init__(self, train_path, test_path, features_dir, register_from, features_settings, target_col, unused_cols, seed,
-                 fold_num, group_key_col, depth, n_estimators, trainer_str, model_str, folds_gen_str, evaluator_str):
-        # TODO: 各settingsのパラメータを全部持ってくる
+    def __init__(self, train_path, test_path, features_dir, register_from, features_settings, target_col, unused_cols,
+                 fold_num, group_key_col, trainer_str, model_str, folds_gen_str, evaluator_str,
+                 base_class=3, bagging_num=5, allow_less_than_base=True, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
+                 reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),
+                 n_estimators=2000, depth=5, seed=None, learning_rate=0.1,
+                 random_strength=1, bagging_temperature=0.1, od_type="IncToDec", od_wait=10, class_weight="balanced"):
+
+        # TODO: デフォルトの値をここで与えるべきなのか、ここはNoneにすべきなのか. dry or damp?
 
         trainer_factory_settings = {
             "model_str": trainer_str,
             "params": {
                 "target_col": target_col,
-                "seed": seed
+                "seed": seed,
+                "base_class": base_class,
+                "bagging_num": bagging_num,
+                "allow_less_than_base": allow_less_than_base
             }
         }
 
@@ -46,9 +54,27 @@ class BasicSeedJob:
         model_factory_settings = {
             "model_str": model_str,
             "params": {
+                # 共通
                 "depth": depth,
                 "n_estimators": n_estimators,
-                "seed": seed
+                "seed": seed,
+                "early_stopping_rounds": early_stopping_rounds,
+                # lgbm
+                "verbose_eval": verbose_eval,
+                "colsample_bytree": colsample_bytree,
+                "reg_alpha": reg_alpha,
+                "reg_lambda": reg_lambda,
+                "subsample": subsample,
+                "min_child_weight": min_child_weight,
+                "num_leaves": num_leaves,
+                # catb
+                "learning_rate": learning_rate,
+                "random_strength": random_strength,
+                "bagging_temperature": bagging_temperature,
+                "od_type": od_type,
+                "od_wait": od_wait,
+                # lgbm and catb's classifier
+                "class_weight": class_weight
             }
         }
 

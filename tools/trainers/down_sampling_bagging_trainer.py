@@ -1,10 +1,11 @@
 from imblearn.under_sampling import RandomUnderSampler
 from tools.models.model_base import MultiClassifierBase
+from tools.trainers.trainer_base import TrainerBase
 import numpy as np
 import pandas as pd
 
 
-class DownSamplingBaggingTrainer:
+class DownSamplingBaggingTrainer(TrainerBase):
     """downsampling+baggingを行う"""
 
     def __init__(self, target_col, base_class, bagging_num=5, seed=None, allow_less_than_base=True):
@@ -25,12 +26,12 @@ class DownSamplingBaggingTrainer:
             model.fit(sampled_train, valid)
             models.append(model)
 
-        aggregated_model = self.aggregate_models(models)
-        return {"model": aggregated_model}
+        return self.aggregate_models(models)
 
     def aggregate_models(self, models):
-        """baggingで作成した複数モデルをまとめる."""
+        """baggingで作成した複数モデルをまとめる.現状は多クラス分類にのみ対応している."""
         # もしかしたら統一的に書けるかもだけどとりあえず
+        # TODO 2クラス分類にも対応する.
         if issubclass(models[0].__class__, MultiClassifierBase):
             return MultiClassifiersAggregator(self.target_col, models)
         else:

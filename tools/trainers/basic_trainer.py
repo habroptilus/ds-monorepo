@@ -1,14 +1,14 @@
-class BasicTrainer:
-    """普通の学習を行う."""
+from tools.trainers.trainer_base import TrainerBase
 
-    def __init__(self):
-        pass
+
+class BasicTrainer(TrainerBase):
+    """普通の学習を行う."""
 
     def run(self, train, valid, model):
         # 学習
         model.fit(train, valid)
 
-        return {"model": model}
+        return model
 
     def return_flag(self):
         return "basic"

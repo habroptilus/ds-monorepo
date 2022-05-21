@@ -14,6 +14,9 @@ class EvaluatorBase(metaclass=ABCMeta):
         raise Exception("Not implemented error.")
 
     def return_flag(self):
+        # TODO そもそもこれいるのか問題を考える
+        # 使っているのはoutput["evaluator"]に入れるところだが、他の実験条件と同列に扱うならoutputに入れるのはおかしい気もする
+        # Evaluatorに限らず、一意性を表すflagの管理をどうするか問題は考える必要がある
         return self.flag
 
 

@@ -35,9 +35,8 @@ class CrossValidationRunner:
             model = self.model_factory.run(**self.model_params)
 
             # 訓練
-            train_result = self.trainer.run(train, valid, model)
+            model = self.trainer.run(train, valid, model)
 
-            model = train_result["model"]
             self.models.append(model)
 
             # validの予測値を出力
