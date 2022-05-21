@@ -12,7 +12,7 @@ from tools.features.generators.group_features import GroupFeatures
 class FeatureGeneratorsFactory(FactoryBase):
     """特徴量生成器のFactoryクラス."""
 
-    def __init__(self, features_dir, custom_members=None):
+    def __init__(self, features_dir, register_from=None):
         str2model = {
             "category": CategoryEncoding,
             "datetime": DatetimeFeatures,
@@ -25,4 +25,4 @@ class FeatureGeneratorsFactory(FactoryBase):
             "group": GroupFeatures
         }
         shared_params = {"features_dir": features_dir}
-        super().__init__(str2model, custom_members, shared_params)
+        super().__init__(str2model, register_from, shared_params)

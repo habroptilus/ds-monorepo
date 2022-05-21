@@ -1,3 +1,4 @@
+"""多クラス分類用のアンサンブル."""
 from tools.ensemble.ensemble_runner_base import EnsembleRunnerBase
 
 

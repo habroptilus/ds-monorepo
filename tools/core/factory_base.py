@@ -1,6 +1,8 @@
 """Factoryクラスのベースクラス."""
 from inspect import signature
 from abc import ABCMeta
+from importlib import import_module
+import re
 
 
 class FactoryBase(metaclass=ABCMeta):
@@ -13,7 +15,7 @@ class FactoryBase(metaclass=ABCMeta):
     継承して利用する場合は__init__をオーバーライドするだけ.
     """
 
-    def __init__(self, str2model, custom_members, shared_params=None):
+    def __init__(self, str2model, register_from, shared_params=None):
         """str2modelを引数にすることを強制する.
 
         :params
@@ -23,19 +25,48 @@ class FactoryBase(metaclass=ABCMeta):
         """
         self.str2model = str2model
         self.shared_params = {} if shared_params is None else shared_params
-        if custom_members:
-            self.register_models_from_dict(custom_members)
+        if register_from:
+            self.register_models_from_src(register_from)
 
     def register_model(self, model_str, Model):
-        """モデルを登録する."""
+        """一つのモデルを登録する."""
         if model_str in self.str2model:
             print(
                 f"[WARNING] You are overwriting '{model_str}' with {Model}.")
         self.str2model[model_str] = Model
 
-    def register_models_from_dict(self, custom_members):
+    def register_models_from_src(self, src):
+        """複数モデルを一括で登録する.srcはファイルパスかdictかを選択できる.
+
+        ファイルパス経由の場合、キーはクラス名をスネークケースにしたものが自動で設定される.
+        """
+        if type(src) is str:
+            src = self.get_custom_members_from_filepath(src)
+        elif type(src) is not dict:
+            raise Exception("Invalid src for registration of factory.")
+
+        self.register_models_from_dict(src)
+
+    def get_custom_members_from_filepath(self, filepath):
+        """filepathからBaseを継承したものを取ってきて、スネークケース:クラスのdictを返す"""
+        # TODO: カスタムモデルのファイルが複数ある場合に対応する
+        # filepathだけどcustom.feature_generatorsのようなものを想定
+        a = import_module(filepath)
+
+        flag = False
+        result = {}
+        for k, v in vars(a).items():
+            if flag:
+                camel_key = re.sub("([A-Z])", lambda x: "_" +
+                                   x.group(1).lower(), k)[1:]
+                result[camel_key] = v
+            if "Base" in k:
+                flag = True
+        return result
+
+    def register_models_from_dict(self, members_dict):
         """モデルフラグをkey、モデルvalueとするdictを受け取り一括でモデルを登録する."""
-        for key, model in custom_members.items():
+        for key, model in members_dict.items():
             self.register_model(key, model)
 
     def get_model(self, model_str):

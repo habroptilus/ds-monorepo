@@ -12,6 +12,10 @@ def df_copy(func):
 
 
 def plot_feature_importance(df, path=None, max_n=20):
+    """特徴量重要度をplotする.
+    
+    importanceカラムがあればどうさする.
+    """
     plt.figure()
     # 特徴量数(説明変数の個数)
     n = len(df)

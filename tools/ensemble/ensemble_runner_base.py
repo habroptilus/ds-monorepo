@@ -21,6 +21,7 @@ class _EnsembleRunnerBase(metaclass=ABCMeta):
         self.evaluator_flag = evaluator_flag
 
     def run(self, output_list, train, test):
+        """前の層の予測からデータセットを作り、ModelingBlockに渡して出力を得る."""
         # 前の層の予測からデータセットを作る
         # 目的変数は含まれていない
         output_based_train, output_based_test = self._create_datasets(

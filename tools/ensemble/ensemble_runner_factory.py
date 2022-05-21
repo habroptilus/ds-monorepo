@@ -5,7 +5,9 @@ from tools.core.factory_base import FactoryBase
 
 
 class EnsembleRunnerFactory(FactoryBase):
-    def __init__(self, custom_members=None):
+    """アンサンブル実行クラスのFactory."""
+
+    def __init__(self, register_from=None):
         str2model = {
             "lgbm_rmsle": LgbmRmsleEnsemble,
             "linear_rmsle": LinearRmsleEnsemble,
@@ -19,4 +21,4 @@ class EnsembleRunnerFactory(FactoryBase):
             "lr_multi": LinearMultiEnsemble,
             "avg_multi": AveragingMultiEnsemble
         }
-        super().__init__(str2model, custom_members)
+        super().__init__(str2model, register_from)
