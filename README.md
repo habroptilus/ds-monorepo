@@ -26,6 +26,16 @@ lilacが上位ディレクトリにあるため、各projectからimportでき�
 export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 ```
 
+## lilac commands
+
+`poetry run lilac`コマンドをいくつか提供している。
+
+### Run experiment
+
+`poetry run lilac run  -p <プロジェクト名> -f <実験設定のyamlファイル名> `
+で実験が実行され、CVが表示され、デフォルトだと`projects/<プロジェクト名>/data/output/<実験設定のyamlファイル名.json>`
+に結果ファイルが出力される.
+
 ## Development
 
 パッケージの追加は以下の通り.

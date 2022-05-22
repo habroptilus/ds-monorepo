@@ -69,13 +69,13 @@ class ExperimentDirector:
 
         result = {}
 
-        output_list = self.run_seed_jobs(jobs_config)
+        output_dict = self.run_seed_jobs(jobs_config)
 
-        result["seed_jobs"] = output_list
+        result["seed_jobs"] = output_dict
 
         if stacking_config is not None:
             stacking_output = self.run_stacking_job(
-                stacking_config, output_list)
+                stacking_config, output_dict)
             result["stacking"] = stacking_output
 
         self.logging_cv(result)
@@ -83,15 +83,15 @@ class ExperimentDirector:
 
         return result
 
-    def run_stacking_job(self, stacking_config, output_list):
+    def run_stacking_job(self, stacking_config, output_dict):
         # これで不要なパラメータが入っていても取り除いてくれる
         # Factory経由にしないと不要なパラメータが入っていたらエラーになる
         stacking_job = self.job_factory.run(
             model_str="stacking", params=stacking_config)
-        return stacking_job.run(output_list)
+        return stacking_job.run(output_dict.values())
 
     def run_seed_jobs(self, jobs_config):
-        output_list = []
+        output_dict = {}
         for name, params in jobs_config.items():
             print(f"Job '{name}' is running...")
             # これで不要なパラメータが入っていても取り除いてくれる
@@ -99,8 +99,8 @@ class ExperimentDirector:
             basic_seed_job = self.job_factory.run(
                 model_str="basic_seed", params=params)
             output = basic_seed_job.run()
-            output_list.append(output)
-        return output_list
+            output_dict[name] = output
+        return output_dict
 
     def logging_cv(self, result):
         """最終的なCVのスコアを表示する.
@@ -110,7 +110,7 @@ class ExperimentDirector:
         seed jobが複数なのにstackingがない場合 : Warningを出して終了
         """
         if len(result["seed_jobs"]) == 1:
-            score = result["seed_jobs"][0]['score']
+            score = result["seed_jobs"].values()[0]['score']
         elif "stacking" in result:
             score = result["stacking"][-1][0]['score']
         else:
