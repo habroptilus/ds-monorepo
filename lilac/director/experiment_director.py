@@ -1,4 +1,6 @@
 from lilac.jobs.job_factory import JobFactory
+from pathlib import Path
+import json
 
 
 class JobsConfigResolver:
@@ -55,32 +57,68 @@ class StackingConfigResolver:
 
 
 class ExperimentDirector:
-    """configファイルを読み込んだdictを受け取り実験を行って結果を返す."""
+    """configファイルを読み込んだdictを受け取り実験を行って返す.パスが指定されていたらJsonにdumpする."""
+
+    def __init__(self, output_path=None):
+        self.output_path = output_path
+        self.job_factory = JobFactory()
 
     def run(self, config):
         jobs_config = JobsConfigResolver().run(config)
-        output_list = []
-        job_factory = JobFactory()
+        stacking_config = StackingConfigResolver().run(config)
 
+        result = {}
+
+        output_list = self.run_seed_jobs(jobs_config)
+
+        result["seed_jobs"] = output_list
+
+        if stacking_config is not None:
+            stacking_output = self.run_stacking_job(
+                stacking_config, output_list)
+            result["stacking"] = stacking_output
+
+        self.logging_cv(result)
+        self.dump_result(result)
+
+        return result
+
+    def run_stacking_job(self, stacking_config, output_list):
+        # これで不要なパラメータが入っていても取り除いてくれる
+        # Factory経由にしないと不要なパラメータが入っていたらエラーになる
+        stacking_job = self.job_factory.run(
+            model_str="stacking", params=stacking_config)
+        return stacking_job.run(output_list)
+
+    def run_seed_jobs(self, jobs_config):
+        output_list = []
         for name, params in jobs_config.items():
             print(f"Job '{name}' is running...")
             # これで不要なパラメータが入っていても取り除いてくれる
             # Factory経由にしないと不要なパラメータが入っていたらエラーになる
-            basic_seed_job = job_factory.run(
+            basic_seed_job = self.job_factory.run(
                 model_str="basic_seed", params=params)
             output = basic_seed_job.run()
             output_list.append(output)
+        return output_list
 
-        stacking_config = StackingConfigResolver().run(config)
+    def logging_cv(self, result):
+        """最終的なCVのスコアを表示する.
 
-        if stacking_config is not None:
-            # これで不要なパラメータが入っていても取り除いてくれる
-            # Factory経由にしないと不要なパラメータが入っていたらエラーになる
-            stacking_job = job_factory.run(
-                model_str="stacking", params=stacking_config)
-            stacking_output = stacking_job.run(output_list)
+        seed jobが一つの場合 : そのSeedJobのscoreを表示
+        seed jobが複数かつstackingを実施した場合 : stackingの最後の層のscoreを表示.最後の層は一つだけ出力しているはず.
+        seed jobが複数なのにstackingがない場合 : Warningを出して終了
+        """
+        if len(result["seed_jobs"]) == 1:
+            score = result["seed_jobs"][0]['score']
+        elif "stacking" in result:
+            score = result["stacking"][-1][0]['score']
+        else:
+            print(
+                "[WARNING] There are multiple SeedJobs but No stacking was conducted.")
+            return
+        print(f"CV: {score}")
 
-        return {
-            "seed_jobs": output_list,
-            "stacking": stacking_output
-        }
+    def dump_result(self, result):
+        with Path(self.output_path).open("w") as f:
+            json.dump(result, f)
