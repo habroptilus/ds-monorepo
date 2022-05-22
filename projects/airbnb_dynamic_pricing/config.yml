@@ -1,4 +1,8 @@
 shared:
+  train_path: projects/airbnb_dynamic_pricing/data/train_data.csv
+  test_path: projects/airbnb_dynamic_pricing/data/test_data.csv
+  features_dir: projects/airbnb_dynamic_pricing/data/features
+  register_from: projects.airbnb_dynamic_pricing.custom.feature_generators
   target_col: y
   seed: 42
   folds_gen_str: group

@@ -1,4 +1,3 @@
-import yaml
 from lilac.jobs.job_factory import JobFactory
 
 
@@ -85,11 +84,3 @@ class ExperimentDirector:
             "seed_jobs": output_list,
             "stacking": stacking_output
         }
-
-
-if __name__ == "__main__":
-    with open('config.yml', 'r') as yml:
-        experiment_config = yaml.safe_load(yml)
-    result = ExperimentDirector().run(experiment_config)
-    score = result["stacking"][-1][0]["score"]
-    print(f"CV : {score}")

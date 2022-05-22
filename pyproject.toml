@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "dynamic-pricing-prob"
+name = "lilac"
 version = "0.1.0"
 description = ""
 authors = ["habroptilus <x7deed53bc9k8@softbank.ne.jp>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-setuptools = "57.0.0"
+setuplilac = "57.0.0"
 pandas = "^1.4.1"
 lightgbm = "^3.3.2"
 catboost = "^1.0.4"
@@ -22,6 +22,7 @@ transformers = "^4.17.0"
 xfeat = "^0.1.1"
 bhtsne = "^0.1.9"
 umap-learn = "^0.5.2"
+fire = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
@@ -30,3 +31,6 @@ autopep8 = "^1.6.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+lilac = "lilac.director.cli:main"

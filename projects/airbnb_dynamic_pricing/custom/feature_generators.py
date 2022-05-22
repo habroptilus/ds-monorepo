@@ -1,4 +1,4 @@
-from tools.features.generator_base import FeaturesBase
+from lilac.features.generator_base import FeaturesBase
 
 
 class ReviewedMonth(FeaturesBase):
