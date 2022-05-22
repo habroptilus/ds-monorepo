@@ -1,4 +1,4 @@
-from tools.jobs.job_base import BasicSeedJob
+from lilac.jobs.job_base import BasicSeedJob
 
 if __name__ == "__main__":
     target_col = "y"

@@ -1,7 +1,7 @@
 """mainスクリプト."""
 import pandas as pd
 from custom.feature_generators import ReviewedMonth, MinNightsAvailability, PreprocessName, RulebaseName
-from tools.core.blocks import BlocksRunner
+from lilac.core.blocks import BlocksRunner
 
 
 target_col = "y"

@@ -16,9 +16,9 @@ ml_metricsのinstallでエラーが出るかもしれない。
 (ここ一発でいけるようにしたい)
 
 
-次にtoolsのパスを通す。
+次にlilacのパスを通す。
 
-toolsが上位ディレクトリにあるため、各projectからimportできないので、環境変数`PYTHONPATH`にあらかじめtoolsまでのパスを入れておく。
+lilacが上位ディレクトリにあるため、各projectからimportできないので、環境変数`PYTHONPATH`にあらかじめlilacまでのパスを入れておく。
 
 .bashrcなどに以下を書いておくなどする.
 
