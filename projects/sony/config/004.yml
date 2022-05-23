@@ -1,0 +1,82 @@
+shared:
+  train_path: projects/sony/data/train.csv
+  test_path: projects/sony/data/test.csv
+  features_dir: projects/sony/data/features
+  # register_from: projects.airbnb.custom.feature_generators
+  target_col: pm25_mid
+  seed: 42
+  folds_gen_str: group
+  group_key_col: City
+  model_str: lgbm_rmse
+  evaluator_str: rmse
+  unused_cols: 
+  - id 
+  - City
+  features_settings:
+    - model_str: group
+      params:
+        do_add_diff_ratio: False # 入れない方がCVもLBも良かった
+        group_key: Country
+        input_cols:
+        - co_cnt
+        - co_min 
+        - co_mid
+        - co_max
+        - co_var
+        - o3_cnt
+        - o3_min
+        - o3_mid
+        - o3_max
+        - o3_var
+        - so2_cnt
+        - so2_min
+        - so2_mid
+        - so2_max
+        - so2_var
+        - no2_cnt
+        - no2_min
+        - no2_mid
+        - no2_max
+        - no2_var
+        - temperature_cnt
+        - temperature_min
+        - temperature_mid
+        - temperature_max
+        - temperature_var
+        - humidity_cnt
+        - humidity_min
+        - humidity_mid
+        - humidity_max
+        - humidity_var
+        - pressure_cnt
+        - pressure_min
+        - pressure_mid
+        - pressure_max
+        - pressure_var
+        - ws_cnt
+        - ws_min
+        - ws_mid
+        - ws_max
+        - ws_var
+        - dew_cnt
+        - dew_min
+        - dew_mid
+        - dew_max
+        - dew_var
+jobs:
+- name: seed42
+  params: 
+    seed: 42
+
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_rmsle
+#    - linear_rmsle
+#    - ridge_rmsle
+#    - lgbm_rmsle
+#  - 
+#    - avg_rmsle
+
