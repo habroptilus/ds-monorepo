@@ -78,7 +78,10 @@ class ExperimentDirector:
                 stacking_config, output_dict)
             result["stacking"] = stacking_output
 
-        self.logging_cv(result)
+        final_output = self.get_final_output(result)
+        if final_output:
+            result["output"] = final_output
+            print(f"CV: {final_output['score']}")
         self.dump_result(result)
 
         return result
@@ -102,22 +105,20 @@ class ExperimentDirector:
             output_dict[name] = output
         return output_dict
 
-    def logging_cv(self, result):
-        """最終的なCVのスコアを表示する.
+    def get_final_output(self, result):
+        """実験全体で最終的な出力となるoutputを返す.
 
-        seed jobが一つの場合 : そのSeedJobのscoreを表示
-        seed jobが複数かつstackingを実施した場合 : stackingの最後の層のscoreを表示.最後の層は一つだけ出力しているはず.
-        seed jobが複数なのにstackingがない場合 : Warningを出して終了
+        :seed jobが一つの場合 : そのSeedJobのoutput
+        :seed jobが複数かつstackingを実施した場合 : stackingの最後の層のoutput
+        :seed jobが複数なのにstackingがない場合 : Warningを出してNoneを返す.
         """
         if len(result["seed_jobs"]) == 1:
-            score = result["seed_jobs"].values()[0]['score']
+            return list(result["seed_jobs"].values())[0]
         elif "stacking" in result:
-            score = result["stacking"][-1][0]['score']
+            return result["stacking"][-1][0]
         else:
             print(
-                "[WARNING] There are multiple SeedJobs but No stacking was conducted.")
-            return
-        print(f"CV: {score}")
+                "[WARNING] There are multiple SeedJobs but No stacking was conducted. Final result couldn't be specified.")
 
     def dump_result(self, result):
         with Path(self.output_path).open("w") as f:

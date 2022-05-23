@@ -23,7 +23,7 @@ class BasicSeedJob:
     """
 
     def __init__(self, target_col, model_str, evaluator_str, train_path, test_path,
-                 features_dir, register_from, features_settings=None, unused_cols=None,
+                 features_dir, register_from=None, features_settings=None, unused_cols=None,
                  folds_gen_str="kfold", fold_num=5, group_key_col="group_key_col", trainer_str="basic",
                  base_class=3, bagging_num=5, allow_less_than_base=True, verbose_eval=100, early_stopping_rounds=100, colsample_bytree=0.8,
                  reg_alpha=0, reg_lambda=0, subsample=0.8, min_child_weight=1.0, num_leaves=int(2 ** 5 * 0.7),

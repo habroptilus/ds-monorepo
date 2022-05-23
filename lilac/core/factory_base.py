@@ -102,10 +102,11 @@ class FactoryBase(metaclass=ABCMeta):
     def extract_required_params(self, required_params_names, all_params):
         """必要な引数を取り出す. 必要な引数が与えられていない場合にWARNINGを出す."""
         required_params = {}
+        print(f"Extracting required params in {self.__class__.__name__}.")
         for params_name in required_params_names:
             if params_name not in all_params:
                 print(
-                    f"[WARNING] parameter '{params_name}' is not specified. So default will be used.")
+                    f"[WARNING] parameter '{params_name}' is not specified. So default is used.")
                 continue
             required_params[params_name] = all_params[params_name]
         return required_params

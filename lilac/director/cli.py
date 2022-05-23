@@ -12,15 +12,14 @@ def run(project_name, filename, data_dir="data", input_dir="config", output_dir=
     :output_path: 
     """
     config_path = Path(
-        f"projects/{project_name}/{data_dir}/{input_dir}/{filename}")
-    output_path = config_path.parent.parent / \
-        output_dir/f"{config_path.stem}.json"
+        f"projects/{project_name}/{input_dir}/{filename}")
+    output_path = f"projects/{project_name}/{data_dir}/{output_dir}/{config_path.stem}.json"
 
     with config_path.open("r") as yml:
         experiment_config = yaml.safe_load(yml)
 
     ExperimentDirector(
-        output_path=str(output_path)).run(experiment_config)
+        output_path=output_path).run(experiment_config)
 
 
 def main():

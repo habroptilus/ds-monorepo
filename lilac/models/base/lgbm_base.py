@@ -32,8 +32,12 @@ class _LgbmBase:
         self.model.fit(train_x, train_y,
                        eval_set=[(train_x, train_y), (valid_x, valid_y)],
                        eval_names=["train", "valid"],
-                       early_stopping_rounds=self.early_stopping_rounds,
-                       verbose=self.verbose_eval)
+                       callbacks=[
+                           lgb.early_stopping(
+                               stopping_rounds=self.early_stopping_rounds, verbose=True),
+                           lgb.log_evaluation(self.verbose_eval)
+                       ]
+                       )
 
         return self
 

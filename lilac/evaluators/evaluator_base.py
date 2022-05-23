@@ -9,6 +9,9 @@ from abc import ABCMeta, abstractmethod
 class EvaluatorBase(metaclass=ABCMeta):
     """評価計算クラスの基底."""
 
+    def __init__(self) -> None:
+        pass
+
     @abstractmethod
     def run(self, y: List, predictions: Predictions):
         raise Exception("Not implemented error.")
