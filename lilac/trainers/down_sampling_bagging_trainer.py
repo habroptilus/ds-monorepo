@@ -1,6 +1,6 @@
 from imblearn.under_sampling import RandomUnderSampler
-from lilac.models.model_base import MultiClassifierBase
 from lilac.trainers.trainer_base import TrainerBase
+from lilac.models.model_base import MultiClassifierBase
 import numpy as np
 import pandas as pd
 
@@ -16,13 +16,15 @@ class DownSamplingBaggingTrainer(TrainerBase):
         self.base_class = base_class
         self.seed = seed
 
-    def run(self, train, valid, model):
+    def run(self, train, valid, model_factory, model_params):
         models = []
         for i in range(self.bagging_num):
             print(f"Bagging {i+1}")
 
             sampled_train = self.sampler.run(train, self.seed+i)
 
+            # 複数モデルを作るためmodel_factoryをtrainer側で叩く必要がある.
+            model = model_factory.run(**model_params)
             model.fit(sampled_train, valid)
             models.append(model)
 
@@ -60,6 +62,7 @@ class MultiClassifiersAggregator(MultiClassifierBase):
         return np.mean(preds, axis=0)
 
     def get_importance(self):
+        # TODO  子モデルがlgbmじゃないと動かないのでどうにかする.
         dfs = [model.get_importance() for model in self.models]
         hoge = pd.concat(dfs, axis=1)
         imp_cols = [f"importance_bagging{i}" for i in range(len(dfs))]

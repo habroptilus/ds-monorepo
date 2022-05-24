@@ -35,7 +35,8 @@ class CrossValidationRunner:
             model = self.model_factory.run(**self.model_params)
 
             # 訓練
-            model = self.trainer.run(train, valid, model)
+            model = self.trainer.run(
+                train, valid, self.model_factory, self.model_params)
 
             self.models.append(model)
 

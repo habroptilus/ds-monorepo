@@ -1,3 +1,6 @@
+meta:
+  title: top10にCountry集約特徴量
+  description: top10にCountry集約特徴量
 shared:
   train_path: projects/sony/data/train.csv
   test_path: projects/sony/data/test.csv

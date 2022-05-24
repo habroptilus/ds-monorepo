@@ -6,7 +6,7 @@ class TrainerBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def run(self, train, valid, model):
+    def run(self, train, valid, model_factory, model_params):
         pass
 
     @abstractmethod

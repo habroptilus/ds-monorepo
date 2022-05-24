@@ -9,4 +9,5 @@ for output_path in sorted(output_path_list):
     with p.open("r") as f:
         data = json.load(f)
         score = data["output"].get("score")
-        print(f"{p.stem}: {score}")
+        title = data.get("meta", {}).get("title")
+        print(f"{p.stem}: {score}   {title}")

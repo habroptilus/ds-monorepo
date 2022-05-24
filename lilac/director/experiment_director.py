@@ -57,7 +57,7 @@ class StackingConfigResolver:
 
 
 class ExperimentDirector:
-    """configファイルを読み込んだdictを受け取り実験を行って返す.パスが指定されていたらJsonにdumpする."""
+    """configファイルを読み込んだdictを受け取り実験を行って返す.パスが指定されていたらJsonにdumpする.metaキーがあればそれをoutputにいれる"""
 
     def __init__(self, output_path=None):
         self.output_path = output_path
@@ -82,6 +82,9 @@ class ExperimentDirector:
         if final_output:
             result["output"] = final_output
             print(f"CV: {final_output['score']}")
+
+        if "meta" in config:
+            result["meta"] = config["meta"]
         self.dump_result(result)
 
         return result
