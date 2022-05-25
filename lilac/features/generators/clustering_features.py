@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from lilac.features.generator_base import FeaturesBase
 from sklearn import cluster, mixture
 
@@ -7,6 +6,8 @@ from sklearn import cluster, mixture
 class ClusteringFeatures(FeaturesBase):
     """GMMやKmeansを用いてクラスタリングする.出力はgmmは各クラスタへの所属確率と所属クラスタ.
     kmeansはセントロイドへの距離と所属クラスタ.
+
+    :model_str: クラスタリングアルゴリズム. kmeans, gmmから選択できる.
     """
 
     def __init__(self, model_str, input_cols,  n_clusters, random_state=None, features_dir=None):
