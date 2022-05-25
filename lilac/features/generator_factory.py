@@ -7,6 +7,7 @@ from lilac.features.generators.clustering_features import ClusteringFeatures
 from lilac.features.generators.features_pipeline import FeaturesPipeline
 from lilac.features.generators.decomposer_features import DecompositionFeatures
 from lilac.features.generators.group_features import GroupFeatures
+from lilac.features.generators.lag_features import LagFeatures
 
 
 class FeatureGeneratorsFactory(FactoryBase):
@@ -22,7 +23,8 @@ class FeatureGeneratorsFactory(FactoryBase):
             "pipeline": FeaturesPipeline,
             "bert": BertVectorizer,
             "dec": DecompositionFeatures,
-            "group": GroupFeatures
+            "group": GroupFeatures,
+            "lag": LagFeatures
         }
         shared_params = {"features_dir": features_dir}
         super().__init__(str2model, register_from, shared_params)
