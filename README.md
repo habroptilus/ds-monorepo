@@ -47,4 +47,11 @@ export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 仮想環境に入る場合は`poetry shell`
 
 
+## Lint and Format
 
+```
+make lint
+make format
+```
+
+でそれぞれ実行できる. `lilac/`と`projects/`以下のコードが対象.
