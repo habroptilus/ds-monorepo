@@ -7,6 +7,7 @@ from lilac.features.generators.extra_table import ExtraTableJoin
 from lilac.features.generators.features_pipeline import FeaturesPipeline
 from lilac.features.generators.group_features import GroupFeatures
 from lilac.features.generators.lag_features import LagFeatures
+from lilac.features.generators.scaling_features import StandardScalingFeatures
 from lilac.features.generators.sentence_vectorizer import BertVectorizer, WordCountVectorizer
 
 
@@ -25,6 +26,7 @@ class FeatureGeneratorsFactory(FactoryBase):
             "dec": DecompositionFeatures,
             "group": GroupFeatures,
             "lag": LagFeatures,
+            "std_scale": StandardScalingFeatures,
         }
         shared_params = {"features_dir": features_dir}
         super().__init__(str2model, register_from, shared_params)

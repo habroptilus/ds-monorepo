@@ -34,6 +34,7 @@ class FeaturesBase(_FeaturesBase):
     """特徴量生成の基底クラス.以下の機能を提供し、実際の特徴量計算は実装クラスで行う.
 
     :計算結果をsaveする.計算済みの特徴量がある場合はそれをloadする.
+    :run経由した時だけsave/load機能が使われる. fit_transformではsave/loadは行わない.
     """
 
     def __init__(self, features_dir=None):

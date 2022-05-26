@@ -22,7 +22,8 @@ class PipelineBlock(FeaturesBase):
         train_data = self.concat_or_not(train_data, train_features)
         test_data = self.concat_or_not(test_data, test_features)
 
-        # 本体は保存せずPipelineBlockの保存で保存されるようにする.
+        # 二つ目はrunではなくfit, transformを実行する.
+        # PipelineBlock側のrun(この_generateが呼ばれているrun)で保存されるようにする.
         self.generator_second.fit(pd.concat([train_data, test_data]).reset_index(drop=True))
         train_features = self.generator_second.transform(train_data)
         test_features = self.generator_second.transform(test_data)
@@ -30,12 +31,14 @@ class PipelineBlock(FeaturesBase):
         return train_features, test_features
 
     def fit(self, df):
+        """保存されないように子genのfit,transformを使う."""
         new_features = self.generator_first.fit_transform(df)
         df = self.concat_or_not(df, new_features)
         self.generator_second.fit(df)
         return self
 
     def transform(self, df):
+        """保存されないように子genのfit,transformを使う."""
         new_features = self.generator_first.transform(df)
         df = self.concat_or_not(df, new_features)
         return self.generator_second.transform(df)
@@ -84,6 +87,7 @@ class FeaturesPipeline(_FeaturesBase):
         self.main_block = self.get_nested_block(feature_generators)
 
     def get_nested_block(self, feature_generators):
+        """feature_generatorsを二つずつ再起的に取り出してPipelineBlockを作っていき、最後のPipelineBlockを返す."""
         prev = None
         for i, gen in enumerate(feature_generators):
             if prev is None:
