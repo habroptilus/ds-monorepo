@@ -1,3 +1,4 @@
+"""yyyymmddの追加."""
 import pandas as pd
 
 
