@@ -1,6 +1,7 @@
 import pandas as pd
-from lilac.features.generator_base import FeaturesBase
 from sklearn import cluster, mixture
+
+from lilac.features.generator_base import FeaturesBase
 
 
 class ClusteringFeatures(FeaturesBase):
@@ -10,7 +11,7 @@ class ClusteringFeatures(FeaturesBase):
     :model_str: クラスタリングアルゴリズム. kmeans, gmmから選択できる.
     """
 
-    def __init__(self, model_str, input_cols,  n_clusters, random_state=None, features_dir=None):
+    def __init__(self, model_str, input_cols, n_clusters, random_state=None, features_dir=None):
         self.input_cols = input_cols
         self.model_str = model_str
         self.n_clusters = n_clusters
@@ -19,11 +20,11 @@ class ClusteringFeatures(FeaturesBase):
 
     def fit(self, df):
         if self.model_str == "kmeans":
-            self.model = cluster.KMeans(
-                n_clusters=self.n_clusters, random_state=self.random_state)
+            self.model = cluster.KMeans(n_clusters=self.n_clusters, random_state=self.random_state)
         elif self.model_str == "gmm":
             self.model = mixture.GaussianMixture(
-                n_components=self.n_clusters, covariance_type='full', random_state=self.random_state)
+                n_components=self.n_clusters, covariance_type="full", random_state=self.random_state
+            )
         else:
             raise Exception(f"Invalid model_str '{self.model_str}'")
         self.model.fit(df[self.input_cols])
@@ -38,8 +39,7 @@ class ClusteringFeatures(FeaturesBase):
             clusters = self.model.predict(df[self.input_cols])
         else:
             raise Exception(f"Invalid model_str '{self.model_str}'")
-        cols = [
-            f"{self.model_str}_{'_'.join(self.input_cols)}_{i}" for i in range(self.n_clusters)]
+        cols = [f"{self.model_str}_{'_'.join(self.input_cols)}_{i}" for i in range(self.n_clusters)]
         df = pd.DataFrame(data, columns=cols)
         df[f"{self.model_str}_{'_'.join(self.input_cols)}_cluster"] = clusters
         return df

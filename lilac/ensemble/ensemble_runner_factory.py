@@ -1,7 +1,17 @@
-from lilac.ensemble.runners.classifiers.multi import LgbmMultiEnsemble, LinearMultiEnsemble, AveragingMultiEnsemble
-from lilac.ensemble.runners.regressors.rmse import LgbmRmseEnsemble, LinearRmseEnsemble, RidgeRmseEnsemble, AveragingRmseEnsemble
-from lilac.ensemble.runners.regressors.rmsle import LgbmRmsleEnsemble, LinearRmsleEnsemble, RidgeRmsleEnsemble, AveragingRmsleEnsemble
 from lilac.core.factory_base import FactoryBase
+from lilac.ensemble.runners.classifiers.multi import AveragingMultiEnsemble, LgbmMultiEnsemble, LinearMultiEnsemble
+from lilac.ensemble.runners.regressors.rmse import (
+    AveragingRmseEnsemble,
+    LgbmRmseEnsemble,
+    LinearRmseEnsemble,
+    RidgeRmseEnsemble,
+)
+from lilac.ensemble.runners.regressors.rmsle import (
+    AveragingRmsleEnsemble,
+    LgbmRmsleEnsemble,
+    LinearRmsleEnsemble,
+    RidgeRmsleEnsemble,
+)
 
 
 class EnsembleRunnerFactory(FactoryBase):
@@ -19,6 +29,6 @@ class EnsembleRunnerFactory(FactoryBase):
             "avg_rmse": AveragingRmseEnsemble,
             "lgbm_multi": LgbmMultiEnsemble,
             "lr_multi": LinearMultiEnsemble,
-            "avg_multi": AveragingMultiEnsemble
+            "avg_multi": AveragingMultiEnsemble,
         }
         super().__init__(str2model, register_from)

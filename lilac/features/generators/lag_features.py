@@ -1,5 +1,6 @@
-from lilac.features.generator_base import FeaturesBase
 import pandas as pd
+
+from lilac.features.generator_base import FeaturesBase
 
 
 class LagFeatures(FeaturesBase):
@@ -12,7 +13,7 @@ class LagFeatures(FeaturesBase):
     sortの時に順番がオリジナルと変わっている可能性があるのでsort_indexして返す.
     """
 
-    def __init__(self,  key_col, input_cols, ts_col, lags=None, rolling_windows=None, features_dir=None):
+    def __init__(self, key_col, input_cols, ts_col, lags=None, rolling_windows=None, features_dir=None):
         self.key_col = key_col
         self.ts_col = ts_col
         self.input_cols = input_cols
@@ -28,20 +29,17 @@ class LagFeatures(FeaturesBase):
             if lag == 0:
                 continue
             # shift
-            shift_df = grp_df.shift(lag).add_prefix(
-                f"Shift{lag}_").sort_index()
+            shift_df = grp_df.shift(lag).add_prefix(f"Shift{lag}_").sort_index()
 
             # diff
             diff_df = grp_df.diff(lag).add_prefix(f"Diff{lag}_").sort_index()
 
             # pct_change
-            pct_df = grp_df.pct_change(lag).add_prefix(
-                f"Pct{lag}_").sort_index()
+            pct_df = grp_df.pct_change(lag).add_prefix(f"Pct{lag}_").sort_index()
 
             df_list.extend([shift_df, diff_df, pct_df])
         for window in self.rolling_windows:
             tmp_df = grp_df.rolling(window, min_periods=1)
-            rolling_df = tmp_df.mean().add_prefix(
-                f"Rolling{window}_mean_").sort_index().reset_index(drop=True)
+            rolling_df = tmp_df.mean().add_prefix(f"Rolling{window}_mean_").sort_index().reset_index(drop=True)
             df_list.append(rolling_df)
         return pd.concat(df_list, axis=1)

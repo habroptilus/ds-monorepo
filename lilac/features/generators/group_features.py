@@ -1,5 +1,6 @@
 import pandas as pd
 from xfeat import aggregation
+
 from lilac.features.generator_base import FeaturesBase
 
 
@@ -18,14 +19,11 @@ class GroupFeatures(FeaturesBase):
         super().__init__(features_dir)
 
     def fit(self, df):
-        df, aggregated_cols = aggregation(df,
-                                          group_key=self.group_key,
-                                          group_values=self.input_cols,
-                                          agg_methods=self.agg_func_list
-                                          )
+        df, aggregated_cols = aggregation(
+            df, group_key=self.group_key, group_values=self.input_cols, agg_methods=self.agg_func_list
+        )
 
-        self._agg = df[~df.duplicated(subset=self.group_key)][[
-            self.group_key]+aggregated_cols]
+        self._agg = df[~df.duplicated(subset=self.group_key)][[self.group_key] + aggregated_cols]
         return self
 
     def transform(self, df):
@@ -46,8 +44,7 @@ class GroupFeatures(FeaturesBase):
         added_df = pd.DataFrame()
         for group_col in self.input_cols:
             agg_col = f"agg_{agg_func}_{group_col}_grpby_{self.group_key}"
-            added_df[f"{agg_col}_diff"] = data[group_col].values - \
-                data[agg_col].values
+            added_df[f"{agg_col}_diff"] = data[group_col].values - data[agg_col].values
             result_cols.append(f"{agg_col}_diff")
         data = pd.concat([data, added_df], axis=1)
         return data, result_cols

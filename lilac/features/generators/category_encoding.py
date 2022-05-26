@@ -1,13 +1,15 @@
-from lilac.features.generator_base import FeaturesBase
 from category_encoders import CountEncoder, OneHotEncoder, OrdinalEncoder
+
+from lilac.features.generator_base import FeaturesBase
 
 
 class CategoryEncoding(FeaturesBase):
     """category_encodersを使ったカテゴリ変数のエンコーディングを行う.input_colsを指定しないと自動でcategory型のカラムが適用先になる."""
+
     str2model = {
-        "count": {"model":  CountEncoder, "suffix": "_ce"},
-        "onehot": {"model":  OneHotEncoder, "suffix": "_ohe"},
-        "ordinal": {"model":  OrdinalEncoder, "suffix": "_oe"}
+        "count": {"model": CountEncoder, "suffix": "_ce"},
+        "onehot": {"model": OneHotEncoder, "suffix": "_ohe"},
+        "ordinal": {"model": OrdinalEncoder, "suffix": "_oe"},
     }
 
     def __init__(self, encoder_str, input_cols=None, features_dir=None):
@@ -22,8 +24,7 @@ class CategoryEncoding(FeaturesBase):
         self.suffix = self.str2model[self.encoder_str]["suffix"]
         if self.input_cols is None:
             self.input_cols = df.select_dtypes(include=[object]).columns
-        self.encoder = self.str2model[self.encoder_str]["model"](
-            cols=self.input_cols)
+        self.encoder = self.str2model[self.encoder_str]["model"](cols=self.input_cols)
         self.encoder.fit(df[self.input_cols])
         return self
 

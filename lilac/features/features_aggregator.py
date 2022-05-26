@@ -16,7 +16,7 @@ class FeaturesAggregator:
             {
                 "model_str": "pipeline",
                 "params": {
-                    "use_previous_cols": True, or [True] 
+                    "use_previous_cols": True, or [True]
                     "feature_generators":[
                         {"model_str": "bert", "params": {"input_col": "name",  "max_len":128}},
                         {"model_str": "pca", "params": {"n_components":20,"random_state":42,"col_mark":"bert"}},
@@ -35,8 +35,7 @@ class FeaturesAggregator:
             if setting["model_str"] == "pipeline":
                 # buildしてparamsを書き換える
                 model_str = "pipeline"
-                feature_generators = self.build_generators(
-                    setting["params"]["feature_generators"])
+                feature_generators = self.build_generators(setting["params"]["feature_generators"])
                 params = setting.get("params", {}).copy()
                 params["feature_generators"] = feature_generators
             else:
@@ -53,14 +52,12 @@ class FeaturesAggregator:
         test_result = test_data.copy()
         features_n = len(self.generators)
         for i, generator in enumerate(self.generators):
-            print(
-                f"[{i+1}/{features_n}] {generator.__class__.__name__}")
+            print(f"[{i+1}/{features_n}] {generator.__class__.__name__}")
             train, test = generator.run(train_data, test_data)
             dup_train = set(train_result.columns) & set(train.columns)
             dup_test = set(test_result.columns) & set(test.columns)
             if dup_train or dup_test:
-                raise Exception(
-                    f"Aggregation error. Duplicated cols are about to be added.{dup_train,dup_test}")
+                raise Exception(f"Aggregation error. Duplicated cols are about to be added.{dup_train,dup_test}")
             train_result = pd.concat([train_result, train], axis=1)
             test_result = pd.concat([test_result, test], axis=1)
         train_result[self.target_col] = y

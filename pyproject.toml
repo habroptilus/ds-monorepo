@@ -6,7 +6,7 @@ authors = ["habroptilus <x7deed53bc9k8@softbank.ne.jp>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-setuplilac = "57.0.0"
+setuptools = "57.0.0"
 pandas = "^1.4.1"
 lightgbm = "^3.3.2"
 catboost = "^1.0.4"
@@ -26,7 +26,9 @@ fire = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
-autopep8 = "^1.6.0"
+black = "^22.3.0"
+isort = "^5.10.1"
+mypy = "^0.960"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -34,3 +36,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 lilac = "lilac.director.cli:main"
+
+[tool.black]
+line-length = 119
+
+[tool.isort]
+profile = "black"
+line_length = 119

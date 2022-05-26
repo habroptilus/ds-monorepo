@@ -1,11 +1,14 @@
 import pandas as pd
-from lilac.features.generator_base import FeaturesBase
 from sklearn.decomposition import PCA
 from umap import UMAP
 
+from lilac.features.generator_base import FeaturesBase
+
 
 class DecompositionFeatures(FeaturesBase):
-    def __init__(self, decomposer_str, n_components, input_cols=None, col_mark=None, random_state=None, features_dir=None):
+    def __init__(
+        self, decomposer_str, n_components, input_cols=None, col_mark=None, random_state=None, features_dir=None
+    ):
         """PCAやUMAPを用いて次元削減する.
 
         :n_components: 削減先の次元数.
@@ -24,8 +27,7 @@ class DecompositionFeatures(FeaturesBase):
     def fit(self, df):
         models = {"pca": PCA, "umap": UMAP}
         input_cols = self.resolve_input_cols(df)
-        self.model = models[self.decomposer_str](n_components=self.n_components,
-                                                 random_state=self.random_state)
+        self.model = models[self.decomposer_str](n_components=self.n_components, random_state=self.random_state)
         self.model.fit(df[input_cols])
         return self
 
@@ -36,8 +38,7 @@ class DecompositionFeatures(FeaturesBase):
             col_mark = input_cols[0]
         else:
             col_mark = self.col_mark
-        output_cols = [
-            f"{self.decomposer_str}_{col_mark}_{i+1}" for i in range(self.n_components)]
+        output_cols = [f"{self.decomposer_str}_{col_mark}_{i+1}" for i in range(self.n_components)]
         return pd.DataFrame(data, columns=output_cols)
 
     def resolve_input_cols(self, df):

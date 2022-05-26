@@ -47,8 +47,7 @@ class StackingRunner:
             print(f"Layer {i+1}")
             layer_results = []
             if type(layer) is not list:
-                raise Exception(
-                    f"Invalid type of layer: {type(layer), layer}. The type should be list.")
+                raise Exception(f"Invalid type of layer: {type(layer), layer}. The type should be list.")
             for ensemble_item in layer:
                 if isinstance(ensemble_item, dict):
                     ensemble_flag = ensemble_item["model"]
@@ -60,11 +59,9 @@ class StackingRunner:
                     ensemble_flag = ensemble_item
                     params = self.shared_params
                 else:
-                    raise Exception(
-                        f"Type of ensemble_item should be dict or str: {type(ensemble_item)}")
+                    raise Exception(f"Type of ensemble_item should be dict or str: {type(ensemble_item)}")
 
-                runner = self.factory.run(
-                    model_str=ensemble_flag, params=params)
+                runner = self.factory.run(model_str=ensemble_flag, params=params)
 
                 result = runner.run(input_list, train, test)
                 layer_results.append(result)

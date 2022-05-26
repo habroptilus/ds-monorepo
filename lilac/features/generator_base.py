@@ -1,13 +1,14 @@
-import pandas as pd
-from pathlib import Path
-from abc import ABCMeta, abstractmethod
-from lilac.core.utils import df_copy
-import json
 import hashlib
+import json
+from abc import ABCMeta, abstractmethod
+from pathlib import Path
+
+import pandas as pd
+
+from lilac.core.utils import df_copy
 
 
 class _FeaturesBase(metaclass=ABCMeta):
-
     def fit(self, df):
         return self
 
@@ -41,15 +42,13 @@ class FeaturesBase(_FeaturesBase):
         :継承先のinitでselfに登録したものを使ってハッシュ値を計算するので、encoderなどをインスタンス化したものがあると同一と見做されなくなる恐れあり
         """
         self.md5 = self.calc_md5()
-        self.features_dir = Path(
-            features_dir) if features_dir is not None else None
+        self.features_dir = Path(features_dir) if features_dir is not None else None
 
     def calc_md5(self):
         return self._calc_md5(vars(self))
 
     def _calc_md5(self, params):
-        return hashlib.md5(json.dumps(
-            params, sort_keys=True).encode('utf-8')).hexdigest()
+        return hashlib.md5(json.dumps(params, sort_keys=True).encode("utf-8")).hexdigest()
 
     def run(self, train_data, test_data):
         train = train_data.copy()
@@ -82,12 +81,10 @@ class FeaturesBase(_FeaturesBase):
             test_path = self.features_dir / self.return_flag() / "test.ftr"
             if train_path.exists():
                 # あるなら読み込む
-                print(
-                    f"Loading {self.return_flag()} (train)...")
+                print(f"Loading {self.return_flag()} (train)...")
                 res_train = pd.read_feather(train_path)
             if test_path.exists():
-                print(
-                    f"Loading {self.return_flag()} (test)...")
+                print(f"Loading {self.return_flag()} (test)...")
                 res_test = pd.read_feather(test_path)
 
         return res_train, res_test

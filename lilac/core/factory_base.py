@@ -1,8 +1,8 @@
 """Factoryクラスのベースクラス."""
-from inspect import signature
+import re
 from abc import ABCMeta
 from importlib import import_module
-import re
+from inspect import signature
 
 
 class FactoryBase(metaclass=ABCMeta):
@@ -31,8 +31,7 @@ class FactoryBase(metaclass=ABCMeta):
     def register_model(self, model_str, Model):
         """一つのモデルを登録する."""
         if model_str in self.str2model:
-            print(
-                f"[WARNING] You are overwriting '{model_str}' with {Model}.")
+            print(f"[WARNING] You are overwriting '{model_str}' with {Model}.")
         self.str2model[model_str] = Model
 
     def register_models_from_src(self, src):
@@ -57,8 +56,7 @@ class FactoryBase(metaclass=ABCMeta):
         result = {}
         for k, v in vars(a).items():
             if flag:
-                camel_key = re.sub("([A-Z])", lambda x: "_" +
-                                   x.group(1).lower(), k)[1:]
+                camel_key = re.sub("([A-Z])", lambda x: "_" + x.group(1).lower(), k)[1:]
                 result[camel_key] = v
             if "Base" in k:
                 flag = True
@@ -78,8 +76,7 @@ class FactoryBase(metaclass=ABCMeta):
 
     def get_required_params_list(self, Model):
         """Modelのinitに必要なパラメータのリストを返す."""
-        required_params_list = list(signature(
-            Model.__init__).parameters.keys())
+        required_params_list = list(signature(Model.__init__).parameters.keys())
         required_params_list.remove("self")
         return required_params_list
 
@@ -95,8 +92,7 @@ class FactoryBase(metaclass=ABCMeta):
         Model = self.get_model(model_str)
         required_params_names = self.get_required_params_list(Model)
         all_params = self.update_shared_params(params)
-        required_params = self.extract_required_params(
-            required_params_names, all_params)
+        required_params = self.extract_required_params(required_params_names, all_params)
         return Model(**required_params)
 
     def extract_required_params(self, required_params_names, all_params):
@@ -105,8 +101,7 @@ class FactoryBase(metaclass=ABCMeta):
         print(f"Extracting required params in {self.__class__.__name__}.")
         for params_name in required_params_names:
             if params_name not in all_params:
-                print(
-                    f"[WARNING] parameter '{params_name}' is not specified. So default is used.")
+                print(f"[WARNING] parameter '{params_name}' is not specified. So default is used.")
                 continue
             required_params[params_name] = all_params[params_name]
         return required_params

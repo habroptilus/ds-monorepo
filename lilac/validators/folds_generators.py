@@ -1,8 +1,9 @@
-from sklearn.model_selection import KFold, StratifiedKFold
-from abc import ABCMeta, abstractmethod
-import numpy as np
-from collections import Counter, defaultdict
 import random
+from abc import ABCMeta, abstractmethod
+from collections import Counter, defaultdict
+
+import numpy as np
+from sklearn.model_selection import KFold, StratifiedKFold
 
 
 class FoldsGeneratorBase(metaclass=ABCMeta):
@@ -23,8 +24,7 @@ class KFoldsGenerator(FoldsGeneratorBase):
         super().__init__(fold_num)
 
     def run(self, data):
-        kf = KFold(n_splits=self.fold_num,
-                   random_state=self.seed, shuffle=True)
+        kf = KFold(n_splits=self.fold_num, random_state=self.seed, shuffle=True)
         return kf.split(data)
 
     def return_flag(self):
@@ -38,8 +38,7 @@ class StratifiedFoldsGenerator(FoldsGeneratorBase):
         self.target_col = target_col
 
     def run(self, data):
-        kf = StratifiedKFold(n_splits=self.fold_num,
-                             random_state=self.seed, shuffle=True)
+        kf = StratifiedKFold(n_splits=self.fold_num, random_state=self.seed, shuffle=True)
         return kf.split(data, data[self.target_col])
 
     def return_flag(self):
@@ -55,8 +54,7 @@ class GroupKFoldsGenerator(FoldsGeneratorBase):
         self.seed = seed
 
     def run(self, data):
-        kf = self._MyGroupKFold(n_splits=self.fold_num,
-                                random_state=self.seed, shuffle=True)
+        kf = self._MyGroupKFold(n_splits=self.fold_num, random_state=self.seed, shuffle=True)
         return kf.split(data, group=data[self.key_col])
 
     def return_flag(self):
@@ -72,8 +70,7 @@ class GroupKFoldsGenerator(FoldsGeneratorBase):
             return self.n_splits
 
         def split(self, X=None, y=None, group=None):
-            kf = KFold(
-                n_splits=self.n_splits, shuffle=self.shuffle, random_state=self.random_state)
+            kf = KFold(n_splits=self.n_splits, shuffle=self.shuffle, random_state=self.random_state)
             unique_ids = group.unique()
             for tr_group_idx, va_group_idx in kf.split(unique_ids):
                 # split group
@@ -116,8 +113,7 @@ class StratifiedGroupKFoldGenerator(FoldsGeneratorBase):
             y_counts_per_fold[fold] += y_counts
             std_per_label = []
             for label in range(labels_num):
-                label_std = np.std(
-                    [y_counts_per_fold[i][label] / y_distr[label] for i in range(k)])
+                label_std = np.std([y_counts_per_fold[i][label] / y_distr[label] for i in range(k)])
                 std_per_label.append(label_std)
             y_counts_per_fold[fold] -= y_counts
             return np.mean(std_per_label)
@@ -141,9 +137,7 @@ class StratifiedGroupKFoldGenerator(FoldsGeneratorBase):
             train_groups = all_groups - groups_per_fold[i]
             test_groups = groups_per_fold[i]
 
-            train_indices = [i for i, g in enumerate(
-                groups) if g in train_groups]
-            test_indices = [i for i, g in enumerate(
-                groups) if g in test_groups]
+            train_indices = [i for i, g in enumerate(groups) if g in train_groups]
+            test_indices = [i for i, g in enumerate(groups) if g in test_groups]
 
             yield train_indices, test_indices

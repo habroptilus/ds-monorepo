@@ -1,8 +1,9 @@
-from imblearn.under_sampling import RandomUnderSampler
-from lilac.trainers.trainer_base import TrainerBase
-from lilac.models.model_base import MultiClassifierBase
 import numpy as np
 import pandas as pd
+from imblearn.under_sampling import RandomUnderSampler
+
+from lilac.models.model_base import MultiClassifierBase
+from lilac.trainers.trainer_base import TrainerBase
 
 
 class DownSamplingBaggingTrainer(TrainerBase):
@@ -11,8 +12,7 @@ class DownSamplingBaggingTrainer(TrainerBase):
     def __init__(self, target_col, base_class, bagging_num=5, seed=None, allow_less_than_base=True):
         self.target_col = target_col
         self.bagging_num = bagging_num
-        self.sampler = ImbalancedClassDownSampler(
-            target_col, base_class, seed, allow_less_than_base)
+        self.sampler = ImbalancedClassDownSampler(target_col, base_class, seed, allow_less_than_base)
         self.base_class = base_class
         self.seed = seed
 
@@ -21,7 +21,7 @@ class DownSamplingBaggingTrainer(TrainerBase):
         for i in range(self.bagging_num):
             print(f"Bagging {i+1}")
 
-            sampled_train = self.sampler.run(train, self.seed+i)
+            sampled_train = self.sampler.run(train, self.seed + i)
 
             # 複数モデルを作るためmodel_factoryをtrainer側で叩く必要がある.
             model = model_factory.run(**model_params)
@@ -37,8 +37,7 @@ class DownSamplingBaggingTrainer(TrainerBase):
         if issubclass(models[0].__class__, MultiClassifierBase):
             return MultiClassifiersAggregator(self.target_col, models)
         else:
-            raise Exception(
-                f"Not supported model class: {models[0].__class__}")
+            raise Exception(f"Not supported model class: {models[0].__class__}")
 
     def return_flag(self):
         return f"dsbt_{self.bagging_num}_{self.base_class}_{self.seed}"
@@ -89,8 +88,7 @@ class ImbalancedClassDownSampler:
     def run(self, data, seed):
         X, y = self.split_df2xy(data)
         sample_ratio = self.get_sample_ratio(y)
-        sampler = RandomUnderSampler(
-            sampling_strategy=sample_ratio, random_state=seed)
+        sampler = RandomUnderSampler(sampling_strategy=sample_ratio, random_state=seed)
         sampled_x, sampled_y = sampler.fit_resample(X, y)
         sampled_x[self.target_col] = sampled_y
         return sampled_x

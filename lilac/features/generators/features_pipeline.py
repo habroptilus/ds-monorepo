@@ -1,4 +1,5 @@
 import pandas as pd
+
 from lilac.features.generator_base import FeaturesBase, _FeaturesBase
 
 
@@ -17,16 +18,12 @@ class PipelineBlock(FeaturesBase):
         test_data = test_data.copy()
 
         # 依存先のgeneratorはrunを呼ぶことでsave,load機能を用いる
-        train_features, test_features = self.generator_first.run(
-            train_data, test_data)
-        train_data = self.concat_or_not(
-            train_data, train_features)
-        test_data = self.concat_or_not(
-            test_data, test_features)
+        train_features, test_features = self.generator_first.run(train_data, test_data)
+        train_data = self.concat_or_not(train_data, train_features)
+        test_data = self.concat_or_not(test_data, test_features)
 
         # 本体は保存せずPipelineBlockの保存で保存されるようにする.
-        self.generator_second.fit(
-            pd.concat([train_data, test_data]).reset_index(drop=True))
+        self.generator_second.fit(pd.concat([train_data, test_data]).reset_index(drop=True))
         train_features = self.generator_second.transform(train_data)
         test_features = self.generator_second.transform(test_data)
 
@@ -44,7 +41,13 @@ class PipelineBlock(FeaturesBase):
         return self.generator_second.transform(df)
 
     def calc_md5(self):
-        return self._calc_md5({"first": self.generator_first.md5, "second": self.generator_second.md5, "use_prev_only": self.use_prev_only})
+        return self._calc_md5(
+            {
+                "first": self.generator_first.md5,
+                "second": self.generator_second.md5,
+                "use_prev_only": self.use_prev_only,
+            }
+        )
 
     def return_flag(self):
         return f"{self.generator_second.__class__.__name__}_by_pipeline_{self.md5}"
@@ -69,12 +72,12 @@ class FeaturesPipeline(_FeaturesBase):
         boolの場合は長さfeature_generators-1のリストにキャストされる.
         """
         if isinstance(use_prev_only, bool):
-            use_prev_only_list = [use_prev_only] * \
-                (len(feature_generators)-1)
+            use_prev_only_list = [use_prev_only] * (len(feature_generators) - 1)
         elif isinstance(use_prev_only, list):
             if len(use_prev_only) != len(feature_generators) - 1:
                 raise Exception(
-                    f"Length of use_previous_cols unmatched { len(use_prev_only)} != {len(feature_generators)- 1}")
+                    f"Length of use_previous_cols unmatched { len(use_prev_only)} != {len(feature_generators)- 1}"
+                )
             use_prev_only_list = use_prev_only
         self.use_prev_only_list = use_prev_only_list
         self.features_dir = features_dir
@@ -86,8 +89,12 @@ class FeaturesPipeline(_FeaturesBase):
             if prev is None:
                 prev = gen
                 continue
-            prev = PipelineBlock(generator_first=prev, generator_second=gen,
-                                 use_prev_only=self.use_prev_only_list[i-1], features_dir=self.features_dir)
+            prev = PipelineBlock(
+                generator_first=prev,
+                generator_second=gen,
+                use_prev_only=self.use_prev_only_list[i - 1],
+                features_dir=self.features_dir,
+            )
         return prev
 
     def run(self, train, test):
