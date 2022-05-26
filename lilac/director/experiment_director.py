@@ -112,9 +112,7 @@ class ExperimentDirector:
         elif "stacking" in result:
             return result["stacking"][-1][0]
         else:
-            print(
-                "[WARNING] There are multiple SeedJobs but No stacking was conducted. Final result couldn't be specified."
-            )
+            print("[WARNING] There are multiple SeedJobs but No stacking was conducted.")
 
     def dump_result(self, result):
         with Path(self.output_path).open("w") as f:

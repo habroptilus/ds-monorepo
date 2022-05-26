@@ -5,9 +5,9 @@ import pandas as pd
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='create sub')
+    parser = argparse.ArgumentParser(description="create sub")
 
-    parser.add_argument('exp')
+    parser.add_argument("exp")
     args = parser.parse_args()
 
     with open(f"data/output/{args.exp}.json", "r") as f:

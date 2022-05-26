@@ -1,7 +1,6 @@
 lint: 
-	poetry run flake8 ./lilac
-	poetry run mypy ./lilac 
+	poetry run flake8 ./lilac ./projects
 
 format:
-	poetry run isort ./lilac
-	poetry run black ./lilac
+	poetry run isort ./lilac ./projects
+	poetry run black ./lilac ./projects

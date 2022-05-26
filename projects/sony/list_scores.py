@@ -1,6 +1,7 @@
 import glob
-from pathlib import Path
 import json
+from pathlib import Path
+
 output_path_list = glob.glob("data/output/*.json")
 
 
