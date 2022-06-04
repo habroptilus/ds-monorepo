@@ -9,6 +9,8 @@ from lilac.core.utils import df_copy
 
 
 class _FeaturesBase(metaclass=ABCMeta):
+    """Features基底クラスのうちfit,transformの前にcopyをする機能を提供."""
+
     def fit(self, df):
         return self
 
@@ -18,10 +20,6 @@ class _FeaturesBase(metaclass=ABCMeta):
 
     def fit_transform(self, df):
         return self.fit(df).transform(df)
-
-    @abstractmethod
-    def return_flag(self):
-        raise Exception("Not implemented error.")
 
     def __new__(cls, *args, **kwargs):
         """デコレーターを継承先にも適用させるため、インスタンス生成時にデコレーターを作用させるようにする."""

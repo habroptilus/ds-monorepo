@@ -3,7 +3,7 @@ import pandas as pd
 from lilac.features.generator_base import FeaturesBase, _FeaturesBase
 
 
-class PipelineBlock(FeaturesBase):
+class PipelineComponent(FeaturesBase):
     """generatorを二つ受け取って、ひとつ目に依存した二つ目のgeneratorとして振る舞う."""
 
     def __init__(self, generator_first, generator_second, use_prev_only=False, features_dir=None):
@@ -23,7 +23,7 @@ class PipelineBlock(FeaturesBase):
         test_data = self.concat_or_not(test_data, test_features)
 
         # 二つ目はrunではなくfit, transformを実行する.
-        # PipelineBlock側のrun(この_generateが呼ばれているrun)で保存されるようにする.
+        # PipelineComponent側のrun(この_generateが呼ばれているrun)で保存されるようにする.
         self.generator_second.fit(pd.concat([train_data, test_data]).reset_index(drop=True))
         train_features = self.generator_second.transform(train_data)
         test_features = self.generator_second.transform(test_data)
@@ -53,7 +53,7 @@ class PipelineBlock(FeaturesBase):
         )
 
     def return_flag(self):
-        return f"{self.generator_second.__class__.__name__}_by_pipeline_{self.md5}"
+        return f"{self.generator_second.__class__.__name__}_{self.md5}"
 
     def concat_or_not(self, original, diff):
         original = original.copy()
@@ -65,7 +65,10 @@ class PipelineBlock(FeaturesBase):
 
 
 class FeaturesPipeline(_FeaturesBase):
-    """FeaturesBaseを複数直列に並べてパイプラインを作る."""
+    """FeaturesBaseを複数直列に並べてパイプラインを作る.
+
+    保存されるのは
+    """
 
     def __init__(self, feature_generators, use_prev_only=False, features_dir=None):
         """use_previous_cols=Trueにするとひとつ前のgeneratorの出力を次のinputとする.
@@ -84,16 +87,16 @@ class FeaturesPipeline(_FeaturesBase):
             use_prev_only_list = use_prev_only
         self.use_prev_only_list = use_prev_only_list
         self.features_dir = features_dir
-        self.main_block = self.get_nested_block(feature_generators)
+        self.pipeline = self.get_nested_components(feature_generators)
 
-    def get_nested_block(self, feature_generators):
-        """feature_generatorsを二つずつ再起的に取り出してPipelineBlockを作っていき、最後のPipelineBlockを返す."""
+    def get_nested_components(self, feature_generators):
+        """feature_generatorsを二つずつ再起的に取り出してPipelineComponentを作っていき、最後のPipelineComponentを返す."""
         prev = None
         for i, gen in enumerate(feature_generators):
             if prev is None:
                 prev = gen
                 continue
-            prev = PipelineBlock(
+            prev = PipelineComponent(
                 generator_first=prev,
                 generator_second=gen,
                 use_prev_only=self.use_prev_only_list[i - 1],
@@ -102,14 +105,11 @@ class FeaturesPipeline(_FeaturesBase):
         return prev
 
     def run(self, train, test):
-        return self.main_block.run(train, test)
+        return self.pipeline.run(train, test)
 
     def fit(self, df):
-        self.main_block.fit_transform(df)
+        self.pipeline.fit_transform(df)
         return self
 
     def transform(self, df):
-        return self.main_block.transform(df)
-
-    def return_flag(self):
-        return "pipeline"
+        return self.pipeline.transform(df)

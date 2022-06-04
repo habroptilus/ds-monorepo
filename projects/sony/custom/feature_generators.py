@@ -3,25 +3,22 @@ from lilac.features.generators.features_pipeline import FeaturesPipeline
 from lilac.features.generators.scaling_features import StandardScalingFeatures
 
 
-class AverageGasStandardScaledStats(FeaturesBase):
+class AverageGasStandardScaledStats(FeaturesPipeline):
     """各気体の統計量を標準化し、統計量の種類ごとに平均する.Pipelineを使った実装の例としても参照されたい."""
 
     prefix_list = ["co", "no2", "so2", "o3"]
     suffix_list = ["cnt", "min", "max", "rng", "var"]
 
-    def fit(self, df):
+    def __init__(self, features_dir=None):
         input_cols = [f"{prefix}_{suffix}" for prefix in self.prefix_list for suffix in self.suffix_list]
-        self.gen = FeaturesPipeline(
+        super().__init__(
             feature_generators=[
-                StandardScalingFeatures(input_cols, features_dir=self.features_dir),
-                AverageGasStats(self.features_dir),
-            ]
+                StandardScalingFeatures(input_cols, features_dir=features_dir),
+                AverageGasStats(features_dir),
+            ],
+            use_prev_only=False,
+            features_dir=features_dir,
         )
-        self.gen.fit(df)
-        return self
-
-    def transform(self, df):
-        return self.gen.transform(df)
 
 
 class AverageGasStats(FeaturesBase):
