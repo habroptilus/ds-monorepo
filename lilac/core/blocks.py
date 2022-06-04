@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 from lilac.evaluators.evaluator_factory import EvaluatorFactory
 from lilac.features.features_aggregator import FeaturesAggregator
 from lilac.features.generator_factory import FeatureGeneratorsFactory
@@ -47,8 +49,10 @@ class ModelingBlock:
 class DatagenBlock:
     """特徴量生成を行い、それらをまとめて学習/テストデータを作る."""
 
-    def __init__(self, target_col, features_dir, register_from, features_settings):
-        features_factory = FeatureGeneratorsFactory(features_dir=features_dir, register_from=register_from)
+    def __init__(self, target_col, features_dir, register_from, extra_class_names: Optional[List], features_settings):
+        features_factory = FeatureGeneratorsFactory(
+            features_dir=features_dir, register_from=register_from, extra_class_names=extra_class_names
+        )
         self.aggregator = FeaturesAggregator(
             target_col=target_col, factory=features_factory, settings=features_settings
         )
@@ -66,6 +70,7 @@ class BlocksRunner:
         self,
         features_dir,
         register_from,
+        extra_class_names: Optional[List],
         features_settings,
         target_col,
         unused_cols,
@@ -74,7 +79,9 @@ class BlocksRunner:
         trainer_factory_settings,
         evaluator_str,
     ):
-        self.datagen_block = DatagenBlock(target_col, features_dir, register_from, features_settings)
+        self.datagen_block = DatagenBlock(
+            target_col, features_dir, register_from, extra_class_names, features_settings
+        )
         self.modeling_block = ModelingBlock(
             target_col,
             unused_cols,

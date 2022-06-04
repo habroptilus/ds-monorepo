@@ -14,7 +14,7 @@ from lilac.features.generators.sentence_vectorizer import BertVectorizer, WordCo
 class FeatureGeneratorsFactory(FactoryBase):
     """特徴量生成器のFactoryクラス."""
 
-    def __init__(self, features_dir, register_from=None):
+    def __init__(self, features_dir, register_from=None, extra_class_names=None):
         str2model = {
             "category": CategoryEncoding,
             "datetime": DatetimeFeatures,
@@ -29,4 +29,9 @@ class FeatureGeneratorsFactory(FactoryBase):
             "std_scale": StandardScalingFeatures,
         }
         shared_params = {"features_dir": features_dir}
-        super().__init__(str2model, register_from, shared_params)
+        super().__init__(
+            str2model=str2model,
+            register_from=register_from,
+            shared_params=shared_params,
+            extra_class_names=extra_class_names,
+        )

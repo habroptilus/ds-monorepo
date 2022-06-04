@@ -4,7 +4,9 @@ shared:
   train_path: projects/sony/data/train_v4.csv
   test_path: projects/sony/data/test_v4.csv
   features_dir: projects/sony/data/features
-  register_from: projects.sony.custom.feature_generators
+  register_from: projects/sony/custom
+  extra_class_names: 
+  - AverageGasStandardScaledStats
   target_col: pm25_mid
   seed: 42
   folds_gen_str: group

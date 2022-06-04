@@ -35,4 +35,4 @@ class ModelFactory(FactoryBase):
             "avg_reg": AveragingRegressor,
         }
         shared_params = {"target_col": target_col}
-        super().__init__(str2model, register_from, shared_params)
+        super().__init__(str2model=str2model, register_from=register_from, shared_params=shared_params)

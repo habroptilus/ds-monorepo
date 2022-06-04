@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import List, Optional
 
 import pandas as pd
 
@@ -33,6 +34,7 @@ class BasicSeedJob:
         test_path,
         features_dir,
         register_from=None,
+        extra_class_names: Optional[List] = None,
         features_settings=None,
         unused_cols=None,
         folds_gen_str="kfold",
@@ -111,6 +113,7 @@ class BasicSeedJob:
             target_col=target_col,
             features_dir=features_dir,
             register_from=register_from,
+            extra_class_names=extra_class_names,
             features_settings=features_settings,
             unused_cols=unused_cols,
             folds_gen_factory_settings=folds_gen_factory_settings,

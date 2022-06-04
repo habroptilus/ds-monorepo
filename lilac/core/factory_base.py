@@ -1,4 +1,6 @@
 """Factoryクラスのベースクラス."""
+import glob
+import os
 import re
 from abc import ABCMeta
 from importlib import import_module
@@ -15,7 +17,7 @@ class FactoryBase(metaclass=ABCMeta):
     継承して利用する場合は__init__をオーバーライドするだけ.
     """
 
-    def __init__(self, str2model, register_from, shared_params=None):
+    def __init__(self, str2model, register_from, extra_class_names=None, shared_params=None):
         """str2modelを引数にすることを強制する.
 
         :params
@@ -26,7 +28,7 @@ class FactoryBase(metaclass=ABCMeta):
         self.str2model = str2model
         self.shared_params = {} if shared_params is None else shared_params
         if register_from:
-            self.register_models_from_src(register_from)
+            self.register_models_from_src(register_from, extra_class_names)
 
     def register_model(self, model_str, Model):
         """一つのモデルを登録する."""
@@ -34,32 +36,35 @@ class FactoryBase(metaclass=ABCMeta):
             print(f"[WARNING] You are overwriting '{model_str}' with {Model}.")
         self.str2model[model_str] = Model
 
-    def register_models_from_src(self, src):
+    def register_models_from_src(self, src, class_names=None):
         """複数モデルを一括で登録する.srcはファイルパスかdictかを選択できる.
 
         ファイルパス経由の場合、キーはクラス名をスネークケースにしたものが自動で設定される.
         """
         if type(src) is str:
-            src = self.get_custom_members_from_filepath(src)
+            if class_names is None:
+                raise Exception("Give 'class_names'.")
+            src = self.get_custom_members_from_filepath(src, class_names)
         elif type(src) is not dict:
             raise Exception("Invalid src for registration of factory.")
 
         self.register_models_from_dict(src)
 
-    def get_custom_members_from_filepath(self, filepath):
+    def get_custom_members_from_filepath(self, src_dir, class_names):
         """filepathからBaseを継承したものを取ってきて、スネークケース:クラスのdictを返す"""
-        # TODO: カスタムモデルのファイルが複数ある場合に対応する
-        # filepathだけどcustom.feature_generatorsのようなものを想定
-        a = import_module(filepath)
-
-        flag = False
         result = {}
-        for k, v in vars(a).items():
-            if flag:
-                camel_key = re.sub("([A-Z])", lambda x: "_" + x.group(1).lower(), k)[1:]
-                result[camel_key] = v
-            if "Base" in k:
-                flag = True
+
+        file_path_list = glob.glob(f"{src_dir}/**/*.py", recursive=True)
+        for filepath in file_path_list:
+            # スラッシュ形式から.に変換してimport用の文字列に変換
+            filepath = ".".join(os.path.splitext(filepath)[0].split("/"))
+            imported = import_module(filepath)
+            for k, v in vars(imported).items():
+                if k in class_names:
+                    # クラス名をスネークケースにしてキーとして登録
+                    camel_key = re.sub("([A-Z])", lambda x: "_" + x.group(1).lower(), k)[1:]
+                    result[camel_key] = v
+        assert len(result) == len(class_names), result
         return result
 
     def register_models_from_dict(self, members_dict):
