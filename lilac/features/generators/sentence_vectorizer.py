@@ -7,46 +7,35 @@ from tqdm import tqdm
 from transformers import BertModel, BertTokenizer
 
 from lilac.features.generator_base import FeaturesBase
+from lilac.features.generators.decomposer_features import DecompositionFeatures, StandardizedDecomposer
+from lilac.features.generators.features_pipeline import FeaturesPipeline
 
 
 class WordCountVectorizer(FeaturesBase):
-    """BoWやTfidfで文書をベクトル化し、SVD等の次元圧縮をする.(PCAはスパースに対応していないらしい).
-    word countと次元圧縮を分けてFeaturesPipelineを用いて実装しなおすのも良いが、bowやtfidfの生データが大きいので悩む
+    """BoWやTfidfで文書をベクトル化する.次元圧縮は行わない.
+    csr_martix->ndarrayに変換してdataframeにして保存するので大きいと辛いかも.
     """
 
-    str2vectorizer = {"bow": CountVectorizer, "tfidf": TfidfVectorizer}
-    str2decomposer = {"svd": TruncatedSVD, "nmf": NMF}
-
-    def __init__(self, input_col, vectorizer_str, decomposer_str, n_components, random_state=None, features_dir=None):
+    def __init__(self, input_col, vectorizer_str, features_dir=None):
         self.input_col = input_col
         self.vectorizer_str = vectorizer_str
-        self.decomposer_str = decomposer_str
-        self.random_state = random_state
-        self.n_components = n_components
         super().__init__(features_dir)
 
     def fit(self, df):
-        if self.vectorizer_str not in self.str2vectorizer:
+        str2vectorizer = {"bow": CountVectorizer, "tfidf": TfidfVectorizer}
+        vectorizer = str2vectorizer.get(self.vectorizer_str)
+        if vectorizer is None:
             raise Exception(f"Invalid vectorizer str : '{ self.vectorizer_str}'")
-        self.vectorizer = self.str2vectorizer[self.vectorizer_str]()
 
-        if self.decomposer_str not in self.str2decomposer:
-            raise Exception(f"Invalid decomposer_str : '{ self.decomposer_str}'")
-        self.decomposer = self.str2decomposer[self.decomposer_str](
-            n_components=self.n_components, random_state=self.random_state
-        )
-        vecs = self.vectorizer.fit_transform(df[self.input_col])
-        self.decomposer.fit(vecs)
+        self.vectorizer = vectorizer().fit(df[self.input_col])
         return self
 
     def transform(self, df):
         vecs = self.vectorizer.transform(df[self.input_col])
-        vecs = self.decomposer.transform(vecs)
+        vecs = vecs.toarray()
         return pd.DataFrame(
             vecs,
-            columns=[
-                f"{self.input_col}_{self.vectorizer_str}_{self.decomposer_str}_{i+1}" for i in range(self.n_components)
-            ],
+            columns=[f"{self.input_col}_{self.vectorizer_str}-{i+1}" for i in range(vecs.shape[1])],
         )
 
 
@@ -94,3 +83,48 @@ class BertVectorizer(FeaturesBase):
             result.append(vector)
         cols = [f"bert_{self.input_col}_{i+1}" for i in range(768)]
         return pd.DataFrame(np.array(result), columns=cols)
+
+
+class DecomposedSentenceVectoizer(FeaturesPipeline):
+    """BertやWordCountのベクトルをPCAやUMAP,NMF,SVDなどで次元削減する.次元削減前の標準化するかどうかも選べる."""
+
+    def __init__(
+        self,
+        input_col,
+        vectorizer_str,
+        decomposer_str,
+        n_components,
+        model_name="bert-base-uncased",
+        max_len=128,
+        standardize=False,
+        random_state=None,
+        features_dir=None,
+    ):
+        if vectorizer_str == "bert":
+            vectorizer = BertVectorizer(
+                input_col=input_col, model_name=model_name, max_len=max_len, features_dir=features_dir
+            )
+        elif vectorizer_str in ["bow", "tfidf"]:
+            vectorizer = WordCountVectorizer(
+                input_col=input_col, vectorizer_str=vectorizer_str, features_dir=features_dir
+            )
+        else:
+            raise Exception(f"Invalid vectorizer_str '{vectorizer_str}'")
+
+        if standardize:
+            decomposer = StandardizedDecomposer
+        else:
+            decomposer = DecompositionFeatures
+
+        # TODO : ここ本当は一意にしたいけど長くなってしまう...
+        prefix = f"{input_col}_{vectorizer_str}_{decomposer_str}_{n_components}"
+
+        decomposer = decomposer(
+            decomposer_str=decomposer_str,
+            n_components=n_components,
+            random_state=random_state,
+            features_dir=features_dir,
+            prefix=prefix,
+        )
+
+        super().__init__(feature_generators=[vectorizer, decomposer], use_prev_only=True, features_dir=features_dir)

@@ -8,7 +8,11 @@ from lilac.features.generators.features_pipeline import FeaturesPipeline
 from lilac.features.generators.group_features import GroupFeatures
 from lilac.features.generators.lag_features import LagFeatures
 from lilac.features.generators.scaling_features import StandardScalingFeatures
-from lilac.features.generators.sentence_vectorizer import BertVectorizer, WordCountVectorizer
+from lilac.features.generators.sentence_vectorizer import (
+    BertVectorizer,
+    DecomposedSentenceVectoizer,
+    WordCountVectorizer,
+)
 
 
 class FeatureGeneratorsFactory(FactoryBase):
@@ -18,17 +22,18 @@ class FeatureGeneratorsFactory(FactoryBase):
         str2model = {
             "category": CategoryEncoding,
             "datetime": DatetimeFeatures,
-            "wc_vec": WordCountVectorizer,
             "extra_join": ExtraTableJoin,
-            "cluster": ClusteringFeatures,
             "pipeline": FeaturesPipeline,
-            "bert": BertVectorizer,
-            "dec": DecompositionFeatures,
             "group": GroupFeatures,
             "lag": LagFeatures,
             "std_scale": StandardScalingFeatures,
+            "dec": DecompositionFeatures,
             "std_dec": StandardizedDecomposer,
+            "cluster": ClusteringFeatures,
             "std_cluster": StandardizedClustering,
+            "sv_dec": DecomposedSentenceVectoizer,
+            "word_count": WordCountVectorizer,
+            "bert": BertVectorizer,
         }
         shared_params = {"features_dir": features_dir}
         super().__init__(

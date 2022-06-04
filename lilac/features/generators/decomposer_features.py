@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.decomposition import PCA
+from sklearn.decomposition import NMF, PCA, TruncatedSVD
 from umap import UMAP
 
 from lilac.features.generator_base import FeaturesBase
@@ -10,7 +10,7 @@ from lilac.features.generators.scaling_features import StandardScalingFeatures
 class StandardizedDecomposer(FeaturesPipeline):
     """標準化をしてからPCAやUMAPを用いて次元削減する."""
 
-    def __init__(self, decomposer_str, n_components, input_cols, prefix, random_state=None, features_dir=None):
+    def __init__(self, decomposer_str, n_components, prefix, input_cols=None, random_state=None, features_dir=None):
         super().__init__(
             feature_generators=[
                 StandardScalingFeatures(input_cols=input_cols, features_dir=features_dir),
@@ -29,7 +29,7 @@ class StandardizedDecomposer(FeaturesPipeline):
 
 class DecompositionFeatures(FeaturesBase):
     def __init__(self, decomposer_str, n_components, prefix, input_cols=None, random_state=None, features_dir=None):
-        """PCAやUMAPを用いて次元削減する.
+        """PCAやUMAP,SVD, NMFを用いて次元削減する.
 
         :n_components: 削減先の次元数.
         :input_cols: 適用するカラム.指定しないと全カラムになる.
@@ -45,9 +45,12 @@ class DecompositionFeatures(FeaturesBase):
         super().__init__(features_dir)
 
     def fit(self, df):
-        models = {"pca": PCA, "umap": UMAP}
+        models = {"pca": PCA, "umap": UMAP, "svd": TruncatedSVD, "nmf": NMF}
+        model = models.get(self.decomposer_str)
+        if model is None:
+            raise Exception(f"Invalid decomposer_str: '{self.decomposer_str}'")
         input_cols = self.resolve_input_cols(df)
-        self.model = models[self.decomposer_str](n_components=self.n_components, random_state=self.random_state)
+        self.model = model(n_components=self.n_components, random_state=self.random_state)
         self.model.fit(df[input_cols])
         return self
 
