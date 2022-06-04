@@ -1,12 +1,13 @@
-from .regressors.lgbm_regressors import LgbmRmsleRegressor, LgbmRmseRegressor, LgbmMaeRegressor
-from .regressors.linear_regressors import LinearRmsle, LinearModel, LinearPositiveModel, RidgeRmsle, RidgeRmse
-from .regressors.catb_regressors import CatbRmseRegressor, CatbRmsleRegressor
-from .regressors.averaging_regressors import AveragingRegressor
+from lilac.core.factory_base import FactoryBase
+
+from .classifiers.averaging_classifiers import AveragingBinaryClassifier, AveragingMultiClassifier
+from .classifiers.catb_classifiers import CatbBinaryClassifier, CatbMultiClassifier
 from .classifiers.lgbm_classifiers import LgbmBinaryClassifier, LgbmMultiClassifier
 from .classifiers.logistic_regression import LrMultiClassifier
-from .classifiers.catb_classifiers import CatbBinaryClassifier, CatbMultiClassifier
-from .classifiers.averaging_classifiers import AveragingBinaryClassifier, AveragingMultiClassifier
-from lilac.core.factory_base import FactoryBase
+from .regressors.averaging_regressors import AveragingRegressor
+from .regressors.catb_regressors import CatbRmseRegressor, CatbRmsleRegressor
+from .regressors.lgbm_regressors import LgbmMaeRegressor, LgbmRmseRegressor, LgbmRmsleRegressor
+from .regressors.linear_regressors import LinearModel, LinearPositiveModel, LinearRmsle, RidgeRmse, RidgeRmsle
 
 
 class ModelFactory(FactoryBase):
@@ -17,7 +18,7 @@ class ModelFactory(FactoryBase):
             "lgbm_rmsle": LgbmRmsleRegressor,
             "lgbm_rmse": LgbmRmseRegressor,
             "lgbm_mae": LgbmMaeRegressor,
-            "lgbm_bin":  LgbmBinaryClassifier,
+            "lgbm_bin": LgbmBinaryClassifier,
             "lgbm_multi": LgbmMultiClassifier,
             "catb_rmse": CatbRmseRegressor,
             "catb_rmsle": CatbRmsleRegressor,
@@ -31,7 +32,7 @@ class ModelFactory(FactoryBase):
             "lr_multi": LrMultiClassifier,
             "avg_bin": AveragingBinaryClassifier,
             "avg_multi": AveragingMultiClassifier,
-            "avg_reg": AveragingRegressor
+            "avg_reg": AveragingRegressor,
         }
         shared_params = {"target_col": target_col}
-        super().__init__(str2model, register_from, shared_params)
+        super().__init__(str2model=str2model, register_from=register_from, shared_params=shared_params)

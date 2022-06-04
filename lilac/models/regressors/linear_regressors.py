@@ -1,5 +1,6 @@
-from sklearn.linear_model import LinearRegression, Ridge
 import numpy as np
+from sklearn.linear_model import LinearRegression, Ridge
+
 from lilac.models.model_base import RegressorBase
 
 
@@ -45,12 +46,12 @@ class LinearRmsle(LinearModel):
     """RMSLEを目的関数にしたlinear regression.欠損やカテゴリ変数に未対応."""
 
     def _preprocess_y(self, y):
-        y = np.log(y+1)
+        y = np.log(y + 1)
         return super()._preprocess_y(y.reshape((-1, 1)))
 
     def _predict(self, x_df):
         raw_pred = super()._predict(x_df)
-        return np.maximum(np.exp(raw_pred)-1, 0)
+        return np.maximum(np.exp(raw_pred) - 1, 0)
 
     def return_flag(self):
         return "linear_rmsle"
@@ -87,12 +88,12 @@ class RidgeRmsle(RidgeRmse):
     """RMSLEを目的関数にしたリッジ回帰.欠損やカテゴリ変数に未対応."""
 
     def _preprocess_y(self, y):
-        y = np.log(y+1)
+        y = np.log(y + 1)
         return super()._preprocess_y(y.reshape((-1, 1)))
 
     def _predict(self, x_df):
         raw_pred = super()._predict(x_df)
-        return np.maximum(np.exp(raw_pred)-1, 0)
+        return np.maximum(np.exp(raw_pred) - 1, 0)
 
     def return_flag(self):
         return "ridge_rmsle"

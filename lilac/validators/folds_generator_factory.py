@@ -1,8 +1,10 @@
-from lilac.validators.folds_generators import (KFoldsGenerator,
-                                               GroupKFoldsGenerator,
-                                               StratifiedFoldsGenerator,
-                                               StratifiedGroupKFoldGenerator)
 from lilac.core.factory_base import FactoryBase
+from lilac.validators.folds_generators import (
+    GroupKFoldsGenerator,
+    KFoldsGenerator,
+    StratifiedFoldsGenerator,
+    StratifiedGroupKFoldGenerator,
+)
 
 
 class FoldsGeneratorFactory(FactoryBase):
@@ -11,6 +13,6 @@ class FoldsGeneratorFactory(FactoryBase):
             "kfold": KFoldsGenerator,
             "stratified": StratifiedFoldsGenerator,
             "group": GroupKFoldsGenerator,
-            "stratified_group": StratifiedGroupKFoldGenerator
+            "stratified_group": StratifiedGroupKFoldGenerator,
         }
         super().__init__(str2model, register_from)

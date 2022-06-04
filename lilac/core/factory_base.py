@@ -1,8 +1,10 @@
 """Factoryクラスのベースクラス."""
-from inspect import signature
+import glob
+import os
+import re
 from abc import ABCMeta
 from importlib import import_module
-import re
+from inspect import signature
 
 
 class FactoryBase(metaclass=ABCMeta):
@@ -15,7 +17,7 @@ class FactoryBase(metaclass=ABCMeta):
     継承して利用する場合は__init__をオーバーライドするだけ.
     """
 
-    def __init__(self, str2model, register_from, shared_params=None):
+    def __init__(self, str2model, register_from, extra_class_names=None, shared_params=None):
         """str2modelを引数にすることを強制する.
 
         :params
@@ -26,42 +28,43 @@ class FactoryBase(metaclass=ABCMeta):
         self.str2model = str2model
         self.shared_params = {} if shared_params is None else shared_params
         if register_from:
-            self.register_models_from_src(register_from)
+            self.register_models_from_src(register_from, extra_class_names)
 
     def register_model(self, model_str, Model):
         """一つのモデルを登録する."""
         if model_str in self.str2model:
-            print(
-                f"[WARNING] You are overwriting '{model_str}' with {Model}.")
+            print(f"[WARNING] You are overwriting '{model_str}' with {Model}.")
         self.str2model[model_str] = Model
 
-    def register_models_from_src(self, src):
+    def register_models_from_src(self, src, class_names=None):
         """複数モデルを一括で登録する.srcはファイルパスかdictかを選択できる.
 
         ファイルパス経由の場合、キーはクラス名をスネークケースにしたものが自動で設定される.
         """
         if type(src) is str:
-            src = self.get_custom_members_from_filepath(src)
+            if class_names is None:
+                raise Exception("Give 'class_names'.")
+            src = self.get_custom_members_from_filepath(src, class_names)
         elif type(src) is not dict:
             raise Exception("Invalid src for registration of factory.")
 
         self.register_models_from_dict(src)
 
-    def get_custom_members_from_filepath(self, filepath):
+    def get_custom_members_from_filepath(self, src_dir, class_names):
         """filepathからBaseを継承したものを取ってきて、スネークケース:クラスのdictを返す"""
-        # TODO: カスタムモデルのファイルが複数ある場合に対応する
-        # filepathだけどcustom.feature_generatorsのようなものを想定
-        a = import_module(filepath)
-
-        flag = False
         result = {}
-        for k, v in vars(a).items():
-            if flag:
-                camel_key = re.sub("([A-Z])", lambda x: "_" +
-                                   x.group(1).lower(), k)[1:]
-                result[camel_key] = v
-            if "Base" in k:
-                flag = True
+
+        file_path_list = glob.glob(f"{src_dir}/**/*.py", recursive=True)
+        for filepath in file_path_list:
+            # スラッシュ形式から.に変換してimport用の文字列に変換
+            filepath = ".".join(os.path.splitext(filepath)[0].split("/"))
+            imported = import_module(filepath)
+            for k, v in vars(imported).items():
+                if k in class_names:
+                    # クラス名をスネークケースにしてキーとして登録
+                    camel_key = re.sub("([A-Z])", lambda x: "_" + x.group(1).lower(), k)[1:]
+                    result[camel_key] = v
+        assert len(result) == len(class_names), result
         return result
 
     def register_models_from_dict(self, members_dict):
@@ -78,8 +81,7 @@ class FactoryBase(metaclass=ABCMeta):
 
     def get_required_params_list(self, Model):
         """Modelのinitに必要なパラメータのリストを返す."""
-        required_params_list = list(signature(
-            Model.__init__).parameters.keys())
+        required_params_list = list(signature(Model.__init__).parameters.keys())
         required_params_list.remove("self")
         return required_params_list
 
@@ -95,17 +97,16 @@ class FactoryBase(metaclass=ABCMeta):
         Model = self.get_model(model_str)
         required_params_names = self.get_required_params_list(Model)
         all_params = self.update_shared_params(params)
-        required_params = self.extract_required_params(
-            required_params_names, all_params)
+        required_params = self.extract_required_params(required_params_names, all_params)
         return Model(**required_params)
 
     def extract_required_params(self, required_params_names, all_params):
         """必要な引数を取り出す. 必要な引数が与えられていない場合にWARNINGを出す."""
         required_params = {}
+        print(f"Extracting required params in {self.__class__.__name__}.")
         for params_name in required_params_names:
             if params_name not in all_params:
-                print(
-                    f"[WARNING] parameter '{params_name}' is not specified. So default will be used.")
+                print(f"[WARNING] parameter '{params_name}' is not specified. So default is used.")
                 continue
             required_params[params_name] = all_params[params_name]
         return required_params

@@ -1,14 +1,24 @@
-import pandas as pd
-import numpy as np
 from abc import ABCMeta, abstractmethod
+
+import numpy as np
+import pandas as pd
+
 from lilac.core.blocks import ModelingBlock
 
 
 class _EnsembleRunnerBase(metaclass=ABCMeta):
     """アンサンブルを行う基底クラス.継承して実装する."""
 
-    def __init__(self, target_col, unused_cols, folds_gen_factory_settings, model_factory_settings,
-                 trainer_factory_settings, evaluator_flag, use_original_cols=False):
+    def __init__(
+        self,
+        target_col,
+        unused_cols,
+        folds_gen_factory_settings,
+        model_factory_settings,
+        trainer_factory_settings,
+        evaluator_flag,
+        use_original_cols=False,
+    ):
         """
         use_original_colsがFalseだとunused_colsはtestのカラムで置き換えられる
         """
@@ -24,8 +34,7 @@ class _EnsembleRunnerBase(metaclass=ABCMeta):
         """前の層の予測からデータセットを作り、ModelingBlockに渡して出力を得る."""
         # 前の層の予測からデータセットを作る
         # 目的変数は含まれていない
-        output_based_train, output_based_test = self._create_datasets(
-            output_list)
+        output_based_train, output_based_test = self._create_datasets(output_list)
 
         # とりあえず全部のデータを結合する
         # foldの計算に必要だったりするため.
@@ -39,7 +48,13 @@ class _EnsembleRunnerBase(metaclass=ABCMeta):
             unused_cols = self.unused_cols
 
         modeling_block = ModelingBlock(
-            self.target_col, unused_cols, self.folds_gen_factory_settings, self.model_factory_settings, self.trainer_factory_settings, self.evaluator_flag)
+            self.target_col,
+            unused_cols,
+            self.folds_gen_factory_settings,
+            self.model_factory_settings,
+            self.trainer_factory_settings,
+            self.evaluator_flag,
+        )
 
         return modeling_block.run(train_df, test_df)
 
@@ -69,11 +84,9 @@ class EnsembleRunnerBase(_EnsembleRunnerBase):
                 raw_pred = np.expand_dims(raw_pred, 1)
                 oof_raw_pred = np.expand_dims(oof_raw_pred, -1)
 
-            oof_raw_pred = pd.DataFrame(oof_raw_pred, columns=[
-                                        f"pred{i}_{j}" for j in range(oof_raw_pred.shape[1])])
+            oof_raw_pred = pd.DataFrame(oof_raw_pred, columns=[f"pred{i}_{j}" for j in range(oof_raw_pred.shape[1])])
 
-            raw_pred = pd.DataFrame(
-                raw_pred, columns=[f"pred{i}_{j}" for j in range(raw_pred.shape[1])])
+            raw_pred = pd.DataFrame(raw_pred, columns=[f"pred{i}_{j}" for j in range(raw_pred.shape[1])])
             train_df = pd.concat([train_df, oof_raw_pred], axis=1)
             test_df = pd.concat([test_df, raw_pred], axis=1)
         return train_df, test_df

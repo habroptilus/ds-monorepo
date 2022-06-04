@@ -1,13 +1,24 @@
-import numpy as np
-from sklearn.metrics import (mean_absolute_error, mean_squared_error,
-                             mean_squared_log_error, roc_auc_score, accuracy_score, f1_score)
-from lilac.core.data import Predictions
-from typing import List
 from abc import ABCMeta, abstractmethod
+from typing import List
+
+import numpy as np
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    mean_absolute_error,
+    mean_squared_error,
+    mean_squared_log_error,
+    roc_auc_score,
+)
+
+from lilac.core.data import Predictions
 
 
 class EvaluatorBase(metaclass=ABCMeta):
     """評価計算クラスの基底."""
+
+    def __init__(self) -> None:
+        pass
 
     @abstractmethod
     def run(self, y: List, predictions: Predictions):
@@ -22,6 +33,7 @@ class EvaluatorBase(metaclass=ABCMeta):
 
 class RmsleEvaluator(EvaluatorBase):
     """RMSLEで評価する."""
+
     direction = "minimize"
     flag = "rmsle"
 
@@ -31,6 +43,7 @@ class RmsleEvaluator(EvaluatorBase):
 
 class RmseEvaluator(EvaluatorBase):
     """RMSEで評価する."""
+
     direction = "minimize"
     flag = "rmse"
 
@@ -40,6 +53,7 @@ class RmseEvaluator(EvaluatorBase):
 
 class MaeEvaluator(EvaluatorBase):
     """MAEで評価する."""
+
     direction = "minimize"
     flag = "mae"
 
@@ -49,6 +63,7 @@ class MaeEvaluator(EvaluatorBase):
 
 class AucEvaluator(EvaluatorBase):
     """AUCで評価する."""
+
     direction = "maximize"
     flag = "auc"
 
@@ -58,6 +73,7 @@ class AucEvaluator(EvaluatorBase):
 
 class AccuracyEvaluator(EvaluatorBase):
     """Accuracyで評価する."""
+
     direction = "maximize"
     flag = "accuracy"
 
@@ -67,8 +83,9 @@ class AccuracyEvaluator(EvaluatorBase):
 
 class MacroF1Evaluator(EvaluatorBase):
     """macro f1_scoreで評価する."""
+
     direction = "maximize"
     flag = "macro_f1"
 
-    def run(self, y,  predictions):
-        return f1_score(y, predictions.pred, average='macro')
+    def run(self, y, predictions):
+        return f1_score(y, predictions.pred, average="macro")

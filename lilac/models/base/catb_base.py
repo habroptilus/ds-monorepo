@@ -1,5 +1,5 @@
-from catboost import Pool, CatBoostRegressor, CatBoostClassifier
 import numpy as np
+from catboost import CatBoostClassifier, CatBoostRegressor, Pool
 
 
 class _CatbBase:
@@ -15,22 +15,17 @@ class _CatbBase:
         train_x = self.transform(train_x)
         valid_x = self.transform(valid_x)
 
-        self.categorical_features_indices = np.where(
-            train_x.dtypes == object)[0]
+        self.categorical_features_indices = np.where(train_x.dtypes == object)[0]
 
-        train_pool = Pool(train_x, train_y,
-                          cat_features=self.categorical_features_indices)
-        validate_pool = Pool(
-            valid_x, valid_y, cat_features=self.categorical_features_indices)
+        train_pool = Pool(train_x, train_y, cat_features=self.categorical_features_indices)
+        validate_pool = Pool(valid_x, valid_y, cat_features=self.categorical_features_indices)
         return train_pool, validate_pool
 
     def fit(self, train_x, train_y, valid_x, valid_y):
-        train_pool, validate_pool = self.preprocess(
-            train_x, train_y, valid_x, valid_y)
-        self.model.fit(train_pool,
-                       eval_set=validate_pool,
-                       early_stopping_rounds=self.early_stopping_rounds,
-                       use_best_model=True)
+        train_pool, validate_pool = self.preprocess(train_x, train_y, valid_x, valid_y)
+        self.model.fit(
+            train_pool, eval_set=validate_pool, early_stopping_rounds=self.early_stopping_rounds, use_best_model=True
+        )
         return self
 
     def transform(self, df):
@@ -43,7 +38,7 @@ class _CatbBase:
         return df
 
     def return_flag(self):
-        return "catb_"+"_".join([str(v) for v in self.catb_params.values()])
+        return "catb_" + "_".join([str(v) for v in self.catb_params.values()])
 
     def get_model(self):
         raise Exception("Implement please.")
@@ -73,15 +68,11 @@ class _CatbClassifier(_CatbBase):
         train_x = self.transform(train_x)
         valid_x = self.transform(valid_x)
 
-        self.categorical_features_indices = np.where(
-            train_x.dtypes == object)[0]
+        self.categorical_features_indices = np.where(train_x.dtypes == object)[0]
 
         sample_weight = self.get_sample_weight(train_y)
-        train_pool = Pool(train_x, train_y,
-                          cat_features=self.categorical_features_indices,
-                          weight=sample_weight)
-        validate_pool = Pool(
-            valid_x, valid_y, cat_features=self.categorical_features_indices)
+        train_pool = Pool(train_x, train_y, cat_features=self.categorical_features_indices, weight=sample_weight)
+        validate_pool = Pool(valid_x, valid_y, cat_features=self.categorical_features_indices)
         return train_pool, validate_pool
 
     def get_sample_weight(self, y):
@@ -89,10 +80,9 @@ class _CatbClassifier(_CatbBase):
             return None
 
         if self.class_weight == "balanced":
-            class_weight = len(y)/np.bincount(y)*len(set(y))
+            class_weight = len(y) / np.bincount(y) * len(set(y))
         else:
-            raise Exception(
-                f"Invalid argument class_weight : {class_weight}")
+            raise Exception(f"Invalid argument class_weight : {class_weight}")
 
         return [class_weight[c] for c in y]
 
@@ -136,7 +126,7 @@ class _CatbMultiClassfier(_CatbClassifier):
 class _CatbRmsleRegressor(_CatbRegressor):
     """CatboostのRMSLEで最適化する回帰モデル."""
 
-    def __init__(self,  early_stopping_rounds, catb_params):
+    def __init__(self, early_stopping_rounds, catb_params):
         super().__init__("RMSE", early_stopping_rounds, catb_params)
 
     def fit(self, train_x, train_y, valid_x, valid_y):
@@ -163,4 +153,4 @@ class _CatbRmsleRegressor(_CatbRegressor):
         """RMSEのlgbmでRMSLEを使った学習を行うために、後処理を行う.
         対数をとった分を戻すのと、負の数が出力されることを防ぐために0と比較したmaxをとる.
         """
-        return np.maximum(np.exp(pred)-1, 0)
+        return np.maximum(np.exp(pred) - 1, 0)

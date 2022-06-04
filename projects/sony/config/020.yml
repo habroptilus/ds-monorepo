@@ -1,0 +1,71 @@
+meta:
+  title: 013に位置情報をkmeansクラスタリング追加(クラスタ数15に, 重複削除前処理追加)
+shared:
+  train_path: projects/sony/data/train_v1.csv
+  test_path: projects/sony/data/test_v1.csv
+  features_dir: projects/sony/data/features
+  # register_from: projects.airbnb.custom.feature_generators
+  target_col: pm25_mid
+  seed: 42
+  folds_gen_str: group
+  group_key_col: City
+  model_str: lgbm_rmse
+  evaluator_str: rmse
+  unused_cols: 
+  - id 
+  - City
+  - yyyymmdd
+  features_settings:
+    - model_str: group
+      params:
+        group_key: Country
+        input_cols:
+        - no2_mid
+        - co_mid
+        - no2_max
+        - no2_min
+        - co_max
+        - so2_max
+        - ws_mid
+        - so2_mid
+        - o3_max
+        - co_min
+    - model_str: lag
+      params:
+        key_col: City
+        ts_col: yyyymmdd
+        input_cols:
+        - no2_mid
+        - co_mid
+        - no2_max
+        - no2_min
+        - co_max
+        - so2_max
+        - ws_mid
+        - so2_mid
+        - o3_max
+        - co_min
+    - model_str: cluster
+      params:
+        model_str: kmeans
+        n_clusters: 15
+        random_state: 42
+        input_cols:
+        - lat
+        - lon
+jobs:
+- params: 
+    seed: 42
+
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_rmsle
+#    - linear_rmsle
+#    - ridge_rmsle
+#    - lgbm_rmsle
+#  - 
+#    - avg_rmsle
+

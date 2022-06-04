@@ -1,0 +1,49 @@
+meta:
+  title: top10にCountry集約特徴量
+  description: top10にCountry集約特徴量
+shared:
+  train_path: projects/sony/data/train.csv
+  test_path: projects/sony/data/test.csv
+  features_dir: projects/sony/data/features
+  # register_from: projects.airbnb.custom.feature_generators
+  target_col: pm25_mid
+  seed: 42
+  folds_gen_str: group
+  group_key_col: City
+  model_str: lgbm_rmse
+  evaluator_str: rmse
+  unused_cols: 
+  - id 
+  - City
+  features_settings:
+    - model_str: group
+      params:
+        group_key: Country
+        input_cols:
+        - no2_mid
+        - co_mid
+        - no2_max
+        - no2_min
+        - co_max
+        - so2_max
+        - ws_mid
+        - so2_mid
+        - o3_max
+        - co_min
+jobs:
+- name: seed42
+  params: 
+    seed: 42
+
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_rmsle
+#    - linear_rmsle
+#    - ridge_rmsle
+#    - lgbm_rmsle
+#  - 
+#    - avg_rmsle
+

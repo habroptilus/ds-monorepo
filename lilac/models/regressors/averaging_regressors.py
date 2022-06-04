@@ -7,7 +7,7 @@ class AveragingRegressor(RegressorBase):
 
     def _predict(self, df):
         """出力は一次元を想定."""
-        return df.mean(axis='columns').to_list()
+        return df.mean(axis="columns").to_list()
 
     def create_flag(self):
         return "avg_reg"

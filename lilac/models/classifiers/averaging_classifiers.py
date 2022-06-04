@@ -1,5 +1,6 @@
-from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase
 import numpy as np
+
+from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase
 
 
 class AveragingBinaryClassifier(BinaryClassifierBase):
@@ -8,7 +9,7 @@ class AveragingBinaryClassifier(BinaryClassifierBase):
 
     def _predict_proba(self, df):
         """出力は一次元でクラス1の予測確率を想定."""
-        return df.mean(axis='columns').to_list()
+        return df.mean(axis="columns").to_list()
 
     def create_flag(self):
         return "avg_bin"
@@ -32,14 +33,13 @@ class AveragingMultiClassifier(MultiClassifierBase):
 
         num_class = (df.columns.str.startswith(f"{self.group_prefix}0_")).sum()
         if self.target_col in df.columns:
-            num_model = int((len(df.columns)-1)/num_class)
+            num_model = int((len(df.columns) - 1) / num_class)
         else:
-            num_model = int(len(df.columns)/num_class)
+            num_model = int(len(df.columns) / num_class)
 
         outputs = []
         for i in range(num_model):
-            cols = df.columns[df.columns.str.startswith(
-                f"{self.group_prefix}{i}")]
+            cols = df.columns[df.columns.str.startswith(f"{self.group_prefix}{i}")]
             outputs.append(df[cols].values)
         outputs = np.array(outputs)
         output = np.mean(outputs, axis=0)

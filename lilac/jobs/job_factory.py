@@ -6,8 +6,5 @@ class JobFactory(FactoryBase):
     """JobクラスのFactory."""
 
     def __init__(self, register_from=None):
-        str2model = {
-            "basic_seed": BasicSeedJob,
-            "stacking": StackingJob
-        }
+        str2model = {"basic_seed": BasicSeedJob, "stacking": StackingJob}
         super().__init__(str2model, register_from)

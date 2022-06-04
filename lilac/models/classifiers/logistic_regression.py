@@ -1,13 +1,12 @@
 from sklearn.linear_model import LogisticRegression
+
 from lilac.models.model_base import MultiClassifierBase
 
 
 class LrMultiClassifier(MultiClassifierBase):
-
     def __init__(self, target_col, class_weight):
         self.class_weight = class_weight
-        self.model = LogisticRegression(
-            max_iter=500, class_weight=class_weight)
+        self.model = LogisticRegression(max_iter=500, class_weight=class_weight)
         super().__init__(target_col)
 
     def fit(self, df, valid):

@@ -1,6 +1,7 @@
 import numpy as np
-from lilac.models.model_base import RegressorBase, BinaryClassifierBase, MultiClassifierBase
+
 from lilac.core.data import Predictions
+from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase, RegressorBase
 
 
 class CrossValidationRunner:
@@ -11,7 +12,7 @@ class CrossValidationRunner:
     multi classification: oof_pred=予測クラス, oof_pred_proba=全クラスの確率, predict=fold平均
     """
 
-    def __init__(self,  pred_oof, target_col, model_factory, model_params, trainer, evaluator):
+    def __init__(self, pred_oof, target_col, model_factory, model_params, trainer, evaluator):
         self.pred_oof = pred_oof
         self.target_col = target_col
         self.model_factory = model_factory
@@ -27,7 +28,7 @@ class CrossValidationRunner:
             pred_valid_df["oof_raw_pred"] = None
 
         for i, (tdx, vdx) in enumerate(folds):
-            print(f'Fold : {i+1}')
+            print(f"Fold : {i+1}")
             # データ分割
             train, valid = labeled.iloc[tdx], labeled.iloc[vdx]
 
@@ -35,7 +36,7 @@ class CrossValidationRunner:
             model = self.model_factory.run(**self.model_params)
 
             # 訓練
-            model = self.trainer.run(train, valid, model)
+            model = self.trainer.run(train, valid, self.model_factory, self.model_params)
 
             self.models.append(model)
 
@@ -46,8 +47,9 @@ class CrossValidationRunner:
 
                 valid_raw_pred = model.get_raw_pred(valid)
                 if issubclass(model.__class__, MultiClassifierBase):
-                    pred_valid_df.at[vdx, [f"oof_raw_pred{i}" for i in range(
-                        valid_raw_pred.shape[1])]] = valid_raw_pred
+                    pred_valid_df.at[
+                        vdx, [f"oof_raw_pred{i}" for i in range(valid_raw_pred.shape[1])]
+                    ] = valid_raw_pred
                 elif issubclass(model.__class__, RegressorBase) or issubclass(model.__class__, BinaryClassifierBase):
                     pred_valid_df.loc[vdx, "oof_raw_pred"] = valid_raw_pred
                 else:
@@ -58,17 +60,16 @@ class CrossValidationRunner:
         if self.pred_oof:
             output["oof_pred"] = pred_valid_df["oof_pred"].to_list()
             if issubclass(model.__class__, MultiClassifierBase):
-                output["oof_raw_pred"] = pred_valid_df[[
-                    f"oof_raw_pred{i}" for i in range(valid_raw_pred.shape[1])]].values
+                output["oof_raw_pred"] = pred_valid_df[
+                    [f"oof_raw_pred{i}" for i in range(valid_raw_pred.shape[1])]
+                ].values
             elif issubclass(model.__class__, RegressorBase) or issubclass(model.__class__, BinaryClassifierBase):
                 output["oof_raw_pred"] = pred_valid_df["oof_raw_pred"].to_list()
 
         # 評価
-        predictions = Predictions(
-            pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
+        predictions = Predictions(pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
         output["evaluator"] = self.evaluator.return_flag()
-        output["score"] = self.evaluator.run(
-            labeled[self.target_col], predictions)
+        output["score"] = self.evaluator.run(labeled[self.target_col], predictions)
 
         return output
 
@@ -102,8 +103,7 @@ class CrossValidationRunner:
             elif issubclass(self.models[0].__class__, BinaryClassifierBase):
                 return np.round(preds)
             else:
-                raise Exception(
-                    f"Invalid model class: {self.models[0].__class__}")
+                raise Exception(f"Invalid model class: {self.models[0].__class__}")
         elif len(preds.shape) == 2:
             return np.argmax(preds, axis=1)
         else:

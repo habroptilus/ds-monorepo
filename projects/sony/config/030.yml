@@ -1,0 +1,132 @@
+meta:
+  title: 027のlgbmのrmse+統計量ごとの平均
+shared:
+  train_path: projects/sony/data/train_v4.csv
+  test_path: projects/sony/data/test_v4.csv
+  features_dir: projects/sony/data/features
+  register_from: projects/sony/custom
+  extra_class_names: 
+  - AverageGasStandardScaledStats
+  target_col: pm25_mid
+  seed: 42
+  folds_gen_str: group
+  group_key_col: City
+  model_str: lgbm_rmse
+  evaluator_str: rmse
+  unused_cols: 
+  - id 
+  - City
+  - yyyymmdd
+  features_settings:
+    - model_str: group
+      params:
+        group_key: Country
+        input_cols:
+        - no2_mid
+        - co_mid
+        - no2_max
+        - no2_min
+        - co_max
+        - no2_rng
+        - co_rng
+        - so2_max
+        - so2_rng
+        - ws_mid
+    - model_str: std_cluster
+      params:
+        model_str: kmeans
+        n_clusters: 30
+        random_state: 42
+        prefix: location
+        input_cols:
+        - lat
+        - lon
+    - model_str: std_cluster
+      params:
+        model_str: gmm
+        n_clusters: 30
+        random_state: 42
+        prefix: co
+        input_cols:
+        - co_cnt
+        - co_min
+        - co_mid
+        - co_max
+        - co_var
+    - model_str: std_dec
+      params:
+        decomposer_str: pca
+        n_components: 16 
+        prefix: numerics
+        random_state: 42
+        input_cols: 
+        - lat
+        - lon
+        - co_cnt
+        - co_min
+        - co_mid
+        - co_max
+        - co_var
+        - o3_cnt
+        - o3_min
+        - o3_mid
+        - o3_max
+        - o3_var
+        - so2_cnt
+        - so2_min
+        - so2_mid
+        - so2_max
+        - so2_var
+        - no2_cnt
+        - no2_min
+        - no2_mid
+        - no2_max
+        - no2_var
+        - temperature_cnt
+        - temperature_min
+        - temperature_mid
+        - temperature_max
+        - temperature_var
+        - humidity_cnt
+        - humidity_min
+        - humidity_mid
+        - humidity_max
+        - humidity_var
+        - pressure_cnt
+        - pressure_min
+        - pressure_mid
+        - pressure_max
+        - pressure_var
+        - ws_cnt
+        - ws_min
+        - ws_mid
+        - ws_max
+        - ws_var
+        - dew_cnt
+        - dew_min
+        - dew_mid
+        - dew_max
+        - dew_var
+        - yyyymmdd
+        - co_rng
+        - no2_rng
+        - so2_rng
+        - o3_rng
+        - temperature_rng
+        - pressure_rng
+        - humidity_rng
+        - ws_rng
+        - dew_rng
+    - model_str: average_gas_standard_scaled_stats
+
+jobs:
+- params: 
+    seed: 42
+    model_str: lgbm_rmse
+    
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_rmse

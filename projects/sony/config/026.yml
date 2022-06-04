@@ -1,0 +1,56 @@
+meta:
+  title: 022+v3
+shared:
+  train_path: projects/sony/data/train_v3.csv
+  test_path: projects/sony/data/test_v3.csv
+  features_dir: projects/sony/data/features
+  # register_from: projects.airbnb.custom.feature_generators
+  target_col: pm25_mid
+  seed: 42
+  folds_gen_str: group
+  group_key_col: City
+  model_str: lgbm_rmse
+  evaluator_str: rmse
+  unused_cols: 
+  - id 
+  - City
+  - yyyymmdd
+  features_settings:
+    - model_str: group
+      params:
+        group_key: Country
+        input_cols:
+        - no2_mid
+        - co_mid
+        - no2_max
+        - no2_min
+        - no2_std
+        - co_max
+        - no2_se
+        - no2_rng
+        - co_std
+        - co_rng
+    - model_str: cluster
+      params:
+        model_str: kmeans
+        n_clusters: 30
+        random_state: 42
+        input_cols:
+        - lat
+        - lon
+jobs:
+- params: 
+    seed: 42
+
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_rmsle
+#    - linear_rmsle
+#    - ridge_rmsle
+#    - lgbm_rmsle
+#  - 
+#    - avg_rmsle
+
