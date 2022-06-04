@@ -1,4 +1,6 @@
 import numpy as np
+import xfeat
+from sklearn.model_selection import KFold
 
 from lilac.core.data import Predictions
 from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase, RegressorBase
@@ -36,22 +38,34 @@ class CrossValidationRunner:
         # group foldで使うkey_colは学習に使わないため.
         df = df.drop(self.unused_cols, axis=1)
 
+        # fit target encoder for test
+        folds_for_te = KFold(n_splits=5, shuffle=True, random_state=42)
+        self.target_encoder = xfeat.TargetEncoder(
+            fold=folds_for_te, target_col=self.target_col, input_cols=["Country"]
+        )
+        self.target_encoder.fit_transform(df)
+
         for i, (tdx, vdx) in enumerate(folds):
             print(f"Fold : {i+1}")
             # データ分割
             train, valid = df.iloc[tdx], df.iloc[vdx]
 
+            # Target encoding for train and valid
+            target_encoder = xfeat.TargetEncoder(fold=folds_for_te, target_col=self.target_col, input_cols=["Country"])
+            train_enc = target_encoder.fit_transform(train)
+            valid_enc = target_encoder.transform(valid)
+
             # 訓練
-            model = self.trainer.run(train, valid, self.model_factory, self.model_params)
+            model = self.trainer.run(train_enc, valid_enc, self.model_factory, self.model_params)
 
             self.models.append(model)
 
             # validの予測値を出力
             if self.pred_oof:
-                valid_pred = model.predict(valid)
+                valid_pred = model.predict(valid_enc)
                 pred_valid_df.loc[vdx, "oof_pred"] = valid_pred
 
-                valid_raw_pred = model.get_raw_pred(valid)
+                valid_raw_pred = model.get_raw_pred(valid_enc)
                 if issubclass(model.__class__, MultiClassifierBase):
                     pred_valid_df.at[
                         vdx, [f"oof_raw_pred{i}" for i in range(valid_raw_pred.shape[1])]
@@ -86,6 +100,7 @@ class CrossValidationRunner:
         multi class : 確率ベクトル (レコード数, クラス数)
         """
         test_df = test_df.drop(self.unused_cols, axis=1)
+        test_df = self.target_encoder.transform(test_df)
         preds = []
         for model in self.models:
             if issubclass(model.__class__, RegressorBase):
