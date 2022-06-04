@@ -12,28 +12,34 @@ class CrossValidationRunner:
     multi classification: oof_pred=予測クラス, oof_pred_proba=全クラスの確率, predict=fold平均
     """
 
-    def __init__(self, pred_oof, target_col, model_factory, model_params, trainer, evaluator):
+    def __init__(
+        self, pred_oof, target_col, model_factory, model_params, trainer, evaluator, folds_generator, unused_cols=None
+    ):
         self.pred_oof = pred_oof
         self.target_col = target_col
         self.model_factory = model_factory
         self.model_params = model_params
         self.trainer = trainer
         self.evaluator = evaluator
+        self.folds_generator = folds_generator
+        self.unused_cols = unused_cols
 
-    def run(self, labeled, folds):
+    def run(self, df):
         self.models = []
         if self.pred_oof:
-            pred_valid_df = labeled.copy()
+            pred_valid_df = df.copy()
             pred_valid_df["oof_pred"] = None
             pred_valid_df["oof_raw_pred"] = None
+
+        folds = self.folds_generator.run(df)
+        # drop colはfolds作成後に行う必要がある
+        # group foldで使うkey_colは学習に使わないため.
+        df = df.drop(self.unused_cols, axis=1)
 
         for i, (tdx, vdx) in enumerate(folds):
             print(f"Fold : {i+1}")
             # データ分割
-            train, valid = labeled.iloc[tdx], labeled.iloc[vdx]
-
-            # model作成
-            model = self.model_factory.run(**self.model_params)
+            train, valid = df.iloc[tdx], df.iloc[vdx]
 
             # 訓練
             model = self.trainer.run(train, valid, self.model_factory, self.model_params)
@@ -69,7 +75,7 @@ class CrossValidationRunner:
         # 評価
         predictions = Predictions(pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
         output["evaluator"] = self.evaluator.return_flag()
-        output["score"] = self.evaluator.run(labeled[self.target_col], predictions)
+        output["score"] = self.evaluator.run(df[self.target_col], predictions)
 
         return output
 
@@ -79,6 +85,7 @@ class CrossValidationRunner:
         binary class : 正例の確率 (レコード数,)
         multi class : 確率ベクトル (レコード数, クラス数)
         """
+        test_df = test_df.drop(self.unused_cols, axis=1)
         preds = []
         for model in self.models:
             if issubclass(model.__class__, RegressorBase):

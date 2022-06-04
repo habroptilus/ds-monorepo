@@ -1,8 +1,11 @@
 from typing import List, Optional
 
+import pandas as pd
+
 from lilac.evaluators.evaluator_factory import EvaluatorFactory
 from lilac.features.features_aggregator import FeaturesAggregator
 from lilac.features.generator_factory import FeatureGeneratorsFactory
+from lilac.features.target_encoders.target_encoder import TargetEncoder
 from lilac.models.model_factory import ModelFactory
 from lilac.trainers.trainer_factory import TrainerFactory
 from lilac.validators.cross_validation_runner import CrossValidationRunner
@@ -20,9 +23,18 @@ class ModelingBlock:
         model_factory_settings,
         trainer_factory_settings,
         evaluator_str,
+        log_target_on_target_enc=False,
+        target_enc_cols=None,
     ):
-        self.folds_generator = FoldsGeneratorFactory().run(**folds_gen_factory_settings)
-        self.unused_cols = unused_cols
+        folds_generator = FoldsGeneratorFactory().run(**folds_gen_factory_settings)
+        self.target_enc_cols = target_enc_cols
+        self.target_encoder = TargetEncoder(
+            input_cols=target_enc_cols,
+            target_col=target_col,
+            folds_gen=folds_generator,
+            log_target=log_target_on_target_enc,
+        )
+
         trainer = TrainerFactory().run(**trainer_factory_settings)
         model_factory = ModelFactory(target_col)
         evaluator = EvaluatorFactory().run(evaluator_str)
@@ -33,13 +45,26 @@ class ModelingBlock:
             model_params=model_factory_settings,
             trainer=trainer,
             evaluator=evaluator,
+            folds_generator=folds_generator,
+            unused_cols=unused_cols,
         )
 
     def run(self, train, test):
-        folds = self.folds_generator.run(train)
-        train = train.drop(self.unused_cols, axis=1)
-        test = test.drop(self.unused_cols, axis=1)
-        output = self.cv_runner.run(train, folds)
+        """target_encoding, run cv.
+
+        Target encodingをした場合、元のカラムは削除される.
+        """
+        # target encoding
+        if self.target_enc_cols:
+            train_feat = self.target_encoder.fit_transform(train)
+            test_feat = self.target_encoder.transform(test)
+            train = pd.concat([train, train_feat], axis=1)
+            test = pd.concat([test, test_feat], axis=1)
+            train = train.drop(self.target_enc_cols, axis=1)
+            test = test.drop(self.target_enc_cols, axis=1)
+
+        # run cross validation and return prediction
+        output = self.cv_runner.run(train)
         predictions = self.cv_runner.get_predictions(test)
         output["raw_pred"] = predictions.raw_pred
         output["pred"] = predictions.pred
@@ -78,6 +103,8 @@ class BlocksRunner:
         model_factory_settings,
         trainer_factory_settings,
         evaluator_str,
+        log_target_on_target_enc,
+        target_enc_cols=None,
     ):
         self.datagen_block = DatagenBlock(
             target_col, features_dir, register_from, extra_class_names, features_settings
@@ -89,6 +116,8 @@ class BlocksRunner:
             model_factory_settings,
             trainer_factory_settings,
             evaluator_str,
+            log_target_on_target_enc,
+            target_enc_cols,
         )
 
     def run(self, train, test):
