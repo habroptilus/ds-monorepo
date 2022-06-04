@@ -10,7 +10,9 @@ from lilac.features.generator_base import FeaturesBase
 
 
 class WordCountVectorizer(FeaturesBase):
-    """BoWやTfidfで文書をベクトル化し、SVD等の次元圧縮をする.(PCAはスパースに対応していないらしい)"""
+    """BoWやTfidfで文書をベクトル化し、SVD等の次元圧縮をする.(PCAはスパースに対応していないらしい).
+    word countと次元圧縮を分けてFeaturesPipelineを用いて実装しなおすのも良いが、bowやtfidfの生データが大きいので悩む
+    """
 
     str2vectorizer = {"bow": CountVectorizer, "tfidf": TfidfVectorizer}
     str2decomposer = {"svd": TruncatedSVD, "nmf": NMF}

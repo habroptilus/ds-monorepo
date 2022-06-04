@@ -3,17 +3,37 @@ from sklearn.decomposition import PCA
 from umap import UMAP
 
 from lilac.features.generator_base import FeaturesBase
+from lilac.features.generators.features_pipeline import FeaturesPipeline
+from lilac.features.generators.scaling_features import StandardScalingFeatures
+
+
+class StandardizedDecomposer(FeaturesPipeline):
+    """標準化をしてからPCAやUMAPを用いて次元削減する."""
+
+    def __init__(self, decomposer_str, n_components, input_cols, prefix, random_state=None, features_dir=None):
+        super().__init__(
+            feature_generators=[
+                StandardScalingFeatures(input_cols=input_cols, features_dir=features_dir),
+                DecompositionFeatures(
+                    decomposer_str=decomposer_str,
+                    n_components=n_components,
+                    prefix=prefix,
+                    random_state=random_state,
+                    features_dir=features_dir,
+                ),
+            ],
+            use_prev_only=True,
+            features_dir=features_dir,
+        )
 
 
 class DecompositionFeatures(FeaturesBase):
-    def __init__(
-        self, decomposer_str, n_components, input_cols=None, col_mark=None, random_state=None, features_dir=None
-    ):
+    def __init__(self, decomposer_str, n_components, prefix, input_cols=None, random_state=None, features_dir=None):
         """PCAやUMAPを用いて次元削減する.
 
         :n_components: 削減先の次元数.
         :input_cols: 適用するカラム.指定しないと全カラムになる.
-        :col_mark: カラム名が{pca}_{col_mark}_1,...となる.指定しないとinput_colsの先頭のcolumn名=col_markになる
+        :prefix: カラム名が{prefix}_{decomposer_str}_1,...となる
         :random_state
         :features_dir
         """
@@ -21,7 +41,7 @@ class DecompositionFeatures(FeaturesBase):
         self.input_cols = input_cols
         self.n_components = n_components
         self.random_state = random_state
-        self.col_mark = col_mark
+        self.prefix = prefix
         super().__init__(features_dir)
 
     def fit(self, df):
@@ -34,11 +54,8 @@ class DecompositionFeatures(FeaturesBase):
     def transform(self, df):
         input_cols = self.resolve_input_cols(df)
         data = self.model.transform(df[input_cols])
-        if self.col_mark is None:
-            col_mark = input_cols[0]
-        else:
-            col_mark = self.col_mark
-        output_cols = [f"{self.decomposer_str}_{col_mark}_{i+1}" for i in range(self.n_components)]
+
+        output_cols = [f"{self.prefix}_{self.decomposer_str}_{i+1}" for i in range(self.n_components)]
         return pd.DataFrame(data, columns=output_cols)
 
     def resolve_input_cols(self, df):
