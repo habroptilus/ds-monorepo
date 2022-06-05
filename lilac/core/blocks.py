@@ -25,19 +25,13 @@ class ModelingBlock:
         evaluator_str,
         log_target_on_target_enc=False,
         target_enc_cols=None,
+        seed=None,
     ):
         folds_generator = FoldsGeneratorFactory().run(**folds_gen_factory_settings)
-        self.target_enc_cols = target_enc_cols
-        self.target_encoder = TargetEncoder(
-            input_cols=target_enc_cols,
-            target_col=target_col,
-            folds_gen=folds_generator,
-            log_target=log_target_on_target_enc,
-        )
-
         trainer = TrainerFactory().run(**trainer_factory_settings)
         model_factory = ModelFactory(target_col)
         evaluator = EvaluatorFactory().run(evaluator_str)
+
         self.cv_runner = CrossValidationRunner(
             pred_oof=True,
             target_col=target_col,
@@ -47,6 +41,9 @@ class ModelingBlock:
             evaluator=evaluator,
             folds_generator=folds_generator,
             unused_cols=unused_cols,
+            target_enc_cols=target_enc_cols,
+            seed=seed,
+            log_target_on_target_enc=log_target_on_target_enc,
         )
 
     def run(self, train, test):
@@ -54,15 +51,6 @@ class ModelingBlock:
 
         Target encodingをした場合、元のカラムは削除される.
         """
-        # target encoding
-        if self.target_enc_cols:
-            train_feat = self.target_encoder.fit_transform(train)
-            test_feat = self.target_encoder.transform(test)
-            train = pd.concat([train, train_feat], axis=1)
-            test = pd.concat([test, test_feat], axis=1)
-            train = train.drop(self.target_enc_cols, axis=1)
-            test = test.drop(self.target_enc_cols, axis=1)
-
         # run cross validation and return prediction
         output = self.cv_runner.run(train)
         predictions = self.cv_runner.get_predictions(test)
@@ -98,26 +86,28 @@ class BlocksRunner:
         extra_class_names: Optional[List],
         features_settings,
         target_col,
-        unused_cols,
         folds_gen_factory_settings,
         model_factory_settings,
         trainer_factory_settings,
         evaluator_str,
-        log_target_on_target_enc,
+        log_target_on_target_enc=False,
+        unused_cols=None,
         target_enc_cols=None,
+        seed=None,
     ):
         self.datagen_block = DatagenBlock(
             target_col, features_dir, register_from, extra_class_names, features_settings
         )
         self.modeling_block = ModelingBlock(
-            target_col,
-            unused_cols,
-            folds_gen_factory_settings,
-            model_factory_settings,
-            trainer_factory_settings,
-            evaluator_str,
-            log_target_on_target_enc,
-            target_enc_cols,
+            target_col=target_col,
+            unused_cols=unused_cols,
+            folds_gen_factory_settings=folds_gen_factory_settings,
+            model_factory_settings=model_factory_settings,
+            trainer_factory_settings=trainer_factory_settings,
+            evaluator_str=evaluator_str,
+            log_target_on_target_enc=log_target_on_target_enc,
+            target_enc_cols=target_enc_cols,
+            seed=seed,
         )
 
     def run(self, train, test):

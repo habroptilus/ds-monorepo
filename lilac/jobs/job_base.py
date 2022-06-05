@@ -124,6 +124,7 @@ class BasicSeedJob:
             evaluator_str=evaluator_str,
             log_target_on_target_enc=log_target_on_target_enc,
             target_enc_cols=target_enc_cols,
+            seed=seed,
         )
 
         self.train_path = train_path

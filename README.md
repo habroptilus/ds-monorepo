@@ -32,9 +32,20 @@ export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 
 ### Run experiment
 
-`poetry run lilac run  -p <プロジェクト名> -f <実験設定のyamlファイル名> `
+`poetry run lilac run -p <プロジェクト名> -f <実験設定のyamlファイル名> `
 で実験が実行され、CVが表示され、デフォルトだと`projects/<プロジェクト名>/data/output/<実験設定のyamlファイル名.json>`
 に結果ファイルが出力される.
+
+### List results
+
+`poetry run lilac list -p <プロジェクト名> -n <直近n回の実験結果を見る> `
+でCVのリストを表示する.
+
+### Show detail
+
+`poetry run lilac detail -p <プロジェクト名> -e <実験番号(001など)>`
+
+で指定した実験の詳細結果を表示する。
 
 ## Development
 
