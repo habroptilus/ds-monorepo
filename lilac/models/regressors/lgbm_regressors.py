@@ -19,6 +19,7 @@ class LgbmRmsleRegressor(RegressorBase):
         n_estimators=2000,
         depth=5,
         seed=None,
+        learning_rate=0.1,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -31,6 +32,7 @@ class LgbmRmsleRegressor(RegressorBase):
             "random_state": seed,
             "n_estimators": n_estimators,
             "max_depth": depth,
+            "learning_rate": learning_rate,
         }
 
         self.model = _LgbmRmsleRegressor(verbose_eval, early_stopping_rounds, lgbm_params)
@@ -71,6 +73,7 @@ class LgbmRmseRegressor(RegressorBase):
         n_estimators=2000,
         depth=5,
         seed=None,
+        learning_rate=0.1,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -85,6 +88,7 @@ class LgbmRmseRegressor(RegressorBase):
             "max_depth": depth,
             "objective": "regression",
             "metrics": "rmse",
+            "learning_rate": learning_rate,
         }
         self.model = _LgbmRegressor(verbose_eval, early_stopping_rounds, lgbm_params)
 
@@ -122,6 +126,7 @@ class LgbmMaeRegressor(RegressorBase):
         n_estimators=2000,
         depth=5,
         seed=None,
+        learning_rate=0.1,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -134,6 +139,7 @@ class LgbmMaeRegressor(RegressorBase):
             "random_state": seed,
             "n_estimators": n_estimators,
             "max_depth": depth,
+            "learning_rate": learning_rate,
             "objective": "regression_l1",
             "metrics": "mae",
         }

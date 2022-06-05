@@ -20,6 +20,7 @@ class LgbmBinaryClassifier(BinaryClassifierBase):
         depth=5,
         seed=None,
         class_weight="balanced",
+        learning_rate=0.1,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -34,6 +35,7 @@ class LgbmBinaryClassifier(BinaryClassifierBase):
             "max_depth": depth,
             "objective": "binary",
             "metrics": "binary_logloss",
+            "learning_rate": learning_rate,
         }
 
         self.model = _LgbmClassifier(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
@@ -73,6 +75,7 @@ class LgbmMultiClassifier(MultiClassifierBase):
         depth=5,
         seed=None,
         class_weight="balanced",
+        learning_rate=0.1,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -87,6 +90,7 @@ class LgbmMultiClassifier(MultiClassifierBase):
             "max_depth": depth,
             "objective": "multiclass",
             "metrics": "multi_logloss",
+            "learning_rate": learning_rate,
         }
         self.model = _LgbmClassifier(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
 
