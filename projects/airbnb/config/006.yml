@@ -1,0 +1,39 @@
+meta:
+  title: 002にtarget-encoding(xfeat, cv中, kfold, logとってから)共通化した
+  
+shared:
+  train_path: projects/airbnb/data/train_data.csv
+  test_path: projects/airbnb/data/test_data.csv
+  features_dir: projects/airbnb/data/features
+  #register_from: projects/airbnb/custom
+  target_col: y
+  seed: 42
+  folds_gen_str: group
+  group_key_col: host_id
+  model_str: lgbm_rmsle
+  evaluator_str: rmsle
+  unused_cols: 
+  - id 
+  - host_id
+  - name
+  target_enc_cols:
+  - neighbourhood
+  log_target_on_target_enc: True
+  features_settings:
+    - model_str: sv_dec
+      params:
+        input_col: name
+        vectorizer_str: bow
+        decomposer_str: svd
+        n_components: 32
+    - model_str: sv_dec
+      params:
+        input_col: name
+        vectorizer_str: tfidf
+        decomposer_str: pca
+        n_components: 32
+
+jobs:
+- name: seed42
+  params: 
+    seed: 42

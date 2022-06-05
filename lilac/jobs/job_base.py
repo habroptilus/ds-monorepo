@@ -61,6 +61,8 @@ class BasicSeedJob:
         od_type="IncToDec",
         od_wait=10,
         class_weight="balanced",
+        log_target_on_target_enc=False,
+        target_enc_cols=None,
     ):
 
         features_settings = [] if features_settings is None else features_settings
@@ -120,6 +122,9 @@ class BasicSeedJob:
             model_factory_settings=model_factory_settings,
             trainer_factory_settings=trainer_factory_settings,
             evaluator_str=evaluator_str,
+            log_target_on_target_enc=log_target_on_target_enc,
+            target_enc_cols=target_enc_cols,
+            seed=seed,
         )
 
         self.train_path = train_path

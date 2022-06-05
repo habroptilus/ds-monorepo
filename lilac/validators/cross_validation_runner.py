@@ -1,6 +1,7 @@
 import numpy as np
 
 from lilac.core.data import Predictions
+from lilac.features.target_encoders.target_encoder import TargetEncoder
 from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase, RegressorBase
 
 
@@ -12,40 +13,68 @@ class CrossValidationRunner:
     multi classification: oof_pred=予測クラス, oof_pred_proba=全クラスの確率, predict=fold平均
     """
 
-    def __init__(self, pred_oof, target_col, model_factory, model_params, trainer, evaluator):
+    def __init__(
+        self,
+        pred_oof,
+        target_col,
+        model_factory,
+        model_params,
+        trainer,
+        evaluator,
+        folds_generator,
+        unused_cols=None,
+        target_enc_cols=None,
+        seed=None,
+        log_target_on_target_enc=False,
+    ):
         self.pred_oof = pred_oof
         self.target_col = target_col
         self.model_factory = model_factory
         self.model_params = model_params
         self.trainer = trainer
         self.evaluator = evaluator
+        self.folds_generator = folds_generator
+        self.unused_cols = unused_cols or []
+        self.target_enc_cols = target_enc_cols or []
+        self.seed = seed
+        self.log_target_on_target_enc = log_target_on_target_enc
 
-    def run(self, labeled, folds):
+    def run(self, df):
         self.models = []
         if self.pred_oof:
-            pred_valid_df = labeled.copy()
+            pred_valid_df = df.copy()
             pred_valid_df["oof_pred"] = None
             pred_valid_df["oof_raw_pred"] = None
 
+        folds = self.folds_generator.run(df)
+        df = df.drop(self.unused_cols, axis=1)
+        self.encoders = []
         for i, (tdx, vdx) in enumerate(folds):
             print(f"Fold : {i+1}")
-            # データ分割
-            train, valid = labeled.iloc[tdx], labeled.iloc[vdx]
+            # split
+            train, valid = df.iloc[tdx].reset_index(drop=True), df.iloc[vdx].reset_index(drop=True)
 
-            # model作成
-            model = self.model_factory.run(**self.model_params)
+            # Target encoding
+            target_encoder = TargetEncoder(
+                input_cols=self.target_enc_cols,
+                target_col=self.target_col,
+                random_state=self.seed,
+                log_target=self.log_target_on_target_enc,
+            )
+            train_enc = target_encoder.fit_transform(train)
+            valid_enc = target_encoder.transform(valid)
+            self.encoders.append(target_encoder)
 
-            # 訓練
-            model = self.trainer.run(train, valid, self.model_factory, self.model_params)
-
+            # Train
+            model = self.trainer.run(train_enc, valid_enc, self.model_factory, self.model_params)
             self.models.append(model)
 
-            # validの予測値を出力
+            # predict for valid
             if self.pred_oof:
-                valid_pred = model.predict(valid)
+                valid_pred = model.predict(valid_enc)
                 pred_valid_df.loc[vdx, "oof_pred"] = valid_pred
 
-                valid_raw_pred = model.get_raw_pred(valid)
+                valid_raw_pred = model.get_raw_pred(valid_enc)
                 if issubclass(model.__class__, MultiClassifierBase):
                     pred_valid_df.at[
                         vdx, [f"oof_raw_pred{i}" for i in range(valid_raw_pred.shape[1])]
@@ -56,7 +85,7 @@ class CrossValidationRunner:
                     raise Exception(f"Invalid model class {model.__class__}")
 
         output = {}
-
+        # add oof to output
         if self.pred_oof:
             output["oof_pred"] = pred_valid_df["oof_pred"].to_list()
             if issubclass(model.__class__, MultiClassifierBase):
@@ -66,10 +95,10 @@ class CrossValidationRunner:
             elif issubclass(model.__class__, RegressorBase) or issubclass(model.__class__, BinaryClassifierBase):
                 output["oof_raw_pred"] = pred_valid_df["oof_raw_pred"].to_list()
 
-        # 評価
+        # add evaluation to output
         predictions = Predictions(pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
         output["evaluator"] = self.evaluator.return_flag()
-        output["score"] = self.evaluator.run(labeled[self.target_col], predictions)
+        output["score"] = self.evaluator.run(df[self.target_col], predictions)
 
         return output
 
@@ -79,8 +108,12 @@ class CrossValidationRunner:
         binary class : 正例の確率 (レコード数,)
         multi class : 確率ベクトル (レコード数, クラス数)
         """
+        test_df = test_df.drop(self.unused_cols, axis=1)
+
+        # test_df = self.target_encoder.transform(test_df)
         preds = []
-        for model in self.models:
+        for model, encoder in zip(self.models, self.encoders):
+            test_df = encoder.transform(test_df)
             if issubclass(model.__class__, RegressorBase):
                 pred = model.predict(test_df)
             elif issubclass(model.__class__, BinaryClassifierBase) or issubclass(model.__class__, MultiClassifierBase):

@@ -54,6 +54,10 @@ class _EnsembleRunnerBase(metaclass=ABCMeta):
             self.model_factory_settings,
             self.trainer_factory_settings,
             self.evaluator_flag,
+            # target_encodingは行わない. use_original_cols=Trueの時に使いたくなるかもだがとりあえずなしで.
+            # ex.
+            # log_target_on_target_enc=False,
+            # target_enc_cols=None,
         )
 
         return modeling_block.run(train_df, test_df)
