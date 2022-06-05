@@ -1,3 +1,4 @@
+from lilac.models import consts
 from lilac.models.base.catb_base import _CatbRegressor, _CatbRmsleRegressor
 from lilac.models.model_base import RegressorBase
 
@@ -8,15 +9,15 @@ class CatbRmseRegressor(RegressorBase):
     def __init__(
         self,
         target_col,
-        early_stopping_rounds=100,
-        n_estimators=2000,
-        depth=5,
-        seed=None,
-        learning_rate=0.1,
-        random_strength=1,
-        bagging_temperature=0.1,
-        od_type="IncToDec",
-        od_wait=10,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        n_estimators=consts.n_estimators,
+        depth=consts.n_estimators,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+        random_strength=consts.random_strength,
+        bagging_temperature=consts.bagging_temperature,
+        od_type=consts.od_type,
+        od_wait=consts.od_wait,
     ):
         super().__init__(target_col)
         catb_params = {
@@ -49,15 +50,15 @@ class CatbRmsleRegressor(RegressorBase):
     def __init__(
         self,
         target_col,
-        early_stopping_rounds=100,
-        n_estimators=2000,
-        depth=5,
-        seed=None,
-        learning_rate=0.1,
-        random_strength=1,
-        bagging_temperature=0.1,
-        od_type="IncToDec",
-        od_wait=10,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        n_estimators=consts.n_estimators,
+        depth=consts.n_estimators,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+        random_strength=consts.random_strength,
+        bagging_temperature=consts.bagging_temperature,
+        od_type=consts.od_type,
+        od_wait=consts.od_wait,
     ):
         super().__init__(target_col)
         catb_params = {

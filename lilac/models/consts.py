@@ -18,7 +18,7 @@ min_child_weight = 1.0
 
 # catb
 num_leaves = int(2**depth * 0.7)
-random_strength = (1,)
-bagging_temperature = (0.1,)
-od_type = ("IncToDec",)
-od_wait = (10,)
+random_strength = 1
+bagging_temperature = 0.1
+od_type = "IncToDec"
+od_wait = 10

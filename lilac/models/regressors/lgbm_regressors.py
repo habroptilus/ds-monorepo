@@ -1,3 +1,4 @@
+from lilac.models import consts
 from lilac.models.base.lgbm_base import _LgbmRegressor, _LgbmRmsleRegressor
 from lilac.models.model_base import RegressorBase
 
@@ -8,18 +9,18 @@ class LgbmRmsleRegressor(RegressorBase):
     def __init__(
         self,
         target_col,
-        verbose_eval=100,
-        early_stopping_rounds=100,
-        colsample_bytree=0.8,
-        reg_alpha=0,
-        reg_lambda=0,
-        subsample=0.8,
-        min_child_weight=1.0,
-        num_leaves=int(2**5 * 0.7),
-        n_estimators=2000,
-        depth=5,
-        seed=None,
-        learning_rate=0.1,
+        verbose_eval=consts.verbose_eval,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        colsample_bytree=consts.colsample_bytree,
+        reg_alpha=consts.reg_alpha,
+        reg_lambda=consts.reg_lambda,
+        subsample=consts.subsample,
+        min_child_weight=consts.min_child_weight,
+        num_leaves=consts.num_leaves,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -62,18 +63,18 @@ class LgbmRmseRegressor(RegressorBase):
     def __init__(
         self,
         target_col,
-        verbose_eval=100,
-        early_stopping_rounds=100,
-        colsample_bytree=0.8,
-        reg_alpha=0,
-        reg_lambda=0,
-        subsample=0.8,
-        min_child_weight=1.0,
-        num_leaves=int(2**5 * 0.7),
-        n_estimators=2000,
-        depth=5,
-        seed=None,
-        learning_rate=0.1,
+        verbose_eval=consts.verbose_eval,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        colsample_bytree=consts.colsample_bytree,
+        reg_alpha=consts.reg_alpha,
+        reg_lambda=consts.reg_lambda,
+        subsample=consts.subsample,
+        min_child_weight=consts.min_child_weight,
+        num_leaves=consts.num_leaves,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -115,18 +116,18 @@ class LgbmMaeRegressor(RegressorBase):
     def __init__(
         self,
         target_col,
-        verbose_eval=100,
-        early_stopping_rounds=100,
-        colsample_bytree=0.8,
-        reg_alpha=0,
-        reg_lambda=0,
-        subsample=0.8,
-        min_child_weight=1.0,
-        num_leaves=int(2**5 * 0.7),
-        n_estimators=2000,
-        depth=5,
-        seed=None,
-        learning_rate=0.1,
+        verbose_eval=consts.verbose_eval,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        colsample_bytree=consts.colsample_bytree,
+        reg_alpha=consts.reg_alpha,
+        reg_lambda=consts.reg_lambda,
+        subsample=consts.subsample,
+        min_child_weight=consts.min_child_weight,
+        num_leaves=consts.num_leaves,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
     ):
         super().__init__(target_col)
         lgbm_params = {
