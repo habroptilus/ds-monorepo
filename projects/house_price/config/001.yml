@@ -1,0 +1,31 @@
+shared:
+  train_path: projects/house_price/data/train_v1.csv
+  test_path: projects/house_price/data/test_v1.csv
+  features_dir: projects/house_price/data/features
+  # register_from: projects.house_price.custom.feature_generators
+  target_col: price_log
+  seed: 42
+  folds_gen_str: group
+  group_key_col: ordered
+  model_str: lgbm_mae
+  evaluator_str: mae
+  unused_cols: 
+  - id 
+  - ordered
+jobs:
+- name: seed42
+  params: 
+    seed: 42
+
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_rmsle
+#    - linear_rmsle
+#    - ridge_rmsle
+#    - lgbm_rmsle
+#  - 
+#    - avg_rmsle
+

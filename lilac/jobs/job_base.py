@@ -1,10 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Optional
 
 import pandas as pd
 
 from lilac.core.blocks import BlocksRunner
 from lilac.ensemble.stacking_runner import StackingRunner
+from lilac.models import consts
 
 
 class SeedJobBase(metaclass=ABCMeta):
@@ -34,7 +34,7 @@ class BasicSeedJob:
         test_path,
         features_dir,
         register_from=None,
-        extra_class_names: Optional[List] = None,
+        extra_class_names=None,
         features_settings=None,
         unused_cols=None,
         folds_gen_str="kfold",
@@ -44,23 +44,23 @@ class BasicSeedJob:
         base_class=3,
         bagging_num=5,
         allow_less_than_base=True,
-        verbose_eval=100,
-        early_stopping_rounds=100,
-        colsample_bytree=0.8,
-        reg_alpha=0,
-        reg_lambda=0,
-        subsample=0.8,
-        min_child_weight=1.0,
-        num_leaves=int(2**5 * 0.7),
-        n_estimators=2000,
-        depth=5,
-        seed=None,
-        learning_rate=0.1,
-        random_strength=1,
-        bagging_temperature=0.1,
-        od_type="IncToDec",
-        od_wait=10,
-        class_weight="balanced",
+        verbose_eval=consts.verbose_eval,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        colsample_bytree=consts.colsample_bytree,
+        reg_alpha=consts.reg_alpha,
+        reg_lambda=consts.reg_alpha,
+        subsample=consts.subsample,
+        min_child_weight=consts.min_child_weight,
+        num_leaves=consts.num_leaves,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+        random_strength=consts.random_strength,
+        bagging_temperature=consts.bagging_temperature,
+        od_type=consts.od_type,
+        od_wait=consts.od_wait,
+        class_weight=consts.class_weight,
         log_target_on_target_enc=False,
         target_enc_cols=None,
     ):
