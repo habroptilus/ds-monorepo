@@ -9,14 +9,15 @@ class _LgbmBase:
 
     def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
         self.lgbm_params = lgbm_params
+        self.lgbm_params["importance_type"]="gain"
         self.verbose_eval = verbose_eval
         self.early_stopping_rounds = early_stopping_rounds
         self.encoder = OrdinalEncoder()
         self.model = self.get_model()
 
     def get_model(self):
-        raise Exception("Implement please.")
-
+        raise Exception("Implement.")
+        
     def fit(self, train_x, train_y, valid_x, valid_y):
         self.object_cols = train_x.select_dtypes(include=[object]).columns
         train_x_cat = self.encoder.fit_transform(train_x[self.object_cols]).add_suffix("_enc")
@@ -42,7 +43,7 @@ class _LgbmBase:
 
     def get_importance(self):
         """特徴量の重要度を出力する."""
-        return pd.DataFrame(self.model.feature_importances_, index=self.cols, columns=["importance"])
+        return pd.DataFrame(self.model.feature_importances_, index=self.cols, columns=["importance"]).to_dict()
 
     def return_flag(self):
         return "lgbm_" + "_".join([str(v) for v in self.lgbm_params.values()])

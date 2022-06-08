@@ -49,6 +49,7 @@ class CrossValidationRunner:
         folds = self.folds_generator.run(df)
         df = df.drop(self.unused_cols, axis=1)
         self.encoders = []
+        additionals = []
         for i, (tdx, vdx) in enumerate(folds):
             print(f"Fold : {i+1}")
             # split
@@ -68,6 +69,7 @@ class CrossValidationRunner:
             # Train
             model = self.trainer.run(train_enc, valid_enc, self.model_factory, self.model_params)
             self.models.append(model)
+            additionals.append(model.get_additional())
 
             # predict for valid
             if self.pred_oof:
@@ -99,7 +101,7 @@ class CrossValidationRunner:
         predictions = Predictions(pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
         output["evaluator"] = self.evaluator.return_flag()
         output["score"] = self.evaluator.run(df[self.target_col], predictions)
-
+        output["additional"] = additionals
         return output
 
     def raw_output(self, test_df):

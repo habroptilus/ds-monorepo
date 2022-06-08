@@ -5,17 +5,16 @@ from lilac.features.generator_base import FeaturesBase
 
 
 class GroupFeatures(FeaturesBase):
-    """集約特徴量を計算する.fitしてtransformするタイプ.
+    """集約特徴量を計算する."""
 
-    mean,max,min,median,sumおよびそれぞれの統計量と対象の数値のdiffを計算する(後者はdo_add_diff=Trueの場合のみ)
-    なので返す特徴量の個数はlen(input_cols)*(5+(1))となる.
-    """
-
-    def __init__(self, input_cols, group_key, do_add_diff=True, features_dir=None):
+    def __init__(self, input_cols, group_key, do_add_diff=True, features_dir=None, agg_func_list=None):
         self.group_key = group_key
         self.input_cols = input_cols
         self.do_add_diff = do_add_diff
-        self.agg_func_list = ["mean", "max", "min", "median", "sum"]
+        default_agg_func_list = ["mean", "max", "min", "median", "sum"]
+        if agg_func_list and len(set(agg_func_list) - set(default_agg_func_list)) > 0:
+            raise Exception(f"Invalid agg_func are found '{set(agg_func_list) - set(default_agg_func_list)}'")
+        self.agg_func_list = agg_func_list or default_agg_func_list
         super().__init__(features_dir)
 
     def fit(self, df):

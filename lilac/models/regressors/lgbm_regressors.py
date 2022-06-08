@@ -56,6 +56,9 @@ class LgbmRmsleRegressor(RegressorBase):
         """RMSLEはそのままだとRMSEと同じになってしまうのでつける"""
         return f"{self.model.return_flag()}_rmsle"
 
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}
+
 
 class LgbmRmseRegressor(RegressorBase):
     """目的関数がRMSEのlgbm回帰モデル."""
@@ -109,6 +112,9 @@ class LgbmRmseRegressor(RegressorBase):
         """lgbmのみ追加で実装している."""
         return self.model.get_importance()
 
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}
+
 
 class LgbmMaeRegressor(RegressorBase):
     """目的関数がMAEのlgbm回帰モデル."""
@@ -161,3 +167,6 @@ class LgbmMaeRegressor(RegressorBase):
 
     def return_flag(self):
         return self.model.return_flag()
+
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}

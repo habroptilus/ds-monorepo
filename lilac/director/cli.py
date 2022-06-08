@@ -3,7 +3,10 @@ import json
 from pathlib import Path
 
 import fire
+import pandas as pd
 import yaml
+
+from lilac.core.utils import plot_feature_importance
 
 
 def run(project_name, filename, data_dir="data", input_dir="config", output_dir="output"):
@@ -53,5 +56,26 @@ def result_detail(project_name, experiment_id, data_dir="data", output_dir="outp
         print(f"CV: {score}")
 
 
+def plot_importance(project_name, experiment_id, job_name="job1", data_dir="data", output_dir="output", num=20):
+    output_path = f"projects/{project_name}/{data_dir}/{output_dir}/{experiment_id}.json"
+    p = Path(output_path)
+    with p.open("r") as f:
+        data = json.load(f)
+        job_result = data["seed_jobs"].get(job_name)
+
+        if job_result is None:
+            raise Exception(
+                f"{job_name} is not in {experiment_id}. Please add '-j <job_name>'. You can use: {list(data['seed_jobs'].keys())}"
+            )
+        additinal = job_result.get("additional")
+        if additinal is None or len(additinal) == 0:
+            raise Exception(f"{job_name} in {experiment_id} doesn't have feature importance.")
+        importance = additinal[0].get("importance")
+        if importance is None:
+            raise Exception(f"{job_name} in {experiment_id} doesn't have feature importance.")
+
+        plot_feature_importance(pd.DataFrame(importance), max_n=num)
+
+
 def main():
-    fire.Fire({"run": run, "list": result_list, "detail": result_detail})
+    fire.Fire({"run": run, "list": result_list, "detail": result_detail, "plot": plot_importance})
