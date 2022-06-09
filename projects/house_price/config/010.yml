@@ -1,5 +1,5 @@
 meta:
-  title: v2でbuilt_yearを除く+layoutごとのareaの集約(mean,mean_diffのみ)
+  title: 009+cityとlayoutを組み合わせてtarget_encoding
 
 shared:
   train_path: projects/house_price/data/train_v2.csv
@@ -16,17 +16,19 @@ shared:
   - id 
   - ordered
   - built_year
+  target_enc_cols:
+  - nearest_sta
+  - district
+  - citylayout_cc
+  log_target_on_target_enc: False
   features_settings:
-  - model_str: group
-    params:
-      group_key: layout_l1
-      agg_func_list:
-      - mean
-      input_cols:
-      - area
+    - model_str: cat_combi
+      params:
+        input_cols:
+        - city
+        - layout
 jobs:
-- name: seed42
-  params: 
+- params: 
     seed: 42
 
 #stacking:

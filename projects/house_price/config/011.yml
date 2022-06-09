@@ -1,5 +1,5 @@
 meta:
-  title: v2でbuilt_yearを除く+layoutごとのareaの集約(mean,mean_diffのみ)
+  title: 009+cityごとにbuilt_year_seireki,areaの集約
 
 shared:
   train_path: projects/house_price/data/train_v2.csv
@@ -16,17 +16,21 @@ shared:
   - id 
   - ordered
   - built_year
+  target_enc_cols:
+  - nearest_sta
+  - district
+  log_target_on_target_enc: False
   features_settings:
   - model_str: group
     params:
-      group_key: layout_l1
+      group_key: city
       agg_func_list:
       - mean
       input_cols:
+      - built_year_seireki
       - area
 jobs:
-- name: seed42
-  params: 
+- params: 
     seed: 42
 
 #stacking:

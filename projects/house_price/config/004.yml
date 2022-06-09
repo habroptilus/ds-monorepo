@@ -17,11 +17,11 @@ shared:
   - ordered
   - built_year
   features_settings:
-    - model_str: group
-      params:
-        group_key: layout_l1
-        input_cols:
-        - area
+  - model_str: group
+    params:
+      group_key: layout_l1
+      input_cols:
+      - area
 jobs:
 - name: seed42
   params: 

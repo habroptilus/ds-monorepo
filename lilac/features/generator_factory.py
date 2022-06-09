@@ -1,6 +1,8 @@
 from lilac.core.factory_base import FactoryBase
+from lilac.features.generators.category_embedding import CategoriesLdaVectorizer
 from lilac.features.generators.category_encoding import CategoryEncoding
 from lilac.features.generators.clustering_features import ClusteringFeatures, StandardizedClustering
+from lilac.features.generators.combination_features import CategoryCombination
 from lilac.features.generators.datetime_features import DatetimeFeatures
 from lilac.features.generators.decomposer_features import DecompositionFeatures, StandardizedDecomposer
 from lilac.features.generators.extra_table import ExtraTableJoin
@@ -34,6 +36,8 @@ class FeatureGeneratorsFactory(FactoryBase):
             "sv_dec": DecomposedSentenceVectoizer,
             "word_count": WordCountVectorizer,
             "bert": BertVectorizer,
+            "cat_combi": CategoryCombination,
+            "cat_lda": CategoriesLdaVectorizer,
         }
         shared_params = {"features_dir": features_dir}
         super().__init__(
