@@ -6,7 +6,6 @@ from lilac.features.generators.combination_features import CategoryCombination
 from lilac.features.generators.datetime_features import DatetimeFeatures
 from lilac.features.generators.decomposer_features import DecompositionFeatures, StandardizedDecomposer
 from lilac.features.generators.extra_table import ExtraTableJoin
-from lilac.features.generators.features_pipeline import FeaturesPipeline
 from lilac.features.generators.group_features import GroupFeatures
 from lilac.features.generators.lag_features import LagFeatures
 from lilac.features.generators.scaling_features import StandardScalingFeatures
@@ -25,7 +24,6 @@ class FeatureGeneratorsFactory(FactoryBase):
             "category": CategoryEncoding,
             "datetime": DatetimeFeatures,
             "extra_join": ExtraTableJoin,
-            "pipeline": FeaturesPipeline,
             "group": GroupFeatures,
             "lag": LagFeatures,
             "std_scale": StandardScalingFeatures,

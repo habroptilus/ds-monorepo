@@ -8,7 +8,7 @@ from transformers import BertModel, BertTokenizer
 
 from lilac.features.generator_base import FeaturesBase
 from lilac.features.generators.decomposer_features import DecompositionFeatures, StandardizedDecomposer
-from lilac.features.generators.features_pipeline import FeaturesPipeline
+from lilac.features.wrappers.features_pipeline import FeaturesPipeline
 
 
 class WordCountVectorizer(FeaturesBase):

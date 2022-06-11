@@ -5,6 +5,23 @@
 * city_codeとcityは一対一
 * layoutの+Sはサービスルームらしい
   
+## 効いたもの/効かなかったもの
+効いたもの
+* nearest_staのtarget_encode
+* districtをtarget_encode
+* cityごとにbuilt_year_seireki,areaの集約
+* districtごとにbuilt_year_seireki,areaの集約
+* lda(city,layout,5) (微改善)
+* nearest_staごとにbuilt_year_seireki,areaの集約 (微改善)
+
+
+改善しなかったもの
+* layoutごとのareaの集約 -> これほんと？再確認する
+* city_l1,layout_l1をtarget_encode
+* cityとlayoutを組み合わせてtarget encode
+* districtをlayoutでldaベクトル化
+* cityのtarget_encode
+
 
 ## アイデア
 

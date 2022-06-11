@@ -67,7 +67,7 @@ class PipelineComponent(FeaturesBase):
 class FeaturesPipeline(_FeaturesBase):
     """FeaturesBaseを複数直列に並べてパイプラインを作る.
 
-    保存されるのは
+    保存されるのは内側の特徴量生成クラスたち.
     """
 
     def __init__(self, feature_generators, use_prev_only=False, features_dir=None):

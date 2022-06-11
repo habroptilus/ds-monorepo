@@ -1,5 +1,5 @@
 from lilac.features.generator_base import FeaturesBase
-from lilac.features.generators.features_pipeline import FeaturesPipeline
+from lilac.features.wrappers.features_pipeline import FeaturesPipeline
 from lilac.features.generators.scaling_features import StandardScalingFeatures
 
 
