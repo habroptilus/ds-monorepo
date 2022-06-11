@@ -16,7 +16,7 @@
 
 
 改善しなかったもの
-* layoutごとのareaの集約 -> これほんと？再確認する
+* layoutごとのareaの集約
 * city_l1,layout_l1をtarget_encode
 * cityとlayoutを組み合わせてtarget encode
 * districtをlayoutでldaベクトル化

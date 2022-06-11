@@ -1,0 +1,33 @@
+meta:
+  title: 017と015のlgbmアンサンブル
+
+shared:
+  train_path: projects/house_price/data/train_v2.csv
+  test_path: projects/house_price/data/test_v2.csv
+  features_dir: projects/house_price/data/features
+  # register_from: projects.house_price.custom.feature_generators
+  target_col: price_log
+  seed: 42
+  folds_gen_str: group
+  group_key_col: ordered
+  model_str: lgbm_mae
+  evaluator_str: mae
+
+jobs:
+- name: load_from_017
+  ref: 
+    src: 017.json
+    job: job1
+
+- name: load_from_015
+  ref: 
+    src: 015.json
+    # jobを指定しない場合は全体のoutputになる
+
+stacking:
+  shared:
+    "use_original_cols": False
+  stacking_settings:
+  - 
+    - lgbm_mae
+
