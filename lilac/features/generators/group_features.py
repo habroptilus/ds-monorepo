@@ -6,25 +6,29 @@ from lilac.features.wrappers.brute_force_features import BruteForceFeatures
 
 
 class GroupFeatures(BruteForceFeatures):
-    def __init__(self, group_key, input_cols, do_add_diff=True, features_dir=None, agg_func_list=None):
+    """集約特徴量を作成する."""
+
+    def __init__(self, group_keys, input_cols, do_add_diff=True, features_dir=None, agg_func_list=None):
+        """
+        group_keys: group byするカラム. 複数指定した場合、col_aかつcol_bの粒度でgroupbyするのではなく、独立に集約するので注意.
+        input_cols: 集約される側
+        agg_func_list: mean,max,min,median,sum
+        """
         default_agg_func_list = ["mean", "max", "min", "median", "sum"]
         if agg_func_list and len(set(agg_func_list) - set(default_agg_func_list)) > 0:
             raise Exception(f"Invalid agg_func are found '{set(agg_func_list) - set(default_agg_func_list)}'")
         agg_func_list = agg_func_list or default_agg_func_list
+        params = {"input_col": input_cols, "agg_func": agg_func_list, "group_key": group_keys}
         super().__init__(
-            params_a=input_cols,
-            params_b=agg_func_list,
-            name_a="input_col",
-            name_b="agg_func",
+            params=params,
             FeaturesClass=_GroupFeatures,
-            group_key=group_key,
             do_add_diff=do_add_diff,
             features_dir=features_dir,
         )
 
 
 class _GroupFeatures(FeaturesBase):
-    """(agg_func,input_col)の組に対して集約特徴量を計算する."""
+    """(group_key, agg_func, input_col)の組に対して集約特徴量を計算する."""
 
     def __init__(self, input_col, agg_func, group_key, do_add_diff=True, features_dir=None):
         self.group_key = group_key

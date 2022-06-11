@@ -8,16 +8,24 @@ from lilac.features.generator_base import _FeaturesBase
 class BruteForceFeatures(_FeaturesBase):
     """複数のパラメータについて複数候補を渡したときに、全組み合わせで特徴量生成クラスを内側で呼ぶ.
 
-    保存は内側のみ(一つずつ)行われる.
-    TODO もう少し汎用的にかけるかも(二種類の引数に限定しない書き方)
+    保存は内側のみ(一つずつ)行われる.)
     """
 
-    def __init__(self, params_a, params_b, name_a, name_b, FeaturesClass, **kwargs):
+    def __init__(self, params, FeaturesClass, **kwargs):
+        """
+        params = {
+            "input_col": ["age","area"]
+            "group_key": ["city", "layout"]
+            "agg_func": ["max", "mean"]
+        }
+        """
         self.FeaturesClass = FeaturesClass
         self.features_generators = []
-        for param_a, param_b in itertools.product(params_a, params_b):
-            params = {name_a: param_a, name_b: param_b}
-            self.features_generators.append(FeaturesClass(**params, **kwargs))
+        # python3.7以上なので順序が保存されている
+        col_names = params.keys()
+        for tmp in itertools.product(*params.values()):
+            tmp = {col_name: param for col_name, param in zip(col_names, tmp)}
+            self.features_generators.append(FeaturesClass(**tmp, **kwargs))
 
     def run(self, train, test):
         train_res_list = []
