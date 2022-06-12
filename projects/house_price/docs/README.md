@@ -13,6 +13,7 @@
 * districtごとにbuilt_year_seireki,areaの集約
 * lda(city,layout,5) (微改善)
 * nearest_staごとにbuilt_year_seireki,areaの集約 (微改善)
+* depthを5->8に変えた
 
 
 改善しなかったもの
@@ -21,6 +22,8 @@
 * cityとlayoutを組み合わせてtarget encode
 * districtをlayoutでldaベクトル化
 * cityのtarget_encode
+* nearest_staとbuilt_yearのconcatをtarget encode
+
 
 
 ## アイデア
@@ -33,3 +36,4 @@
 * [x] layout_l1ごとにareaの平均.diffを取る -> あんまり改善せず
 * [x] city codeを削除する
 * [x] structureをmultihotに開く
+* [ ] area x floor_ratioで延べ床面積っぽいものができそう

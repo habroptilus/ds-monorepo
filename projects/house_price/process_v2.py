@@ -1,4 +1,4 @@
-from imghdr import tests
+
 
 import pandas as pd
 

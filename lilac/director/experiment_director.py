@@ -113,7 +113,7 @@ class ExperimentDirector:
                 print(f"Loading output from '{src_file}'...")
                 with src_file.open("r") as f:
                     result = json.load(f)
-                    job_name = job_settings.get("job")
+                    job_name = ref.get("job")
                     if job_name is None:
                         output = result["output"]
                     else:
