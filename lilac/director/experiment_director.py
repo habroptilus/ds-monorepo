@@ -120,7 +120,7 @@ class ExperimentDirector:
                         output = result["seed_jobs"].get(job_name)
                         if output is None:
                             raise Exception(f"Job name '{job_name}' is not found in Experiment '{ref['src']}'.")
-
+                print(f"CV: {output['score']}")
             else:
                 # これで不要なパラメータが入っていても取り除いてくれる
                 # Factory経由にしないと不要なパラメータが入っていたらエラーになる

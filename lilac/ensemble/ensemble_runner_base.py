@@ -48,12 +48,12 @@ class _EnsembleRunnerBase(metaclass=ABCMeta):
             unused_cols = self.unused_cols
 
         modeling_block = ModelingBlock(
-            self.target_col,
-            unused_cols,
-            self.folds_gen_factory_settings,
-            self.model_factory_settings,
-            self.trainer_factory_settings,
-            self.evaluator_flag,
+            target_col=self.target_col,
+            unused_cols=unused_cols,
+            folds_gen_factory_settings=self.folds_gen_factory_settings,
+            model_factory_settings=self.model_factory_settings,
+            trainer_factory_settings=self.trainer_factory_settings,
+            evaluator_str=self.evaluator_flag,
         )
 
         return modeling_block.run(train_df, test_df)

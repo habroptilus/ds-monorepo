@@ -29,5 +29,5 @@ stacking:
     "use_original_cols": False
   stacking_settings:
   - 
-    - lgbm_mae
+    - avg_mae
 

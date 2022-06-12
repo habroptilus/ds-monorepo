@@ -1,11 +1,8 @@
 from typing import List, Optional
 
-import pandas as pd
-
 from lilac.evaluators.evaluator_factory import EvaluatorFactory
 from lilac.features.features_aggregator import FeaturesAggregator
 from lilac.features.generator_factory import FeatureGeneratorsFactory
-from lilac.features.target_encoders.target_encoder import TargetEncoder
 from lilac.models.model_factory import ModelFactory
 from lilac.trainers.trainer_factory import TrainerFactory
 from lilac.validators.cross_validation_runner import CrossValidationRunner

@@ -56,27 +56,28 @@ class CrossValidationRunner:
             train, valid = df.iloc[tdx].reset_index(drop=True), df.iloc[vdx].reset_index(drop=True)
 
             # Target encoding
-            target_encoder = TargetEncoder(
-                input_cols=self.target_enc_cols,
-                target_col=self.target_col,
-                random_state=self.seed,
-                log_target=self.log_target_on_target_enc,
-            )
-            train_enc = target_encoder.fit_transform(train)
-            valid_enc = target_encoder.transform(valid)
-            self.encoders.append(target_encoder)
+            if self.target_enc_cols:
+                target_encoder = TargetEncoder(
+                    input_cols=self.target_enc_cols,
+                    target_col=self.target_col,
+                    random_state=self.seed,
+                    log_target=self.log_target_on_target_enc,
+                )
+                train = target_encoder.fit_transform(train)
+                valid = target_encoder.transform(valid)
+                self.encoders.append(target_encoder)
 
             # Train
-            model = self.trainer.run(train_enc, valid_enc, self.model_factory, self.model_params)
+            model = self.trainer.run(train, valid, self.model_factory, self.model_params)
             self.models.append(model)
             additionals.append(model.get_additional())
 
             # predict for valid
             if self.pred_oof:
-                valid_pred = model.predict(valid_enc)
+                valid_pred = model.predict(valid)
                 pred_valid_df.loc[vdx, "oof_pred"] = valid_pred
 
-                valid_raw_pred = model.get_raw_pred(valid_enc)
+                valid_raw_pred = model.get_raw_pred(valid)
                 if issubclass(model.__class__, MultiClassifierBase):
                     pred_valid_df.at[
                         vdx, [f"oof_raw_pred{i}" for i in range(valid_raw_pred.shape[1])]
@@ -112,10 +113,11 @@ class CrossValidationRunner:
         """
         test_df = test_df.drop(self.unused_cols, axis=1)
 
-        # test_df = self.target_encoder.transform(test_df)
         preds = []
-        for model, encoder in zip(self.models, self.encoders):
-            test_df = encoder.transform(test_df)
+        for i, model in enumerate(self.models):
+            if self.target_enc_cols:
+                encoder = self.encoders[i]
+                test_df = encoder.transform(test_df)
             if issubclass(model.__class__, RegressorBase):
                 pred = model.predict(test_df)
             elif issubclass(model.__class__, BinaryClassifierBase) or issubclass(model.__class__, MultiClassifierBase):
