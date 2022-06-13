@@ -6,7 +6,7 @@
 * layoutの+Sはサービスルームらしい
   
 ## 効いたもの/効かなかったもの
-効いたもの
+効いたもの：
 * nearest_staのtarget_encode
 * districtをtarget_encode
 * cityごとにbuilt_year_seireki,areaの集約
@@ -14,15 +14,17 @@
 * lda(city,layout,5) (微改善)
 * nearest_staごとにbuilt_year_seireki,areaの集約 (微改善)
 * depthを5->8に変えた
+* seed average (seedによるブレがあるのをなくすことに貢献していそう. 改善はしてない？)
 
 
-改善しなかったもの
+改善しなかったもの：
 * layoutごとのareaの集約
 * city_l1,layout_l1をtarget_encode
 * cityとlayoutを組み合わせてtarget encode
 * districtをlayoutでldaベクトル化
 * cityのtarget_encode
 * nearest_staとbuilt_yearのconcatをtarget encode
+* detphを変えて平均アンサンブル(3,5,8)
 
 
 
