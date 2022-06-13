@@ -40,8 +40,7 @@ shared:
       num_topics: 5
   - model_str: diff_group
     params:
-      group_key:
-      - district
+      group_key: district
       input_cols:
       - built_year_seireki
       - area

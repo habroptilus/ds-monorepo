@@ -67,7 +67,7 @@ class FeaturesBase(_FeaturesBase):
     def _save(self, res_train, res_test):
         if self.features_dir is None:
             print("SaveFeatures is not used because features_dir is None.")
-            return 
+            return
         train_path = self.features_dir / self.return_flag() / "train.ftr"
         train_path.parent.mkdir(exist_ok=True)
         res_train.to_feather(train_path)
