@@ -26,6 +26,7 @@ class BruteForceFeatures(_FeaturesBase):
         for tmp in itertools.product(*params.values()):
             tmp = {col_name: param for col_name, param in zip(col_names, tmp)}
             self.features_generators.append(FeaturesClass(**tmp, **kwargs))
+        self.md5 = self._calc_md5({f"gen_{i}": gen.md5 for i, gen in enumerate(self.features_generators)})
 
     def run(self, train, test):
         train_res_list = []

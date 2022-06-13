@@ -12,21 +12,15 @@ class PipelineComponent(FeaturesBase):
         self.use_prev_only = use_prev_only
         super().__init__(features_dir)
 
-    def _generate(self, train_data, test_data):
-        """_generateをオーバーライドしないと,子genereatorのrunが呼ばれないので子のsave,load機能が動作しないのでこれは必須."""
+    def run(self, train_data, test_data):
         train_data = train_data.copy()
         test_data = test_data.copy()
 
-        # 依存先のgeneratorはrunを呼ぶことでsave,load機能を用いる
         train_features, test_features = self.generator_first.run(train_data, test_data)
         train_data = self.concat_or_not(train_data, train_features)
         test_data = self.concat_or_not(test_data, test_features)
 
-        # 二つ目はrunではなくfit, transformを実行する.
-        # PipelineComponent側のrun(この_generateが呼ばれているrun)で保存されるようにする.
-        self.generator_second.fit(pd.concat([train_data, test_data]).reset_index(drop=True))
-        train_features = self.generator_second.transform(train_data)
-        test_features = self.generator_second.transform(test_data)
+        train_features, test_features = self.generator_second.run(train_data, test_data)
 
         return train_features, test_features
 
@@ -88,6 +82,7 @@ class FeaturesPipeline(_FeaturesBase):
         self.use_prev_only_list = use_prev_only_list
         self.features_dir = features_dir
         self.pipeline = self.get_nested_components(feature_generators)
+        self.md5 = self.pipeline.md5
 
     def get_nested_components(self, feature_generators):
         """feature_generatorsを二つずつ再起的に取り出してPipelineComponentを作っていき、最後のPipelineComponentを返す."""

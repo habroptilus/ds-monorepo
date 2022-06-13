@@ -26,6 +26,7 @@
 * nearest_staとbuilt_yearのconcatをtarget encode
 * detphを変えて平均アンサンブル(3,5,8)
 * area x floor_ratioで延べ床面積
+* 延べ床面積、部屋数、一部屋あたりの面積、何回立てかを入れたv3
 
 
 
@@ -46,7 +47,7 @@
 * [x] 部屋数
 * [x] 一部屋当たりの面積
 * [x] 何階立てか
-* [ ] diff ratioをもう一段集約する
+* [x] diff ratioをもう一段集約する
 
 ## 疑問
 
