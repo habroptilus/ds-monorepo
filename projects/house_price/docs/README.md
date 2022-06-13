@@ -25,6 +25,7 @@
 * cityのtarget_encode
 * nearest_staとbuilt_yearのconcatをtarget encode
 * detphを変えて平均アンサンブル(3,5,8)
+* area x floor_ratioで延べ床面積
 
 
 
@@ -38,4 +39,21 @@
 * [x] layout_l1ごとにareaの平均.diffを取る -> あんまり改善せず
 * [x] city codeを削除する
 * [x] structureをmultihotに開く
-* [ ] area x floor_ratioで延べ床面積っぽいものができそう
+* [x] area x floor_ratioで延べ床面積っぽいものができそう
+* [ ] 集約をmean以外も試す
+* [ ] 集約をnearest_min, ordered_year,ageも試す
+* [ ] catboostとlgbmをアンサンブルする
+* [x] 部屋数
+* [x] 一部屋当たりの面積
+* [x] 何階立てか
+* [ ] diff ratioをもう一段集約する
+
+## 疑問
+
+* layout,layout_l1を見るとかなり予測に効きそうなのにtarget_encodingで改善しないのはなぜ？   
+  * ある程度ルールがわかるのでいい感じに順序を与えてあげるとか
+
+
+## 参考
+
+https://static.signate.jp/competitions/182/summaries/3%E4%BD%8D.pdf
