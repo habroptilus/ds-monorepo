@@ -17,6 +17,7 @@
 * seed average (seedによるブレがあるのをなくすことに貢献していそう. 改善はしてない？)
 
 
+
 改善しなかったもの：
 * layoutごとのareaの集約
 * city_l1,layout_l1をtarget_encode
@@ -25,8 +26,11 @@
 * cityのtarget_encode
 * nearest_staとbuilt_yearのconcatをtarget encode
 * detphを変えて平均アンサンブル(3,5,8)
-* area x floor_ratioで延べ床面積
-* 延べ床面積、部屋数、一部屋あたりの面積、何回立てかを入れたv3
+* area x floor_ratioで延べ床面積(悪化する)
+* 延べ床面積、部屋数、一部屋あたりの面積、何回立てかを入れたv3 (悪化する...)
+  * total_floor_areaだけ上位に来ていて、それが悪さしている？
+  * 目的変数と散布図を書くと予測に効きやすそうな感じしているけどな。。。なぜ？
+* diff ratioをもう一段集約する (悪化はしていない。importanceみても下位)
 
 
 
