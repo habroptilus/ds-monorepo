@@ -4,6 +4,9 @@
 * 排反なカテゴリはorderedだけ
 * city_codeとcityは一対一
 * layoutの+Sはサービスルームらしい
+* 極端に小さいprice_logのものがあって、それが予測を外している
+  * structureがRCやSRC, layoutが3LDKあたり,年代は昭和から平成初期にかけてのものに含まれる
+  * ただ、それらは平均で見ると普通、むしろ高い
   
 ## 効いたもの/効かなかったもの
 効いたもの：
@@ -11,20 +14,20 @@
 * districtをtarget_encode
 * cityごとにbuilt_year_seireki,areaの集約
 * districtごとにbuilt_year_seireki,areaの集約
-* lda(city,layout,5) (微改善)
 * nearest_staごとにbuilt_year_seireki,areaの集約 (微改善)
+* lda(city,layout,5) (微改善)
 * depthを5->8に変えた
 * seed average (seedによるブレがあるのをなくすことに貢献していそう. 改善はしてない？)
 
 
 
 改善しなかったもの：
-* layoutごとのareaの集約
 * city_l1,layout_l1をtarget_encode
-* cityとlayoutを組み合わせてtarget encode
-* districtをlayoutでldaベクトル化
 * cityのtarget_encode
 * nearest_staとbuilt_yearのconcatをtarget encode
+* cityとlayoutを組み合わせてtarget encode
+* layoutごとのareaの集約
+* districtをlayoutでldaベクトル化
 * detphを変えて平均アンサンブル(3,5,8)
 * area x floor_ratioで延べ床面積(悪化する)
 * 延べ床面積、部屋数、一部屋あたりの面積、何回立てかを入れたv3 (悪化する...)
@@ -36,6 +39,9 @@
 
 ## アイデア
 
+* [ ] 集約をnearest_min, age, ordered_yearも試す
+* [ ] v4のdistrict-built_yearのtarget encode
+* [ ] RMSEとMAEのアンサンブル
 * [x] cityを市と区にわける
 * [x] build yearを西暦に変える
 * [x] 築何年を計算する
@@ -45,19 +51,24 @@
 * [x] city codeを削除する
 * [x] structureをmultihotに開く
 * [x] area x floor_ratioで延べ床面積っぽいものができそう
-* [ ] 集約をmean以外も試す
-* [ ] 集約をnearest_min, ordered_year,ageも試す
-* [ ] catboostとlgbmをアンサンブルする
+* [x] 集約をmean以外も試す
+* [x] catboostとlgbmをアンサンブルする
 * [x] 部屋数
 * [x] 一部屋当たりの面積
 * [x] 何階立てか
 * [x] diff ratioをもう一段集約する
 
+## memo
+
+* 本当は西暦が一年ずれているけど全部一年ずれているのでまあいいか
+* price_logが小さいところで特に上振れた予測をして外している
+* シングルモデルでは0.073台まで来ている(6/14現在)
+* districtが同じで違う県、とかはある？->あったので、prefecture>city>districtを連結して置換した
+* アンサンブルしても0.001上がるかなというかんじなのと、catboostが時間かかるので、シングルモデルの改善をしたほうがいいかも
+
 ## 疑問
 
-* layout,layout_l1を見るとかなり予測に効きそうなのにtarget_encodingで改善しないのはなぜ？   
-  * ある程度ルールがわかるのでいい感じに順序を与えてあげるとか
-
+* total_floor_areaとかは効きそうな散布図をしているが悪化するのはなぜ
 
 ## 参考
 
