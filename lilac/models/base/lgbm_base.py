@@ -8,8 +8,9 @@ class _LgbmBase:
     """LGBMのベース.object型があればlabel encodingして元のカテゴリ変数は削除する"""
 
     def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
+        lgbm_params["importance_type"] = "gain"
+        lgbm_params["num_leaves"] = int(2 ** lgbm_params["max_depth"] * 0.7)
         self.lgbm_params = lgbm_params
-        self.lgbm_params["importance_type"]="gain"
         self.verbose_eval = verbose_eval
         self.early_stopping_rounds = early_stopping_rounds
         self.encoder = OrdinalEncoder()
@@ -17,7 +18,7 @@ class _LgbmBase:
 
     def get_model(self):
         raise Exception("Implement.")
-        
+
     def fit(self, train_x, train_y, valid_x, valid_y):
         self.object_cols = train_x.select_dtypes(include=[object]).columns
         train_x_cat = self.encoder.fit_transform(train_x[self.object_cols]).add_suffix("_enc")

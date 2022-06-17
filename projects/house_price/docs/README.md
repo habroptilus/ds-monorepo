@@ -15,6 +15,7 @@
 * cityごとにbuilt_year_seireki,areaの集約
 * districtごとにbuilt_year_seireki,areaの集約
 * nearest_staごとにbuilt_year_seireki,areaの集約 (微改善)
+* nearest_minを集約に追加(とんとん~微改善)
 * lda(city,layout,5) (微改善)
 * depthを5->8に変えた
 * seed average (seedによるブレがあるのをなくすことに貢献していそう. 改善はしてない？)
@@ -34,13 +35,14 @@
   * total_floor_areaだけ上位に来ていて、それが悪さしている？
   * 目的変数と散布図を書くと予測に効きやすそうな感じしているけどな。。。なぜ？
 * diff ratioをもう一段集約する (悪化はしていない。importanceみても下位)
+* v4のdistrict-built_yearのtarget encode
 
 
 
 ## アイデア
 
 * [ ] 集約をnearest_min, age, ordered_yearも試す
-* [ ] v4のdistrict-built_yearのtarget encode
+* [x] v4のdistrict-built_yearのtarget encode
 * [ ] RMSEとMAEのアンサンブル
 * [x] cityを市と区にわける
 * [x] build yearを西暦に変える

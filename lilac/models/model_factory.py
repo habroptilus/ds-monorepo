@@ -6,7 +6,7 @@ from .classifiers.lgbm_classifiers import LgbmBinaryClassifier, LgbmMultiClassif
 from .classifiers.logistic_regression import LrMultiClassifier
 from .regressors.averaging_regressors import AveragingRegressor
 from .regressors.catb_regressors import CatbMaeRegressor, CatbRmseRegressor, CatbRmsleRegressor
-from .regressors.lgbm_regressors import LgbmMaeRegressor, LgbmRmseRegressor, LgbmRmsleRegressor
+from .regressors.lgbm_regressors import LgbmFairRegressor, LgbmMaeRegressor, LgbmRmseRegressor, LgbmRmsleRegressor
 from .regressors.linear_regressors import LinearModel, LinearPositiveModel, LinearRmsle, RidgeRmse, RidgeRmsle
 
 
@@ -18,6 +18,7 @@ class ModelFactory(FactoryBase):
             "lgbm_rmsle": LgbmRmsleRegressor,
             "lgbm_rmse": LgbmRmseRegressor,
             "lgbm_mae": LgbmMaeRegressor,
+            "lgbm_fair": LgbmFairRegressor,
             "lgbm_bin": LgbmBinaryClassifier,
             "lgbm_multi": LgbmMultiClassifier,
             "catb_rmse": CatbRmseRegressor,
