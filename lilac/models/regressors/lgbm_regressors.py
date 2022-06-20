@@ -168,7 +168,7 @@ class LgbmMaeRegressor(RegressorBase):
 
 class LgbmFairRegressor(RegressorBase):
     """目的関数がfairのlgbm回帰モデル.MAE最適化の時に使われる.
-    
+
     see:
     https://www.kaggle.com/c/allstate-claims-severity/discussion/24520
     """
@@ -222,3 +222,67 @@ class LgbmFairRegressor(RegressorBase):
 
     def get_additional(self):
         return {"importance": self.model.get_importance()}
+
+
+class LgbmDiffMaeRegressor(LgbmMaeRegressor):
+    """target_col-base_colに対してMAEで最適化するLGBMモデル."""
+
+    def __init__(
+        self,
+        target_col,
+        base_col,
+        verbose_eval=consts.verbose_eval,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        colsample_bytree=consts.colsample_bytree,
+        reg_alpha=consts.reg_alpha,
+        reg_lambda=consts.reg_lambda,
+        subsample=consts.subsample,
+        min_child_weight=consts.min_child_weight,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+    ):
+        self.base_col = base_col
+        super().__init__(
+            target_col,
+            verbose_eval=verbose_eval,
+            early_stopping_rounds=early_stopping_rounds,
+            colsample_bytree=colsample_bytree,
+            reg_alpha=reg_alpha,
+            reg_lambda=reg_lambda,
+            subsample=subsample,
+            min_child_weight=min_child_weight,
+            n_estimators=n_estimators,
+            depth=depth,
+            seed=seed,
+            learning_rate=learning_rate,
+        )
+
+    def fit(self, train_df, valid_df):
+        if train_df[self.base_col].isnull().sum() > 0:
+            raise Exception(f"{self.base_col} has some nulls. {train_df[self.base_col].isnull().sum()}")
+        train_x, train_y = self.split_df2xy(train_df)
+        valid_x, valid_y = self.split_df2xy(valid_df)
+        # preprocess
+        train_h = train_x[self.base_col]
+        valid_h = valid_x[self.base_col]
+        # ndarrayにするとバグらない
+        # TODO なぜか調査する
+        train_y = train_y - train_h.values
+        valid_y = valid_y - valid_h.values
+        return self.model.fit(train_x, train_y, valid_x, valid_y)
+
+    def _predict(self, test_df):
+        """test_dfにtarget_colが入っていても大丈夫."""
+        pred = self.model.predict(test_df)
+        # ndarrayにするとバグらない
+        # TODO なぜか調査する
+        h = test_df[self.base_col].values
+        if test_df[self.base_col].isnull().sum() > 0:
+            raise Exception(f"{self.base_col} has some nulls. {test_df[self.base_col].isnull().sum()}")
+        return pred + h
+
+    def get_importance(self):
+        """lgbmのみ追加で実装している."""
+        return self.model.get_importance()

@@ -87,6 +87,8 @@ class CrossValidationRunner:
                 else:
                     raise Exception(f"Invalid model class {model.__class__}")
 
+        if pred_valid_df["oof_pred"].isnull().sum() > 0:
+            raise Exception(pred_valid_df["oof_pred"].isnull().sum())
         output = {}
         # add oof to output
         if self.pred_oof:
@@ -97,6 +99,8 @@ class CrossValidationRunner:
                 ].values
             elif issubclass(model.__class__, RegressorBase) or issubclass(model.__class__, BinaryClassifierBase):
                 output["oof_raw_pred"] = pred_valid_df["oof_raw_pred"].to_list()
+            else:
+                raise Exception(f"Invalid model class: {model.__class__}")
 
         # add evaluation to output
         predictions = Predictions(pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])

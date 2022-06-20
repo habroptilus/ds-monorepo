@@ -60,6 +60,7 @@ class BasicSeedJob:
         od_type=consts.od_type,
         od_wait=consts.od_wait,
         class_weight=consts.class_weight,
+        base_col=None,
         log_target_on_target_enc=False,
         target_enc_cols=None,
     ):
@@ -106,6 +107,8 @@ class BasicSeedJob:
                 "od_wait": od_wait,
                 # lgbm and catb's classifier
                 "class_weight": class_weight,
+                # diff model
+                "base_col": base_col,
             },
         }
 

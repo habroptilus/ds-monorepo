@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 
 train = pd.read_csv("data/train_v1.csv")
@@ -15,7 +13,7 @@ def wareki2seireki(x):
     if x == "戦前":
         return 1945  # 昭和のminが1947だった
     else:
-        d = {"昭和": 1926, "平成": 1989, "令和": 2019}
+        d = {"昭和": 1925, "平成": 1988, "令和": 2018}
         return d[x[:2]] + int(x[2:-1])
 
 

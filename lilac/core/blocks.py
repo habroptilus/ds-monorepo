@@ -68,7 +68,8 @@ class DatagenBlock:
         )
 
     def run(self, train, test):
-        return self.aggregator.run(train, test)
+        train, test = self.aggregator.run(train, test)
+        return train, test
 
 
 class BlocksRunner:
@@ -109,4 +110,5 @@ class BlocksRunner:
 
     def run(self, train, test):
         train, test = self.datagen_block.run(train, test)
+
         return self.modeling_block.run(train, test)

@@ -7,6 +7,9 @@
 * 極端に小さいprice_logのものがあって、それが予測を外している
   * structureがRCやSRC, layoutが3LDKあたり,年代は昭和から平成初期にかけてのものに含まれる
   * ただ、それらは平均で見ると普通、むしろ高い
+* 13210行trainにはid以外同じなのにprice_logが異なるものが存在する
+  * 予測しようがないよねこれ
+  * でもなぜかgroupbyすると三つしかなくなる
   
 ## 効いたもの/効かなかったもの
 効いたもの：
@@ -41,7 +44,11 @@
 
 ## アイデア
 
-* [ ] 集約をnearest_min, age, ordered_yearも試す
+* [ ] trainの重複を削除する
+* [ ] 同一物件の特定
+* [ ] 集約に用いたnearest_min,areaをlogに変換してから集約する
+  * 正規分布っぽくなるからよいかも？
+* [x] 集約をnearest_min, age,試す
 * [x] v4のdistrict-built_yearのtarget encode
 * [ ] RMSEとMAEのアンサンブル
 * [x] cityを市と区にわける
