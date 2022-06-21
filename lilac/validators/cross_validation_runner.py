@@ -48,6 +48,7 @@ class CrossValidationRunner:
 
         folds = self.folds_generator.run(df)
         df = df.drop(self.unused_cols, axis=1)
+        print(f"Data: {len(df)}")
         self.encoders = []
         additionals = []
         for i, (tdx, vdx) in enumerate(folds):
@@ -105,6 +106,8 @@ class CrossValidationRunner:
         # add evaluation to output
         predictions = Predictions(pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
         output["evaluator"] = self.evaluator.return_flag()
+        if df[self.target_col].isnull().sum() > 0:
+            raise Exception(df[self.target_col].isnull().sum())
         output["score"] = self.evaluator.run(df[self.target_col], predictions)
         output["additional"] = additionals
         return output

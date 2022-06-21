@@ -38,6 +38,10 @@ class _EnsembleRunnerBase(metaclass=ABCMeta):
 
         # とりあえず全部のデータを結合する
         # foldの計算に必要だったりするため.
+        if len(output_based_train) != len(train):
+            raise Exception(f"Unmatched train data length: { len(output_based_train)} != { len(train)}")
+        if len(output_based_test) != len(test):
+            raise Exception(f"Unmatched test data length: { len(output_based_test)} != { len(test)}")
         train_df = pd.concat([output_based_train, train], axis=1)
         test_df = pd.concat([output_based_test, test], axis=1)
 
@@ -75,8 +79,8 @@ class EnsembleRunnerBase(_EnsembleRunnerBase):
         raw_predは回帰だと1次元、分類だと各クラスの予測確率なのでクラス数の次元である
         最終出力の次元は「一層前のmodel数*raw_predの次元数」となる.
         """
-        train_df = pd.DataFrame()
-        test_df = pd.DataFrame()
+        train_df_list = []
+        test_df_list = []
         for i, output in enumerate(output_list):
             oof_raw_pred = np.array(output["oof_raw_pred"])
             raw_pred = np.array(output["raw_pred"])
@@ -87,8 +91,13 @@ class EnsembleRunnerBase(_EnsembleRunnerBase):
             oof_raw_pred = pd.DataFrame(oof_raw_pred, columns=[f"pred{i}_{j}" for j in range(oof_raw_pred.shape[1])])
 
             raw_pred = pd.DataFrame(raw_pred, columns=[f"pred{i}_{j}" for j in range(raw_pred.shape[1])])
-            train_df = pd.concat([train_df, oof_raw_pred], axis=1)
-            test_df = pd.concat([test_df, raw_pred], axis=1)
+            train_df_list.append(oof_raw_pred)
+            test_df_list.append(raw_pred)
+
+        if set([len(df) for df in train_df_list]) > 1:
+            raise Exception(f"Ensemble seeds have different length: {[len(df) for df in train_df_list]}")
+        train_df = pd.concat(train_df_list, axis=1)
+        test_df = pd.concat(test_df_list, axis=1)
         return train_df, test_df
 
 
