@@ -66,3 +66,9 @@ make format
 ```
 
 でそれぞれ実行できる. `lilac/`と`projects/`以下のコードが対象.
+
+
+## Pitfalls
+
+* diffモデルでndarrayに変換しないとおかしなことになる
+* trainデータ数を変えた実験をロードしてアンサンブルするとこけるのに注意

@@ -15,12 +15,6 @@
     * dup_id_list=["id_40088089", "id_40088088", "id_23116490", "id_23116486", "id_12027757","id_12027758"]
 * 上の13210行とは別でprice_logまで重複しているのは7911行。v5で削除した
   
-
-## やること
-
-* lgbm_diff_maeを含めてアンサンブル(log集約)+catb(古いやつ)
-* 時間かかるのでlog集約のでcatbを先に回しておいてアンサンブル用に準備する
-* 後処理で上がる方法を見つける
 ## 効いたもの/効かなかったもの
 効いたもの：
 * nearest_staのtarget_encode
@@ -58,8 +52,10 @@
 
 ## アイデア
 
+* catboostのdiff
+* logとったものでもう一度diffratioの2段集約
+* 正規化してxentropyでtrainする
 * [x] trainの重複を削除する
-* [ ] 同一物件の特定
 * [x] 集約に用いたnearest_min,areaをlogに変換してから集約する
   * 正規分布っぽくなるからよいかも？
 * [x] 集約をnearest_min, age,試す
@@ -96,4 +92,5 @@
 
 ## 参考
 
-https://static.signate.jp/competitions/182/summaries/3%E4%BD%8D.pdf
+* https://static.signate.jp/competitions/182/summaries/3%E4%BD%8D.pdf
+* https://naotaka1128.hatenadiary.jp/entry/kaggle-compe-tips
