@@ -46,15 +46,17 @@
   * 目的変数と散布図を書くと予測に効きやすそうな感じしているけどな。。。なぜ？
 * diff ratioをもう一段集約する (悪化はしていない。importanceみても下位)
 * v4のdistrict-built_yearのtarget encode
+* v6
 
 
 
 
 ## アイデア
 
-* catboostのdiff
-* logとったものでもう一度diffratioの2段集約
-* 正規化してxentropyでtrainする
+* [ ] catboostのdiff
+* [ ] logとったものでもう一度diffratioの2段集約
+* [ ] 正規化してxentropyでtrainする
+* [ ] seed averaging
 * [x] trainの重複を削除する
 * [x] 集約に用いたnearest_min,areaをlogに変換してから集約する
   * 正規分布っぽくなるからよいかも？

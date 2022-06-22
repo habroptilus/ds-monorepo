@@ -4,7 +4,7 @@ import pandas as pd
 from category_encoders import OrdinalEncoder
 
 
-class _LgbmBase:
+class LgbmBase:
     """LGBMのベース.object型があればlabel encodingして元のカテゴリ変数は削除する"""
 
     def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
@@ -50,7 +50,7 @@ class _LgbmBase:
         return "lgbm_" + "_".join([str(v) for v in self.lgbm_params.values()])
 
 
-class _LgbmClassifier(_LgbmBase):
+class LgbmClassifierBase(LgbmBase):
     """ベースとなるLGBMのclassifierモデル."""
 
     def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params, class_weight):
@@ -71,7 +71,25 @@ class _LgbmClassifier(_LgbmBase):
         return f"{super().return_flag()}_cls"
 
 
-class _LgbmRegressor(_LgbmBase):
+class LgbmBinaryClassifierBase(LgbmClassifierBase):
+    """LGBMのloglossで最適化するbin分類モデルのベース."""
+
+    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
+        lgbm_params["objective"] = "binary"
+        lgbm_params["metrics"] = "binary_logloss"
+        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params)
+
+
+class LgbmMultiClassifierBase(LgbmClassifierBase):
+    """LGBMのloglossで最適化するmulti分類モデルのベース."""
+
+    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
+        lgbm_params["objective"] = "multiclass"
+        lgbm_params["metrics"] = "multi_logloss"
+        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params)
+
+
+class LgbmRegressorBase(LgbmBase):
     """ベースとなるLGBMの回帰モデル."""
 
     def get_model(self):
@@ -88,13 +106,35 @@ class _LgbmRegressor(_LgbmBase):
         return f"{super().return_flag()}_reg"
 
 
-class _LgbmRmsleRegressor(_LgbmRegressor):
-    """LGBMのRMSLEで最適化する回帰モデル."""
+class LgbmRmseRegressorBase(LgbmRegressorBase):
+    """LGBMのRMSEで最適化する回帰モデルのベース."""
 
     def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
         lgbm_params["objective"] = "regression"
         lgbm_params["metrics"] = "rmse"
         super().__init__(verbose_eval, early_stopping_rounds, lgbm_params)
+
+
+class LgbmMaeRegressorBase(LgbmRegressorBase):
+    """LGBMのMAEで最適化する回帰モデルのベース."""
+
+    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
+        lgbm_params["objective"] = "mae"
+        lgbm_params["metrics"] = "mae"
+        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params)
+
+
+class LgbmFairRegressorBase(LgbmRegressorBase):
+    """LGBMのFairで最適化する回帰モデルのベース."""
+
+    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
+        lgbm_params["objective"] = "fair"
+        lgbm_params["metrics"] = "mae"
+        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params)
+
+
+class LgbmRmsleRegressorBase(LgbmRmseRegressorBase):
+    """LGBMのRMSLEで最適化する回帰モデルのベース."""
 
     def fit(self, train_x, train_y, valid_x, valid_y):
         # yをlog変換

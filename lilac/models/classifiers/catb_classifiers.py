@@ -1,6 +1,6 @@
 """catboost classfiers."""
 from lilac.models import consts
-from lilac.models.base.catb_base import _CatbBinaryClassfier, _CatbMultiClassfier
+from lilac.models.base.catb_base import CatbBinaryClassfierBase, CatbMultiClassfierBase
 from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase
 
 
@@ -12,7 +12,7 @@ class CatbBinaryClassifier(BinaryClassifierBase):
         target_col,
         early_stopping_rounds=consts.early_stopping_rounds,
         n_estimators=consts.n_estimators,
-        depth=consts.n_estimators,
+        depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
         random_strength=consts.random_strength,
@@ -32,7 +32,7 @@ class CatbBinaryClassifier(BinaryClassifierBase):
             "num_boost_round": n_estimators,
             "depth": depth,
         }
-        self.model = _CatbBinaryClassfier(early_stopping_rounds, catb_params, class_weight)
+        self.model = CatbBinaryClassfierBase(early_stopping_rounds, catb_params, class_weight)
 
     def fit(self, train_df, valid_df):
         train_x, train_y = self.split_df2xy(train_df)
@@ -55,7 +55,7 @@ class CatbMultiClassifier(MultiClassifierBase):
         target_col,
         early_stopping_rounds=consts.early_stopping_rounds,
         n_estimators=consts.n_estimators,
-        depth=consts.n_estimators,
+        depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
         random_strength=consts.random_strength,
@@ -75,7 +75,7 @@ class CatbMultiClassifier(MultiClassifierBase):
             "num_boost_round": n_estimators,
             "depth": depth,
         }
-        self.model = _CatbMultiClassfier(early_stopping_rounds, catb_params, class_weight)
+        self.model = CatbMultiClassfierBase(early_stopping_rounds, catb_params, class_weight)
 
     def fit(self, train_df, valid_df):
         train_x, train_y = self.split_df2xy(train_df)

@@ -1,5 +1,5 @@
 from lilac.models import consts
-from lilac.models.base.lgbm_base import _LgbmClassifier
+from lilac.models.base.lgbm_base import LgbmBinaryClassifierBase, LgbmMultiClassifierBase
 from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase
 
 
@@ -32,12 +32,10 @@ class LgbmBinaryClassifier(BinaryClassifierBase):
             "random_state": seed,
             "n_estimators": n_estimators,
             "max_depth": depth,
-            "objective": "binary",
-            "metrics": "binary_logloss",
             "learning_rate": learning_rate,
         }
 
-        self.model = _LgbmClassifier(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
+        self.model = LgbmBinaryClassifierBase(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
 
     def fit(self, train_df, valid_df):
         train_x, train_y = self.split_df2xy(train_df)
@@ -85,11 +83,9 @@ class LgbmMultiClassifier(MultiClassifierBase):
             "random_state": seed,
             "n_estimators": n_estimators,
             "max_depth": depth,
-            "objective": "multiclass",
-            "metrics": "multi_logloss",
             "learning_rate": learning_rate,
         }
-        self.model = _LgbmClassifier(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
+        self.model = LgbmMultiClassifierBase(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
 
     def fit(self, train_df, valid_df):
         train_x, train_y = self.split_df2xy(train_df)
