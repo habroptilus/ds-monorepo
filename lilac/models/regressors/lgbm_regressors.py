@@ -6,6 +6,8 @@ from lilac.models.base.lgbm_base import (
     LgbmRmseRegressorBase,
     LgbmRmsleRegressorBase,
 )
+from lilac.models.base.xentropy_reg_base import XentropyRegressorBase
+from lilac.models.classifiers.lgbm_classifiers import LgbmXentropyClassifier
 from lilac.models.model_base import RegressorBase
 
 
@@ -284,3 +286,40 @@ class LgbmDiffRmseRegressor(DiffRegressorBase):
     def get_importance(self):
         """lgbmのみ追加で実装している."""
         return self.model.get_importance()
+
+
+class LgbmXentropyRegressor(XentropyRegressorBase):
+    """LgbmXentropyClassifierで[0,1]正規化した回帰問題を解く."""
+
+    def __init__(
+        self,
+        target_col,
+        verbose_eval=consts.verbose_eval,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        colsample_bytree=consts.colsample_bytree,
+        reg_alpha=consts.reg_alpha,
+        reg_lambda=consts.reg_lambda,
+        subsample=consts.subsample,
+        min_child_weight=consts.min_child_weight,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+    ):
+        super().__init__(
+            target_col=target_col,
+            model=LgbmXentropyClassifier(
+                target_col=target_col,
+                verbose_eval=verbose_eval,
+                early_stopping_rounds=early_stopping_rounds,
+                colsample_bytree=colsample_bytree,
+                reg_alpha=reg_alpha,
+                reg_lambda=reg_lambda,
+                subsample=subsample,
+                min_child_weight=min_child_weight,
+                n_estimators=n_estimators,
+                depth=depth,
+                seed=seed,
+                learning_rate=learning_rate,
+            ),
+        )

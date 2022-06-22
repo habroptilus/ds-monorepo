@@ -19,6 +19,7 @@ from .regressors.lgbm_regressors import (
     LgbmMaeRegressor,
     LgbmRmseRegressor,
     LgbmRmsleRegressor,
+    LgbmXentropyRegressor,
 )
 from .regressors.linear_regressors import LinearModel, LinearRmsle, RidgeRmse, RidgeRmsle
 
@@ -36,6 +37,7 @@ class ModelFactory(FactoryBase):
             "lgbm_multi": LgbmMultiClassifier,
             "lgbm_diff_mae": LgbmDiffMaeRegressor,
             "lgbm_diff_rmse": LgbmDiffRmseRegressor,
+            "lgbm_xentropy_reg": LgbmXentropyRegressor,
             "catb_rmse": CatbRmseRegressor,
             "catb_rmsle": CatbRmsleRegressor,
             "catb_mae": CatbMaeRegressor,

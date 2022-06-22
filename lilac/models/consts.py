@@ -5,7 +5,7 @@ depth = 5
 learning_rate = 0.1
 n_estimators = 30000
 seed = None
-class_weight = "balanced"
+class_weight = None  # "balanced"
 
 
 # lgbm

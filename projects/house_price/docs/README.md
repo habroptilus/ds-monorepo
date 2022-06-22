@@ -1,5 +1,12 @@
 # House price
 
+やること
+* xentropyのやつのバグ調査
+* seed averaging
+* catbのdiff
+* logとったののdiff2段階試す
+* v3をdepth=8でもう一度試す
+
 ## eda
 * 排反なカテゴリはorderedだけ
 * city_codeとcityは一対一
@@ -47,6 +54,7 @@
 * diff ratioをもう一段集約する (悪化はしていない。importanceみても下位)
 * v4のdistrict-built_yearのtarget encode
 * v6
+
 
 
 

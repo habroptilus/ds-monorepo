@@ -11,6 +11,7 @@ class LgbmBase:
         lgbm_params["importance_type"] = "gain"
         lgbm_params["num_leaves"] = int(2 ** lgbm_params["max_depth"] * 0.7)
         self.lgbm_params = lgbm_params
+        print(self.lgbm_params)
         self.verbose_eval = verbose_eval
         self.early_stopping_rounds = early_stopping_rounds
         self.encoder = OrdinalEncoder()
@@ -74,19 +75,28 @@ class LgbmClassifierBase(LgbmBase):
 class LgbmBinaryClassifierBase(LgbmClassifierBase):
     """LGBMのloglossで最適化するbin分類モデルのベース."""
 
-    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
+    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params, class_weight):
         lgbm_params["objective"] = "binary"
         lgbm_params["metrics"] = "binary_logloss"
-        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params)
+        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
 
 
 class LgbmMultiClassifierBase(LgbmClassifierBase):
     """LGBMのloglossで最適化するmulti分類モデルのベース."""
 
-    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params):
+    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params, class_weight):
         lgbm_params["objective"] = "multiclass"
         lgbm_params["metrics"] = "multi_logloss"
-        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params)
+        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
+
+
+class LgbmXentropyClassifierBase(LgbmClassifierBase):
+    """LGBMのxentropyで最適化するbinary分類モデルのベース."""
+
+    def __init__(self, verbose_eval, early_stopping_rounds, lgbm_params, class_weight):
+        lgbm_params["objective"] = "xentropy"
+        lgbm_params["metrics"] = "xentropy"
+        super().__init__(verbose_eval, early_stopping_rounds, lgbm_params, class_weight)
 
 
 class LgbmRegressorBase(LgbmBase):

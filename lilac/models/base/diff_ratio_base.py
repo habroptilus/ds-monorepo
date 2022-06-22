@@ -7,6 +7,8 @@ class DiffRegressorBase(RegressorBase):
     def __init__(self, model, target_col, base_col):
         super().__init__(target_col)
         self.base_col = base_col
+        if not issubclass(model.__class__, RegressorBase):
+            ValueError(f"DiffRegressor allows only models that implemented RegressorBase. {model.__class__}")
         self.model = model
 
     def fit(self, train_df, valid_df):
