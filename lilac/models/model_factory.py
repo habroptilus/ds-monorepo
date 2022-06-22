@@ -5,15 +5,22 @@ from .classifiers.catb_classifiers import CatbBinaryClassifier, CatbMultiClassif
 from .classifiers.lgbm_classifiers import LgbmBinaryClassifier, LgbmMultiClassifier
 from .classifiers.logistic_regression import LrMultiClassifier
 from .regressors.averaging_regressors import AveragingRegressor
-from .regressors.catb_regressors import CatbMaeRegressor, CatbRmseRegressor, CatbRmsleRegressor
+from .regressors.catb_regressors import (
+    CatbDiffMaeRegressor,
+    CatbDiffRmseRegressor,
+    CatbMaeRegressor,
+    CatbRmseRegressor,
+    CatbRmsleRegressor,
+)
 from .regressors.lgbm_regressors import (
     LgbmDiffMaeRegressor,
+    LgbmDiffRmseRegressor,
     LgbmFairRegressor,
     LgbmMaeRegressor,
     LgbmRmseRegressor,
     LgbmRmsleRegressor,
 )
-from .regressors.linear_regressors import LinearModel, LinearPositiveModel, LinearRmsle, RidgeRmse, RidgeRmsle
+from .regressors.linear_regressors import LinearModel, LinearRmsle, RidgeRmse, RidgeRmsle
 
 
 class ModelFactory(FactoryBase):
@@ -28,14 +35,16 @@ class ModelFactory(FactoryBase):
             "lgbm_bin": LgbmBinaryClassifier,
             "lgbm_multi": LgbmMultiClassifier,
             "lgbm_diff_mae": LgbmDiffMaeRegressor,
+            "lgbm_diff_rmse": LgbmDiffRmseRegressor,
             "catb_rmse": CatbRmseRegressor,
             "catb_rmsle": CatbRmsleRegressor,
             "catb_mae": CatbMaeRegressor,
             "catb_bin": CatbBinaryClassifier,
             "catb_multi": CatbMultiClassifier,
+            "catb_diff_mae": CatbDiffMaeRegressor,
+            "catb_diff_rmse": CatbDiffRmseRegressor,
             "lr_rmsle": LinearRmsle,
             "lr_rmse": LinearModel,
-            "lr_pos": LinearPositiveModel,
             "lr_multi": LrMultiClassifier,
             "ridge_rmse": RidgeRmse,
             "ridge_rmsle": RidgeRmsle,

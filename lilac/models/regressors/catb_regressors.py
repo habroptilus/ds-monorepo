@@ -1,5 +1,6 @@
 from lilac.models import consts
 from lilac.models.base.catb_base import CatbMaeRegressorBase, CatbRmseRegressorBase, CatbRmsleRegressorBase
+from lilac.models.base.diff_ratio_base import DiffRegressorBase
 from lilac.models.model_base import RegressorBase
 
 
@@ -136,3 +137,67 @@ class CatbRmsleRegressor(CatbRegressor):
             od_type=od_type,
             od_wait=od_wait,
         )
+
+
+class CatbDiffRmseRegressor(DiffRegressorBase):
+    """target_col-base_colに対してRMSEで最適化するCatbモデル."""
+
+    def __init__(
+        self,
+        target_col,
+        base_col,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+        random_strength=consts.random_strength,
+        bagging_temperature=consts.bagging_temperature,
+        od_type=consts.od_type,
+        od_wait=consts.od_wait,
+    ):
+        model = CatbRmseRegressor(
+            target_col=target_col,
+            early_stopping_rounds=early_stopping_rounds,
+            n_estimators=n_estimators,
+            depth=depth,
+            seed=seed,
+            learning_rate=learning_rate,
+            random_strength=random_strength,
+            bagging_temperature=bagging_temperature,
+            od_type=od_type,
+            od_wait=od_wait,
+        )
+        super().__init__(target_col=target_col, base_col=base_col, model=model)
+
+
+class CatbDiffMaeRegressor(DiffRegressorBase):
+    """target_col-base_colに対してMaeで最適化するCatbモデル."""
+
+    def __init__(
+        self,
+        target_col,
+        base_col,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+        random_strength=consts.random_strength,
+        bagging_temperature=consts.bagging_temperature,
+        od_type=consts.od_type,
+        od_wait=consts.od_wait,
+    ):
+        model = CatbMaeRegressor(
+            target_col=target_col,
+            early_stopping_rounds=early_stopping_rounds,
+            n_estimators=n_estimators,
+            depth=depth,
+            seed=seed,
+            learning_rate=learning_rate,
+            random_strength=random_strength,
+            bagging_temperature=bagging_temperature,
+            od_type=od_type,
+            od_wait=od_wait,
+        )
+        super().__init__(target_col=target_col, base_col=base_col, model=model)

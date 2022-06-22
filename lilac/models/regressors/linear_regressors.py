@@ -31,17 +31,6 @@ class LinearModel(RegressorBase):
         return "linear_rmse"
 
 
-class LinearPositiveModel(LinearModel):
-    """普通のlinear regression.欠損やカテゴリ変数に未対応.正の値を出すように補正だけはする."""
-
-    def _predict(self, x_df):
-        pred = super()._predict(x_df)
-        return np.maximum(pred, 0)
-
-    def return_flag(self):
-        return "linear_rmse_pos"
-
-
 class LinearRmsle(LinearModel):
     """RMSLEを目的関数にしたlinear regression.欠損やカテゴリ変数に未対応."""
 
