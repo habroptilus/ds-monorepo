@@ -12,12 +12,12 @@ class FactoryBase(metaclass=ABCMeta):
 
     以下の機能を提供する.
     * モデルフラグを受け取って引数を渡してモデルをインスタンス化して返す.
-    * 必要のないパラメータを渡しても問題ないようにしている.(ここをエラーにするオプションをつけてもよいがtodo)
+    * allow_extra_params=Trueだと必要のないパラメータを渡しても問題ないようにしている.Falseだとエラーになる.
     * 必要なパラメータがない場合、かつモデル側がデフォルト引数を持っている場合、WARNINGを出す.
     継承して利用する場合は__init__をオーバーライドするだけ.
     """
 
-    def __init__(self, str2model, register_from, extra_class_names=None, shared_params=None):
+    def __init__(self, str2model, register_from, extra_class_names=None, shared_params=None, allow_extra_params=True):
         """str2modelを引数にすることを強制する.
 
         :params
@@ -27,6 +27,7 @@ class FactoryBase(metaclass=ABCMeta):
         """
         self.str2model = str2model
         self.shared_params = {} if shared_params is None else shared_params
+        self.allow_extra_params = allow_extra_params
         if register_from:
             self.register_models_from_src(register_from, extra_class_names)
 
@@ -103,6 +104,10 @@ class FactoryBase(metaclass=ABCMeta):
     def extract_required_params(self, required_params_names, all_params):
         """必要な引数を取り出す. 必要な引数が与えられていない場合にWARNINGを出す."""
         required_params = {}
+        if not self.allow_extra_params:
+            extra_params = set(all_params.keys()) - set(required_params_names)
+            if len(extra_params) > 0:
+                raise Exception(f"There are extra params: {extra_params}")
         print(f"Extracting required params in {self.__class__.__name__}.")
         for params_name in required_params_names:
             if params_name not in all_params:

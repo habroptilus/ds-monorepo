@@ -9,7 +9,7 @@ shared:
   target_col: price_log
   base_col: area_log
   seed: 42
-  depth: 8
+  depth: 8 
   folds_gen_str: group
   group_key_col: ordered
   model_str: lgbm_xentropy_reg
