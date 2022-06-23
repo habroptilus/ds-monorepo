@@ -104,3 +104,9 @@
 
 * https://static.signate.jp/competitions/182/summaries/3%E4%BD%8D.pdf
 * https://naotaka1128.hatenadiary.jp/entry/kaggle-compe-tips
+
+
+## tips
+
+* ハイパーパラメータはdepthとmin_child_samplesが大事らしい。
+  * depthはあげるとover fitting気味になり、min_child_samplesは上げるとunder_fitting気味になる

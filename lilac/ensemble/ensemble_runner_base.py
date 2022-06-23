@@ -94,7 +94,7 @@ class EnsembleRunnerBase(_EnsembleRunnerBase):
             train_df_list.append(oof_raw_pred)
             test_df_list.append(raw_pred)
 
-        if set([len(df) for df in train_df_list]) > 1:
+        if len(set([len(df) for df in train_df_list])) > 1:
             raise Exception(f"Ensemble seeds have different length: {[len(df) for df in train_df_list]}")
         train_df = pd.concat(train_df_list, axis=1)
         test_df = pd.concat(test_df_list, axis=1)

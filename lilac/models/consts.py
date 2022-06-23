@@ -15,6 +15,7 @@ reg_alpha = 0
 reg_lambda = 1
 subsample = 0.9
 min_child_weight = 1.0
+min_child_samples = 20
 
 
 # catb

@@ -51,6 +51,7 @@ class BasicSeedJob:
         reg_lambda=consts.reg_alpha,
         subsample=consts.subsample,
         min_child_weight=consts.min_child_weight,
+        min_child_samples= consts.min_child_samples,
         n_estimators=consts.n_estimators,
         depth=consts.depth,
         seed=consts.seed,
@@ -99,6 +100,7 @@ class BasicSeedJob:
                 "reg_lambda": reg_lambda,
                 "subsample": subsample,
                 "min_child_weight": min_child_weight,
+                "min_child_samples": min_child_samples,
                 # catb
                 "learning_rate": learning_rate,
                 "random_strength": random_strength,

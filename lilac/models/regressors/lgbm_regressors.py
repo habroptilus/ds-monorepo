@@ -29,6 +29,7 @@ class LgbmRegressor(RegressorBase):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         super().__init__(target_col)
         lgbm_params = {
@@ -38,11 +39,11 @@ class LgbmRegressor(RegressorBase):
             "subsample": subsample,
             "min_child_weight": min_child_weight,
             "random_state": seed,
-            "n_estimators": n_estimators,
             "max_depth": depth,
             "learning_rate": learning_rate,
+            "min_child_samples": min_child_samples,
         }
-        self.model = base_model(verbose_eval, early_stopping_rounds, lgbm_params)
+        self.model = base_model(verbose_eval, early_stopping_rounds, n_estimators, lgbm_params)
 
     def fit(self, train_df, valid_df):
         train_x, train_y = self.split_df2xy(train_df)
@@ -81,6 +82,7 @@ class LgbmRmsleRegressor(RegressorBase):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         super().__init__(
             target_col=target_col,
@@ -96,6 +98,7 @@ class LgbmRmsleRegressor(RegressorBase):
             depth=depth,
             seed=seed,
             learning_rate=learning_rate,
+            min_child_samples=min_child_samples,
         )
 
 
@@ -116,6 +119,7 @@ class LgbmRmseRegressor(LgbmRegressor):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         super().__init__(
             target_col=target_col,
@@ -131,6 +135,7 @@ class LgbmRmseRegressor(LgbmRegressor):
             depth=depth,
             seed=seed,
             learning_rate=learning_rate,
+            min_child_samples=min_child_samples,
         )
 
 
@@ -151,6 +156,7 @@ class LgbmMaeRegressor(LgbmRegressor):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         super().__init__(
             target_col=target_col,
@@ -166,6 +172,7 @@ class LgbmMaeRegressor(LgbmRegressor):
             depth=depth,
             seed=seed,
             learning_rate=learning_rate,
+            min_child_samples=min_child_samples,
         )
 
 
@@ -190,6 +197,7 @@ class LgbmFairRegressor(LgbmRegressor):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         super().__init__(
             target_col=target_col,
@@ -205,6 +213,7 @@ class LgbmFairRegressor(LgbmRegressor):
             depth=depth,
             seed=seed,
             learning_rate=learning_rate,
+            min_child_samples=min_child_samples,
         )
 
 
@@ -226,6 +235,7 @@ class LgbmDiffMaeRegressor(DiffRegressorBase):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         model = LgbmMaeRegressor(
             target_col=target_col,
@@ -240,6 +250,7 @@ class LgbmDiffMaeRegressor(DiffRegressorBase):
             depth=depth,
             seed=seed,
             learning_rate=learning_rate,
+            min_child_samples=min_child_samples,
         )
         super().__init__(target_col=target_col, base_col=base_col, model=model)
 
@@ -266,6 +277,7 @@ class LgbmDiffRmseRegressor(DiffRegressorBase):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         model = LgbmRmseRegressor(
             target_col=target_col,
@@ -280,6 +292,7 @@ class LgbmDiffRmseRegressor(DiffRegressorBase):
             depth=depth,
             seed=seed,
             learning_rate=learning_rate,
+            min_child_samples=min_child_samples,
         )
         super().__init__(target_col=target_col, base_col=base_col, model=model)
 
@@ -305,6 +318,7 @@ class LgbmXentropyRegressor(XentropyRegressorBase):
         depth=consts.depth,
         seed=consts.seed,
         learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
     ):
         super().__init__(
             target_col=target_col,
@@ -321,5 +335,6 @@ class LgbmXentropyRegressor(XentropyRegressorBase):
                 depth=depth,
                 seed=seed,
                 learning_rate=learning_rate,
+                min_child_samples=min_child_samples,
             ),
         )

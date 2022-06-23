@@ -9,6 +9,7 @@ class XentropyRegressorBase(RegressorBase):
     def __init__(self, target_col, model):
         super().__init__(target_col)
         if issubclass(model.__class__, BinaryClassifierBase):
+            # TODO 本当はXentropyで学習するモデルに限定しないといけない
             ValueError(
                 f"XentropyRegressorBase allows only models that implemented BinaryClassifierBase. {model.__class__}"
             )
