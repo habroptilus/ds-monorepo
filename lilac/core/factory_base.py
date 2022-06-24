@@ -17,7 +17,7 @@ class FactoryBase(metaclass=ABCMeta):
     継承して利用する場合は__init__をオーバーライドするだけ.
     """
 
-    def __init__(self, str2model, register_from, extra_class_names=None, shared_params=None, allow_extra_params=True):
+    def __init__(self, str2model, register_from, extra_class_names=None, shared_params=None):
         """str2modelを引数にすることを強制する.
 
         :params
@@ -27,7 +27,6 @@ class FactoryBase(metaclass=ABCMeta):
         """
         self.str2model = str2model
         self.shared_params = {} if shared_params is None else shared_params
-        self.allow_extra_params = allow_extra_params
         if register_from:
             self.register_models_from_src(register_from, extra_class_names)
 
@@ -92,19 +91,19 @@ class FactoryBase(metaclass=ABCMeta):
         shared.update(params)
         return shared
 
-    def run(self, model_str, params=None):
+    def run(self, model_str, params=None, allow_extra_params=True):
         """モデルフラグを受け取り、必要な引数を取り出してモデルに与えてインスタンスを作成して返す."""
         params = {} if params is None else params
         Model = self.get_model(model_str)
         required_params_names = self.get_required_params_list(Model)
         all_params = self.update_shared_params(params)
-        required_params = self.extract_required_params(required_params_names, all_params)
+        required_params = self.extract_required_params(required_params_names, all_params, allow_extra_params)
         return Model(**required_params)
 
-    def extract_required_params(self, required_params_names, all_params):
+    def extract_required_params(self, required_params_names, all_params, allow_extra_params):
         """必要な引数を取り出す. 必要な引数が与えられていない場合にWARNINGを出す."""
         required_params = {}
-        if not self.allow_extra_params:
+        if not allow_extra_params:
             extra_params = set(all_params.keys()) - set(required_params_names)
             if len(extra_params) > 0:
                 raise Exception(f"There are extra params: {extra_params}")

@@ -125,7 +125,9 @@ class ExperimentDirector:
                 # これで不要なパラメータが入っていても取り除いてくれる
                 # Factory経由にしないと不要なパラメータが入っていたらエラーになる
                 print(f"Generating output by running job '{name}'...")
-                basic_seed_job = self.job_factory.run(model_str="basic_seed", params=job_settings["params"])
+                basic_seed_job = self.job_factory.run(
+                    model_str="basic_seed", params=job_settings["params"], allow_extra_params=False
+                )
                 output = basic_seed_job.run()
             output_dict[name] = output
         return output_dict

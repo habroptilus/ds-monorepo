@@ -1,11 +1,15 @@
 # House price
 
 やること
-* xentropyのやつのバグ調査
-* seed averaging
-* catbのdiff
+
+
 * logとったののdiff2段階試す
-* v3をdepth=8でもう一度試す
+  * district,city,nearest_staがあるがとりあえずdistrictから
+* min_child_samplesを大きくするのをさらに検証
+  * 200と2000の間？
+* seed averaging
+* catbのdiff (時間かかるしコスパ悪いか)
+
 
 ## eda
 * 排反なカテゴリはorderedだけ
@@ -35,8 +39,11 @@
 * seed average (seedによるブレがあるのをなくすことに貢献していそう. 改善はしてない？)
 * logとって集約(特に分布が正規分布に近づくものは有効？)
   * オリジナルの集約もどちらも改善に効いている
-* diffモデル(targetをprice_log-area_logに変更したもの) は精度変わらず
-
+* diffモデル(targetをprice_log-area_logに変更したもの)
+  * 特にアンサンブルで改善
+* min_child_samplesを大きくする
+  * 20->200で改善
+  * 200->2000は悪化
 
 
 改善しなかったもの：
@@ -54,6 +61,9 @@
 * diff ratioをもう一段集約する (悪化はしていない。importanceみても下位)
 * v4のdistrict-built_yearのtarget encode
 * v6
+* 正規化してxentropyでtrainする(アンサンブルにはワンチャン使えるかも)
+  * 平均アンサンブルでは改善しなかった
+* v7(v3と同じ)はやっぱり悪化
 
 
 
@@ -63,8 +73,9 @@
 
 * [ ] catboostのdiff
 * [ ] logとったものでもう一度diffratioの2段集約
-* [ ] 正規化してxentropyでtrainする
+* [x] 正規化してxentropyでtrainする
 * [ ] seed averaging
+* [ ] min_child_samplesを大きくする
 * [x] trainの重複を削除する
 * [x] 集約に用いたnearest_min,areaをlogに変換してから集約する
   * 正規分布っぽくなるからよいかも？
