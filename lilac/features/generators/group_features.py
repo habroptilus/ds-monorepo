@@ -123,7 +123,7 @@ class _GroupFeatures(FeaturesBase):
         added_df = pd.DataFrame()
 
         agg_col = f"agg_{self.agg_func}_{self.input_col}_grpby_{self.group_key}"
-        added_df[f"{agg_col}_ratio"] = data[self.input_col].values / data[agg_col].values
+        added_df[f"{agg_col}_ratio"] = data[self.input_col].values / (data[agg_col].values + 1e-9)
         result_cols.append(f"{agg_col}_ratio")
         data = pd.concat([data, added_df], axis=1)
         return data, result_cols
