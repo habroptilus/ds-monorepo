@@ -3,7 +3,7 @@
 early_stopping_rounds = 100
 depth = 5
 learning_rate = 0.1
-n_estimators = 30000
+n_estimators = 40000
 seed = None
 class_weight = None  # "balanced"
 

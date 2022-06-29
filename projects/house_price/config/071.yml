@@ -1,5 +1,5 @@
 meta:
-  title: 55+diff_group
+  title: 59のcat_ldaをcity->district
 
 shared:
   train_path: projects/house_price/data/train_v5.csv
@@ -45,7 +45,7 @@ shared:
       - age_log
   - model_str: cat_lda
     params:
-      main_col: city
+      main_col: district
       sub_col: layout
       num_topics: 5
   - model_str: diff_group

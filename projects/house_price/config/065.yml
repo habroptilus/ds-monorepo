@@ -1,5 +1,5 @@
 meta:
-  title: 55+diff_group
+  title: 64にxentropyも混ぜる
 
 shared:
   train_path: projects/house_price/data/train_v5.csv
@@ -8,12 +8,12 @@ shared:
   # register_from: projects.house_price.custom.feature_generators
   target_col: price_log
   base_col: area_log
-  seed: 42
+  #seed: 42
   depth: 8
   min_child_samples: 200
   folds_gen_str: group
   group_key_col: ordered
-  model_str: lgbm_diff_mae
+  #model_str: lgbm_diff_mae
   evaluator_str: mae
   unused_cols: 
   - id 
@@ -56,13 +56,35 @@ shared:
       - area_log
       - nearest_min_log
 jobs:
-- params: 
-    seed: 42
+- name: lgbm_diff_mae_43
+  ref: 
+    src: 063.json
+    job: lgbm_mae_43
+
+- name: lgbm_mae_43
+  ref: 
+    src: 063.json
+    job: lgbm_mae_43
 
 
-#stacking:
-#  shared:
-#    "use_original_cols": False
-#  stacking_settings:
-#  - 
-#    - avg_mae
+- name: lgbm_mae
+  ref: 
+    src: 063.json
+    job: lgbm_mae
+
+- name: lgbm_diff_mae
+  ref: 
+    src: 063.json
+    job: lgbm_diff_mae
+
+- name: xentropy
+  ref: 
+    src: 052.json
+
+
+stacking:
+  shared:
+    "use_original_cols": False
+  stacking_settings:
+  - 
+    - lgbm_mae

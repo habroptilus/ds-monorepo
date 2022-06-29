@@ -1,15 +1,5 @@
 # House price
 
-やること
-
-
-* logとったののdiff2段階試す
-  * district,city,nearest_staがあるがとりあえずdistrictから
-* min_child_samplesを大きくするのをさらに検証
-  * 200と2000の間？
-* seed averaging
-* catbのdiff (時間かかるしコスパ悪いか)
-
 
 ## eda
 * 排反なカテゴリはorderedだけ
@@ -24,8 +14,7 @@
   * わかった、13210行の方はnullのものも含んでいる.
   * 三つはnullもなくて重複している
     * dup_id_list=["id_40088089", "id_40088088", "id_23116490", "id_23116486", "id_12027757","id_12027758"]
-* 上の13210行とは別でprice_logまで重複しているのは7911行。v5で削除した
-  
+* 上の13210行とは別でprice_logまで重複しているのは7911行。v5で削除した  
 ## 効いたもの/効かなかったもの
 効いたもの：
 * nearest_staのtarget_encode
@@ -44,6 +33,9 @@
 * min_child_samplesを大きくする
   * 20->200で改善
   * 200->2000は悪化
+* diff ratioをもう一段集約 -> 微改善
+* colsample_bytreeを1->0.7で微微改善
+  * 誤差レベルな気もする
 
 
 改善しなかったもの：
@@ -58,7 +50,6 @@
 * 延べ床面積、部屋数、一部屋あたりの面積、何回立てかを入れたv3 (悪化する...)
   * total_floor_areaだけ上位に来ていて、それが悪さしている？
   * 目的変数と散布図を書くと予測に効きやすそうな感じしているけどな。。。なぜ？
-* diff ratioをもう一段集約する (悪化はしていない。importanceみても下位)
 * v4のdistrict-built_yearのtarget encode
 * v6
 * 正規化してxentropyでtrainする(アンサンブルにはワンチャン使えるかも)
@@ -71,17 +62,17 @@
 
 ## アイデア
 
-* [ ] catboostのdiff
-* [ ] logとったものでもう一度diffratioの2段集約
+* [x] catboostのdiff
+* [x] logとったものでもう一度diffratioの2段集約
 * [x] 正規化してxentropyでtrainする
-* [ ] seed averaging
-* [ ] min_child_samplesを大きくする
+* [x] seed averaging
+* [x] min_child_samplesを大きくする
 * [x] trainの重複を削除する
 * [x] 集約に用いたnearest_min,areaをlogに変換してから集約する
   * 正規分布っぽくなるからよいかも？
 * [x] 集約をnearest_min, age,試す
 * [x] v4のdistrict-built_yearのtarget encode
-* [ ] RMSEとMAEのアンサンブル
+* [x] RMSEとMAEのアンサンブル
 * [x] cityを市と区にわける
 * [x] build yearを西暦に変える
 * [x] 築何年を計算する
@@ -111,6 +102,7 @@
 
 * total_floor_areaとかは効きそうな散布図をしているが悪化するのはなぜ
 * diff_groupでメモリが足りずにkilledになってしまう
+* catb diff回すと固まる
 
 ## 参考
 

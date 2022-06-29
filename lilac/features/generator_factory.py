@@ -8,6 +8,7 @@ from lilac.features.generators.decomposer_features import DecompositionFeatures,
 from lilac.features.generators.extra_table import ExtraTableJoin
 from lilac.features.generators.group_features import GroupFeatures, MeanDiffRatioGroupFeatures
 from lilac.features.generators.lag_features import LagFeatures
+from lilac.features.generators.rowwise_features import NullColumnsNum
 from lilac.features.generators.scaling_features import StandardScalingFeatures
 from lilac.features.generators.sentence_vectorizer import (
     BertVectorizer,
@@ -38,6 +39,7 @@ class FeatureGeneratorsFactory(FactoryBase):
             "cat_combi": CategoryCombination,
             "num_combi": NumericCombination,
             "cat_lda": CategoriesLdaVectorizer,
+            "null_cols": NullColumnsNum,
         }
         shared_params = {"features_dir": features_dir}
         super().__init__(

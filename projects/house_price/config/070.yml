@@ -1,5 +1,5 @@
 meta:
-  title: 55+diff_group
+  title: 59のmin_child_samplesを500に
 
 shared:
   train_path: projects/house_price/data/train_v5.csv
@@ -10,7 +10,7 @@ shared:
   base_col: area_log
   seed: 42
   depth: 8
-  min_child_samples: 200
+  min_child_samples: 500
   folds_gen_str: group
   group_key_col: ordered
   model_str: lgbm_diff_mae

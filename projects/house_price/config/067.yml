@@ -1,5 +1,5 @@
 meta:
-  title: 55+diff_group
+  title: 59のcolsample_bytree=0.7版
 
 shared:
   train_path: projects/house_price/data/train_v5.csv
@@ -14,6 +14,7 @@ shared:
   folds_gen_str: group
   group_key_col: ordered
   model_str: lgbm_diff_mae
+  colsample_bytree: 0.7
   evaluator_str: mae
   unused_cols: 
   - id 

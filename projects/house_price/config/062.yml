@@ -1,5 +1,5 @@
 meta:
-  title: 55+diff_group
+  title: 59とそのlgbm_mae版を学習して平均アンサンブル
 
 shared:
   train_path: projects/house_price/data/train_v5.csv
@@ -56,13 +56,17 @@ shared:
       - area_log
       - nearest_min_log
 jobs:
-- params: 
-    seed: 42
+- name: lgbm_mae
+  params: 
+    model_str: lgbm_mae
 
+- name: lgbm_diff_mae
+  ref: 
+    src: 059.json
 
-#stacking:
-#  shared:
-#    "use_original_cols": False
-#  stacking_settings:
-#  - 
-#    - avg_mae
+stacking:
+  shared:
+    "use_original_cols": False
+  stacking_settings:
+  - 
+    - avg_mae

@@ -95,7 +95,7 @@ class FeaturesBase(_FeaturesBase):
 
     def _generate(self, train, test):
         # generatorのfitはtrain+testで行うことにする.
-        # testのtarget_colはNoneが入るはず
+        # trainのtarget_colは既に削除されている
         self.fit(pd.concat([test, train]).reset_index(drop=True))
         res_train = self.transform(train)
         res_test = self.transform(test)
