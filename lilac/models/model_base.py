@@ -28,6 +28,12 @@ class ModelBase:
     def get_additional(self):
         return
 
+    def save(self):
+        raise Exception("Implement please.")
+
+    def load(self):
+        raise Exception("Implement please.")
+
 
 class RegressorBase(ModelBase):
     """回帰モデルのベース."""

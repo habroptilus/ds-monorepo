@@ -14,15 +14,19 @@ class JobsConfigResolver:
     refもparamsもないとwarningが出る.
     """
 
-    def run(self, config):
+    def run(self, config, model_dir):
         config = config.copy()
         shared = config.get("shared", {})
         jobs = config.get("jobs")
         if len(jobs) == 0:
             raise Exception("'jobs' key should be a list that has one job at least.")
         config_dict = {}
+        names = set()
         for i, job in enumerate(jobs):
             name = job.get("name", f"job{i+1}")
+            if name in names:
+                raise Exception(f"Duplicated job name found:'{name}'.")
+            names.add(name)
             config_dict[name] = {}
             ref = job.get("ref")
             if ref is not None:
@@ -36,6 +40,10 @@ class JobsConfigResolver:
                 print(f"[WARNING] In Job '{name}', neither params nor ref are set. Are you sure?")
             else:
                 copied_shared.update(params)
+
+            if model_dir:
+                # model_dirが設定されているときはjobごとに違うmodel_dirを設定する.
+                copied_shared["model_dir"] = f"{model_dir}/{name}"
             config_dict[name]["params"] = copied_shared
         return config_dict
 
@@ -52,7 +60,6 @@ class StackingConfigResolver:
 
         stacking_shared = stacking.pop("shared", {})
         shared.update(stacking_shared)
-        shared
         stacking_settings = stacking.get("stacking_settings")
         if stacking_settings is None:
             raise Exception("'stacking_settings' key was Not found in 'stacking'.")
@@ -66,8 +73,12 @@ class ExperimentDirector:
         self.output_path = Path(output_path)
         self.job_factory = JobFactory()
 
-    def run(self, config):
-        jobs_config = JobsConfigResolver().run(config)
+    def run(self, config, model_dir):
+        """
+        config: yamlを読み込んだ物.dict形式
+        model_dir: save_model=Trueの時はmodelディレクトリ、FalseのときはNone
+        """
+        jobs_config = JobsConfigResolver().run(config, model_dir)
         stacking_config = StackingConfigResolver().run(config)
 
         result = {}

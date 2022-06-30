@@ -23,6 +23,7 @@ class ModelingBlock:
         log_target_on_target_enc=False,
         target_enc_cols=None,
         seed=None,
+        model_dir=None,
     ):
         folds_generator = FoldsGeneratorFactory().run(**folds_gen_factory_settings)
         trainer = TrainerFactory().run(**trainer_factory_settings)
@@ -41,6 +42,7 @@ class ModelingBlock:
             target_enc_cols=target_enc_cols,
             seed=seed,
             log_target_on_target_enc=log_target_on_target_enc,
+            model_dir=model_dir,
         )
 
     def run(self, train, test):
@@ -92,6 +94,7 @@ class BlocksRunner:
         unused_cols=None,
         target_enc_cols=None,
         seed=None,
+        model_dir=None,
     ):
         self.datagen_block = DatagenBlock(
             target_col, features_dir, register_from, extra_class_names, features_settings
@@ -106,6 +109,7 @@ class BlocksRunner:
             log_target_on_target_enc=log_target_on_target_enc,
             target_enc_cols=target_enc_cols,
             seed=seed,
+            model_dir=model_dir,
         )
 
     def run(self, train, test):

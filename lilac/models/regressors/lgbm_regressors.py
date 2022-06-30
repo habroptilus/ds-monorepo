@@ -64,8 +64,14 @@ class LgbmRegressor(RegressorBase):
     def get_additional(self):
         return {"importance": self.model.get_importance()}
 
+    def save(self, filepath):
+        self.model.save(filepath)
 
-class LgbmRmsleRegressor(RegressorBase):
+    def load(self, filepath):
+        self.model.load(filepath)
+
+
+class LgbmRmsleRegressor(LgbmRegressor):
     """目的関数がRMSLEのlgbm回帰モデル."""
 
     def __init__(
@@ -217,13 +223,14 @@ class LgbmFairRegressor(LgbmRegressor):
         )
 
 
-class LgbmDiffMaeRegressor(DiffRegressorBase):
-    """target_col-base_colに対してMAEで最適化するLGBMモデル."""
+class LgbmDiffRegressor(DiffRegressorBase):
+    """target_col-base_colに対して最適化するLGBMモデル."""
 
     def __init__(
         self,
         target_col,
         base_col,
+        base_model,
         verbose_eval=consts.verbose_eval,
         early_stopping_rounds=consts.early_stopping_rounds,
         colsample_bytree=consts.colsample_bytree,
@@ -237,7 +244,7 @@ class LgbmDiffMaeRegressor(DiffRegressorBase):
         learning_rate=consts.learning_rate,
         min_child_samples=consts.min_child_samples,
     ):
-        model = LgbmMaeRegressor(
+        model = base_model(
             target_col=target_col,
             verbose_eval=verbose_eval,
             early_stopping_rounds=early_stopping_rounds,
@@ -261,8 +268,53 @@ class LgbmDiffMaeRegressor(DiffRegressorBase):
     def get_additional(self):
         return {"importance": self.model.get_importance()}
 
+    def save(self, filepath):
+        self.model.save(filepath)
 
-class LgbmDiffRmseRegressor(DiffRegressorBase):
+    def load(self, filepath):
+        self.model.load(filepath)
+
+
+class LgbmDiffMaeRegressor(LgbmDiffRegressor):
+    """target_col-base_colに対してMAEで最適化するLGBMモデル."""
+
+    def __init__(
+        self,
+        target_col,
+        base_col,
+        verbose_eval=consts.verbose_eval,
+        early_stopping_rounds=consts.early_stopping_rounds,
+        colsample_bytree=consts.colsample_bytree,
+        reg_alpha=consts.reg_alpha,
+        reg_lambda=consts.reg_lambda,
+        subsample=consts.subsample,
+        min_child_weight=consts.min_child_weight,
+        n_estimators=consts.n_estimators,
+        depth=consts.depth,
+        seed=consts.seed,
+        learning_rate=consts.learning_rate,
+        min_child_samples=consts.min_child_samples,
+    ):
+        super().__init__(
+            target_col=target_col,
+            base_col=base_col,
+            base_model=LgbmMaeRegressor,
+            verbose_eval=verbose_eval,
+            early_stopping_rounds=early_stopping_rounds,
+            colsample_bytree=colsample_bytree,
+            reg_alpha=reg_alpha,
+            reg_lambda=reg_lambda,
+            subsample=subsample,
+            min_child_weight=min_child_weight,
+            n_estimators=n_estimators,
+            depth=depth,
+            seed=seed,
+            learning_rate=learning_rate,
+            min_child_samples=min_child_samples,
+        )
+
+
+class LgbmDiffRmseRegressor(LgbmDiffRegressor):
     """target_col-base_colに対してRMSEで最適化するLGBMモデル."""
 
     def __init__(
@@ -282,8 +334,10 @@ class LgbmDiffRmseRegressor(DiffRegressorBase):
         learning_rate=consts.learning_rate,
         min_child_samples=consts.min_child_samples,
     ):
-        model = LgbmRmseRegressor(
+        super().__init__(
             target_col=target_col,
+            base_col=base_col,
+            base_model=LgbmRmseRegressor,
             verbose_eval=verbose_eval,
             early_stopping_rounds=early_stopping_rounds,
             colsample_bytree=colsample_bytree,
@@ -297,11 +351,6 @@ class LgbmDiffRmseRegressor(DiffRegressorBase):
             learning_rate=learning_rate,
             min_child_samples=min_child_samples,
         )
-        super().__init__(target_col=target_col, base_col=base_col, model=model)
-
-    def get_importance(self):
-        """lgbmのみ追加で実装している."""
-        return self.model.get_importance()
 
 
 class LgbmXentropyRegressor(XentropyRegressorBase):
@@ -348,3 +397,9 @@ class LgbmXentropyRegressor(XentropyRegressorBase):
 
     def get_additional(self):
         return {"importance": self.model.get_importance()}
+
+    def save(self, filepath):
+        self.model.save(filepath)
+
+    def load(self, filepath):
+        self.model.load(filepath)

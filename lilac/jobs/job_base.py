@@ -51,7 +51,7 @@ class BasicSeedJob:
         reg_lambda=consts.reg_alpha,
         subsample=consts.subsample,
         min_child_weight=consts.min_child_weight,
-        min_child_samples= consts.min_child_samples,
+        min_child_samples=consts.min_child_samples,
         n_estimators=consts.n_estimators,
         depth=consts.depth,
         seed=consts.seed,
@@ -64,8 +64,8 @@ class BasicSeedJob:
         base_col=None,
         log_target_on_target_enc=False,
         target_enc_cols=None,
+        model_dir=None,
     ):
-
         features_settings = [] if features_settings is None else features_settings
         unused_cols = [] if unused_cols is None else unused_cols
 
@@ -128,6 +128,7 @@ class BasicSeedJob:
             log_target_on_target_enc=log_target_on_target_enc,
             target_enc_cols=target_enc_cols,
             seed=seed,
+            model_dir=model_dir,
         )
 
         self.train_path = train_path

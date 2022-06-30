@@ -6,15 +6,25 @@ import fire
 import pandas as pd
 import yaml
 
-from lilac.core.utils import plot_feature_importance
 
-
-def run(project_name, filename, data_dir="data", input_dir="config", output_dir="output"):
+def run(
+    project_name,
+    filename,
+    data_dir="data",
+    input_dir="config",
+    output_dir="output",
+    model_dir="models",
+    save_model=False,
+):
     """runコマンドの実装.
 
     :project_name: プロジェクト名
     :filepath: プロジェクト以下のyamlファイルパス
-    :output_path:
+    :input_dir: 実験設定ファイルyaml置き場
+    :data_dir: 生成物置き場。outputやmodel,featuresが出力されるところ
+    :output_dir: json出力先ディレクトリ
+    :model_dir: model出力先ディレクトリ
+    :save_model: modelを保存するか.
     """
     from lilac.director.experiment_director import ExperimentDirector
 
@@ -23,8 +33,9 @@ def run(project_name, filename, data_dir="data", input_dir="config", output_dir=
 
     with config_path.open("r") as yml:
         experiment_config = yaml.safe_load(yml)
+    model_dir = f"projects/{project_name}/{data_dir}/{model_dir}" if save_model else None
 
-    ExperimentDirector(output_path=output_path).run(experiment_config)
+    ExperimentDirector(output_path=output_path).run(experiment_config, model_dir)
 
 
 def result_list(project_name, num=5, data_dir="data", output_dir="output"):
@@ -57,6 +68,8 @@ def result_detail(project_name, experiment_id, data_dir="data", output_dir="outp
 
 
 def plot_importance(project_name, experiment_id, job_name="job1", data_dir="data", output_dir="output", num=20):
+    from lilac.core.utils import plot_feature_importance
+
     output_path = f"projects/{project_name}/{data_dir}/{output_dir}/{experiment_id}.json"
     p = Path(output_path)
     with p.open("r") as f:

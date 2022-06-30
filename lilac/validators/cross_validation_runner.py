@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 
 from lilac.core.data import Predictions
@@ -26,6 +28,7 @@ class CrossValidationRunner:
         target_enc_cols=None,
         seed=None,
         log_target_on_target_enc=False,
+        model_dir=None,
     ):
         self.pred_oof = pred_oof
         self.target_col = target_col
@@ -38,6 +41,7 @@ class CrossValidationRunner:
         self.target_enc_cols = target_enc_cols or []
         self.seed = seed
         self.log_target_on_target_enc = log_target_on_target_enc
+        self.model_dir = Path(model_dir) if model_dir is not None else None
 
     def run(self, df):
         self.models = []
@@ -46,13 +50,16 @@ class CrossValidationRunner:
             pred_valid_df["oof_pred"] = None
             pred_valid_df["oof_raw_pred"] = None
 
+        if self.model_dir:
+            self.model_dir.mkdir(parents=True, exist_ok=True)
+
         folds = self.folds_generator.run(df)
         df = df.drop(self.unused_cols, axis=1)
         print(f"Data: {len(df)}")
         self.encoders = []
         additionals = []
-        for i, (tdx, vdx) in enumerate(folds):
-            print(f"Fold : {i+1}")
+        for fold, (tdx, vdx) in enumerate(folds):
+            print(f"Fold : {fold+1}")
             # split
             train, valid = df.iloc[tdx].reset_index(drop=True), df.iloc[vdx].reset_index(drop=True)
 
@@ -87,6 +94,10 @@ class CrossValidationRunner:
                     pred_valid_df.loc[vdx, "oof_raw_pred"] = valid_raw_pred
                 else:
                     raise Exception(f"Invalid model class {model.__class__}")
+
+            # save model
+            if self.model_dir:
+                model.save(filepath=f"{self.model_dir}/fold{fold+1}.model")
 
         if pred_valid_df["oof_pred"].isnull().sum() > 0:
             raise Exception(pred_valid_df["oof_pred"].isnull().sum())

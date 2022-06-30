@@ -1,3 +1,5 @@
+import pickle
+
 import lightgbm as lgb
 import numpy as np
 import pandas as pd
@@ -16,6 +18,7 @@ class LgbmBase:
         self.early_stopping_rounds = early_stopping_rounds
         self.num_boost_round = n_estimators
         self.encoder = OrdinalEncoder()
+        self.model = None
 
     def fit(self, train_x, train_y, valid_x, valid_y):
         self.object_cols = train_x.select_dtypes(include=[object]).columns
@@ -52,6 +55,16 @@ class LgbmBase:
 
     def return_flag(self):
         return "lgbm_" + "_".join([str(v) for v in self.lgbm_params.values()])
+
+    def save(self, filepath):
+        if self.model is None:
+            raise Exception("Saving model before training cannot be done. Please train model first.")
+        pickle.dump(self.model, open(filepath, "wb"))
+
+    def load(self, filepath):
+        if self.model:
+            raise Exception("Trained model already exists.")
+        self.model = pickle.load(open(filepath, "rb"))
 
 
 class LgbmClassifierBase(LgbmBase):
