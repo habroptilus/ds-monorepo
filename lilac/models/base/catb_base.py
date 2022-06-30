@@ -2,7 +2,7 @@ import numpy as np
 from catboost import CatBoostClassifier, CatBoostRegressor, Pool
 
 
-class _CatbBase:
+class CatbBase:
     """CatBoostの基底クラス."""
 
     def __init__(self, loss_function, early_stopping_rounds, catb_params):
@@ -44,7 +44,7 @@ class _CatbBase:
         raise Exception("Implement please.")
 
 
-class _CatbRegressor(_CatbBase):
+class CatbRegressorBase(CatbBase):
     """CatBoostの回帰モデル."""
 
     def predict(self, test):
@@ -59,7 +59,7 @@ class _CatbRegressor(_CatbBase):
         return CatBoostRegressor(**self.catb_params)
 
 
-class _CatbClassifier(_CatbBase):
+class CatbClassifierBase(CatbBase):
     def __init__(self, loss_function, early_stopping_rounds, catb_params, class_weight):
         self.class_weight = class_weight
         super().__init__(loss_function, early_stopping_rounds, catb_params)
@@ -103,7 +103,7 @@ class _CatbClassifier(_CatbBase):
         return f"{super().return_flag()}_{self.class_weight}"
 
 
-class _CatbBinaryClassfier(_CatbClassifier):
+class CatbBinaryClassfierBase(CatbClassifierBase):
     """CatBoostの2クラス分類モデル."""
 
     def __init__(self, early_stopping_rounds, catb_params, class_weight):
@@ -113,7 +113,7 @@ class _CatbBinaryClassfier(_CatbClassifier):
         return f"{super().return_flag()}_bin"
 
 
-class _CatbMultiClassfier(_CatbClassifier):
+class CatbMultiClassfierBase(CatbClassifierBase):
     """CatBoostの多クラス分類モデル."""
 
     def __init__(self, early_stopping_rounds, catb_params, class_weight):
@@ -123,11 +123,25 @@ class _CatbMultiClassfier(_CatbClassifier):
         return f"{super().return_flag()}_multi"
 
 
-class _CatbRmsleRegressor(_CatbRegressor):
-    """CatboostのRMSLEで最適化する回帰モデル."""
+class CatbRmseRegressorBase(CatbRegressorBase):
+    """CatboostのRMSEで最適化する回帰モデル."""
 
     def __init__(self, early_stopping_rounds, catb_params):
         super().__init__("RMSE", early_stopping_rounds, catb_params)
+
+
+class CatbMaeRegressorBase(CatbRegressorBase):
+    """CatboostのRMSEで最適化する回帰モデル."""
+
+    def __init__(self, early_stopping_rounds, catb_params):
+        super().__init__("MAE", early_stopping_rounds, catb_params)
+
+
+class CatbRmsleRegressorBase(CatbRmseRegressorBase):
+    """CatboostのRMSLEで最適化する回帰モデル.
+
+    TODO LgbmのRMSLEと共通化する.
+    """
 
     def fit(self, train_x, train_y, valid_x, valid_y):
         # yをlog変換

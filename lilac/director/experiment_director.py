@@ -7,9 +7,11 @@ from lilac.jobs.job_factory import JobFactory
 class JobsConfigResolver:
     """実験設定yamlファイルを解析してSeedJobのパラメータのdictを作成する.
 
-    keyはnameを指定していればname, していなければ自動でjobN(N番目のジョブ)が割り当てられる.
-    valueはsharedを各jobのparamsで置き換えたもの.
-    paramsがないとwarningが出る.
+    各jobに対し、以下のルールで解決する
+    nameキーを取り出す(指定がなければ自動でjobN(N番目のジョブ)が割り当てられる.)
+    refキーがある場合、refキーをnameキーの下にそのままコピーして次のジョブへ
+    refキーがない場合、paramsキーを取り出してsharedをjob固有設定で上書きしてnameキーの下にコピーして次のジョブへ
+    refもparamsもないとwarningが出る.
     """
 
     def run(self, config):
@@ -21,14 +23,20 @@ class JobsConfigResolver:
         config_dict = {}
         for i, job in enumerate(jobs):
             name = job.get("name", f"job{i+1}")
+            config_dict[name] = {}
+            ref = job.get("ref")
+            if ref is not None:
+                config_dict[name]["ref"] = ref
+                continue
 
             copied_shared = shared.copy()
+
             params = job.get("params")
             if params is None:
-                print(f"[WARNING] job '{name}' is using default parameters. Are you sure?")
+                print(f"[WARNING] In Job '{name}', neither params nor ref are set. Are you sure?")
             else:
                 copied_shared.update(params)
-            config_dict[name] = copied_shared
+            config_dict[name]["params"] = copied_shared
         return config_dict
 
 
@@ -55,7 +63,7 @@ class ExperimentDirector:
     """configファイルを読み込んだdictを受け取り実験を行って返す.パスが指定されていたらJsonにdumpする.metaキーがあればそれをoutputにいれる"""
 
     def __init__(self, output_path=None):
-        self.output_path = output_path
+        self.output_path = Path(output_path)
         self.job_factory = JobFactory()
 
     def run(self, config):
@@ -90,13 +98,37 @@ class ExperimentDirector:
         return stacking_job.run(output_dict.values())
 
     def run_seed_jobs(self, jobs_config):
+        """seed jobに対応する結果ファイルを取得する.
+
+        * refがあれば結果ファイルを読み込む
+            * jobに指定があればそのjobを、なければoutputを読み込む.
+        * refがなければparamsを使ってjobを作成しrunして結果を得る.
+        """
         output_dict = {}
-        for name, params in jobs_config.items():
+        for name, job_settings in jobs_config.items():
             print(f"Job '{name}' is running...")
-            # これで不要なパラメータが入っていても取り除いてくれる
-            # Factory経由にしないと不要なパラメータが入っていたらエラーになる
-            basic_seed_job = self.job_factory.run(model_str="basic_seed", params=params)
-            output = basic_seed_job.run()
+            ref = job_settings.get("ref")
+            if ref:
+                src_file = self.output_path.parent / ref["src"]
+                print(f"Loading output from '{src_file}'...")
+                with src_file.open("r") as f:
+                    result = json.load(f)
+                    job_name = ref.get("job")
+                    if job_name is None:
+                        output = result["output"]
+                    else:
+                        output = result["seed_jobs"].get(job_name)
+                        if output is None:
+                            raise Exception(f"Job name '{job_name}' is not found in Experiment '{ref['src']}'.")
+                print(f"CV: {output['score']}")
+            else:
+                # これで不要なパラメータが入っていても取り除いてくれる
+                # Factory経由にしないと不要なパラメータが入っていたらエラーになる
+                print(f"Generating output by running job '{name}'...")
+                basic_seed_job = self.job_factory.run(
+                    model_str="basic_seed", params=job_settings["params"], allow_extra_params=False
+                )
+                output = basic_seed_job.run()
             output_dict[name] = output
         return output_dict
 
@@ -115,5 +147,5 @@ class ExperimentDirector:
             print("[WARNING] There are multiple SeedJobs but No stacking was conducted.")
 
     def dump_result(self, result):
-        with Path(self.output_path).open("w") as f:
+        with self.output_path.open("w") as f:
             json.dump(result, f)

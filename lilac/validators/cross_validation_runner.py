@@ -48,33 +48,37 @@ class CrossValidationRunner:
 
         folds = self.folds_generator.run(df)
         df = df.drop(self.unused_cols, axis=1)
+        print(f"Data: {len(df)}")
         self.encoders = []
+        additionals = []
         for i, (tdx, vdx) in enumerate(folds):
             print(f"Fold : {i+1}")
             # split
             train, valid = df.iloc[tdx].reset_index(drop=True), df.iloc[vdx].reset_index(drop=True)
 
             # Target encoding
-            target_encoder = TargetEncoder(
-                input_cols=self.target_enc_cols,
-                target_col=self.target_col,
-                random_state=self.seed,
-                log_target=self.log_target_on_target_enc,
-            )
-            train_enc = target_encoder.fit_transform(train)
-            valid_enc = target_encoder.transform(valid)
-            self.encoders.append(target_encoder)
+            if self.target_enc_cols:
+                target_encoder = TargetEncoder(
+                    input_cols=self.target_enc_cols,
+                    target_col=self.target_col,
+                    random_state=self.seed,
+                    log_target=self.log_target_on_target_enc,
+                )
+                train = target_encoder.fit_transform(train)
+                valid = target_encoder.transform(valid)
+                self.encoders.append(target_encoder)
 
             # Train
-            model = self.trainer.run(train_enc, valid_enc, self.model_factory, self.model_params)
+            model = self.trainer.run(train, valid, self.model_factory, self.model_params)
             self.models.append(model)
+            additionals.append(model.get_additional())
 
             # predict for valid
             if self.pred_oof:
-                valid_pred = model.predict(valid_enc)
+                valid_pred = model.predict(valid)
                 pred_valid_df.loc[vdx, "oof_pred"] = valid_pred
 
-                valid_raw_pred = model.get_raw_pred(valid_enc)
+                valid_raw_pred = model.get_raw_pred(valid)
                 if issubclass(model.__class__, MultiClassifierBase):
                     pred_valid_df.at[
                         vdx, [f"oof_raw_pred{i}" for i in range(valid_raw_pred.shape[1])]
@@ -84,6 +88,8 @@ class CrossValidationRunner:
                 else:
                     raise Exception(f"Invalid model class {model.__class__}")
 
+        if pred_valid_df["oof_pred"].isnull().sum() > 0:
+            raise Exception(pred_valid_df["oof_pred"].isnull().sum())
         output = {}
         # add oof to output
         if self.pred_oof:
@@ -94,12 +100,16 @@ class CrossValidationRunner:
                 ].values
             elif issubclass(model.__class__, RegressorBase) or issubclass(model.__class__, BinaryClassifierBase):
                 output["oof_raw_pred"] = pred_valid_df["oof_raw_pred"].to_list()
+            else:
+                raise Exception(f"Invalid model class: {model.__class__}")
 
         # add evaluation to output
         predictions = Predictions(pred=output["oof_pred"], raw_pred=output["oof_raw_pred"])
         output["evaluator"] = self.evaluator.return_flag()
+        if df[self.target_col].isnull().sum() > 0:
+            raise Exception(df[self.target_col].isnull().sum())
         output["score"] = self.evaluator.run(df[self.target_col], predictions)
-
+        output["additional"] = additionals
         return output
 
     def raw_output(self, test_df):
@@ -110,10 +120,11 @@ class CrossValidationRunner:
         """
         test_df = test_df.drop(self.unused_cols, axis=1)
 
-        # test_df = self.target_encoder.transform(test_df)
         preds = []
-        for model, encoder in zip(self.models, self.encoders):
-            test_df = encoder.transform(test_df)
+        for i, model in enumerate(self.models):
+            if self.target_enc_cols:
+                encoder = self.encoders[i]
+                test_df = encoder.transform(test_df)
             if issubclass(model.__class__, RegressorBase):
                 pred = model.predict(test_df)
             elif issubclass(model.__class__, BinaryClassifierBase) or issubclass(model.__class__, MultiClassifierBase):

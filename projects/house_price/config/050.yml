@@ -1,0 +1,61 @@
+meta:
+  title: 45のv6
+
+shared:
+  train_path: projects/house_price/data/train_v6.csv
+  test_path: projects/house_price/data/test_v6.csv
+  features_dir: projects/house_price/data/features/v6
+  # register_from: projects.house_price.custom.feature_generators
+  target_col: price_log
+  base_col: area_log
+  seed: 42
+  detph: 8
+  folds_gen_str: group
+  group_key_col: ordered
+  model_str: lgbm_mae
+  evaluator_str: mae
+  unused_cols: 
+  - id 
+  - ordered
+  - built_year # 西暦を使っているから
+  - area # area_logを使っているから 
+  - nearest_min # nearest_min_logを使っているから
+  - age # ageを使っているから
+  target_enc_cols:
+  - nearest_sta
+  - district
+  log_target_on_target_enc: False
+  features_settings:
+  - model_str: group
+    params:
+      group_keys:
+      - city
+      - district
+      - nearest_sta
+      agg_func_list:
+      - mean
+      input_cols:
+      - built_year_seireki
+      - area
+      - nearest_min
+      - age
+      - area_log
+      - nearest_min_log
+      - age_log
+  - model_str: cat_lda
+    params:
+      main_col: city
+      sub_col: layout
+      num_topics: 5
+      
+jobs:
+- params: 
+    seed: 42
+
+
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_mae

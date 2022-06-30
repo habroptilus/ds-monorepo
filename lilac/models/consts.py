@@ -3,21 +3,22 @@
 early_stopping_rounds = 100
 depth = 5
 learning_rate = 0.1
-n_estimators = 10000
+n_estimators = 40000
 seed = None
-class_weight = "balanced"
+class_weight = None  # "balanced"
+
 
 # lgbm
 verbose_eval = 100
-colsample_bytree = 0.8
+colsample_bytree = 1.0
 reg_alpha = 0
-reg_lambda = 0
-subsample = 0.8
+reg_lambda = 1
+subsample = 0.9
 min_child_weight = 1.0
+min_child_samples = 20
 
 
 # catb
-num_leaves = int(2**depth * 0.7)
 random_strength = 1
 bagging_temperature = 0.1
 od_type = "IncToDec"

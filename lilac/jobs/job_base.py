@@ -51,7 +51,7 @@ class BasicSeedJob:
         reg_lambda=consts.reg_alpha,
         subsample=consts.subsample,
         min_child_weight=consts.min_child_weight,
-        num_leaves=consts.num_leaves,
+        min_child_samples= consts.min_child_samples,
         n_estimators=consts.n_estimators,
         depth=consts.depth,
         seed=consts.seed,
@@ -61,6 +61,7 @@ class BasicSeedJob:
         od_type=consts.od_type,
         od_wait=consts.od_wait,
         class_weight=consts.class_weight,
+        base_col=None,
         log_target_on_target_enc=False,
         target_enc_cols=None,
     ):
@@ -99,7 +100,7 @@ class BasicSeedJob:
                 "reg_lambda": reg_lambda,
                 "subsample": subsample,
                 "min_child_weight": min_child_weight,
-                "num_leaves": num_leaves,
+                "min_child_samples": min_child_samples,
                 # catb
                 "learning_rate": learning_rate,
                 "random_strength": random_strength,
@@ -108,6 +109,8 @@ class BasicSeedJob:
                 "od_wait": od_wait,
                 # lgbm and catb's classifier
                 "class_weight": class_weight,
+                # diff model
+                "base_col": base_col,
             },
         }
 

@@ -25,6 +25,9 @@ class ModelBase:
         X = df.drop(self.target_col, axis=1)
         return X, y
 
+    def get_additional(self):
+        return
+
 
 class RegressorBase(ModelBase):
     """回帰モデルのベース."""

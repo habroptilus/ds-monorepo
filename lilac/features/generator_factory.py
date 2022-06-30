@@ -1,12 +1,14 @@
 from lilac.core.factory_base import FactoryBase
+from lilac.features.generators.category_embedding import CategoriesLdaVectorizer, ConcatCategoriesLda
 from lilac.features.generators.category_encoding import CategoryEncoding
 from lilac.features.generators.clustering_features import ClusteringFeatures, StandardizedClustering
+from lilac.features.generators.combination_features import CategoryCombination, NumericCombination
 from lilac.features.generators.datetime_features import DatetimeFeatures
 from lilac.features.generators.decomposer_features import DecompositionFeatures, StandardizedDecomposer
 from lilac.features.generators.extra_table import ExtraTableJoin
-from lilac.features.generators.features_pipeline import FeaturesPipeline
-from lilac.features.generators.group_features import GroupFeatures
+from lilac.features.generators.group_features import GroupFeatures, MeanDiffRatioGroupFeatures
 from lilac.features.generators.lag_features import LagFeatures
+from lilac.features.generators.rowwise_features import NullColumnsNum
 from lilac.features.generators.scaling_features import StandardScalingFeatures
 from lilac.features.generators.sentence_vectorizer import (
     BertVectorizer,
@@ -23,8 +25,8 @@ class FeatureGeneratorsFactory(FactoryBase):
             "category": CategoryEncoding,
             "datetime": DatetimeFeatures,
             "extra_join": ExtraTableJoin,
-            "pipeline": FeaturesPipeline,
             "group": GroupFeatures,
+            "diff_group": MeanDiffRatioGroupFeatures,
             "lag": LagFeatures,
             "std_scale": StandardScalingFeatures,
             "dec": DecompositionFeatures,
@@ -34,6 +36,11 @@ class FeatureGeneratorsFactory(FactoryBase):
             "sv_dec": DecomposedSentenceVectoizer,
             "word_count": WordCountVectorizer,
             "bert": BertVectorizer,
+            "cat_combi": CategoryCombination,
+            "num_combi": NumericCombination,
+            "cat_lda": CategoriesLdaVectorizer,
+            "concat_cat_lda": ConcatCategoriesLda,
+            "null_cols": NullColumnsNum,
         }
         shared_params = {"features_dir": features_dir}
         super().__init__(

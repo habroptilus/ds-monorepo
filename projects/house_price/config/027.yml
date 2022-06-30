@@ -1,0 +1,52 @@
+meta:
+  title: depth=8かつcatb_mae
+
+shared:
+  train_path: projects/house_price/data/train_v2.csv
+  test_path: projects/house_price/data/test_v2.csv
+  features_dir: projects/house_price/data/features
+  # register_from: projects.house_price.custom.feature_generators
+  target_col: price_log
+  seed: 42
+  detph: 8
+  folds_gen_str: group
+  group_key_col: ordered
+  model_str: catb_mae
+  evaluator_str: mae
+  unused_cols: 
+  - id 
+  - ordered
+  - built_year
+  target_enc_cols:
+  - nearest_sta
+  - district
+  log_target_on_target_enc: False
+  features_settings:
+  - model_str: group
+    params:
+      group_keys:
+      - city
+      - district
+      - nearest_sta
+      agg_func_list:
+      - mean
+      input_cols:
+      - built_year_seireki
+      - area
+  - model_str: cat_lda
+    params:
+      main_col: city
+      sub_col: layout
+      num_topics: 5
+  
+jobs:
+- params: 
+    seed: 42
+
+
+#stacking:
+#  shared:
+#    "use_original_cols": False
+#  stacking_settings:
+#  - 
+#    - avg_mae

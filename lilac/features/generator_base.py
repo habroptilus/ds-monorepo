@@ -27,6 +27,9 @@ class _FeaturesBase(metaclass=ABCMeta):
         cls.transform = df_copy(cls.transform)
         return super().__new__(cls)
 
+    def _calc_md5(self, params):
+        return hashlib.md5(json.dumps(params, sort_keys=True).encode("utf-8")).hexdigest()
+
 
 class FeaturesBase(_FeaturesBase):
     """特徴量生成の基底クラス.以下の機能を提供し、実際の特徴量計算は実装クラスで行う.
@@ -46,9 +49,6 @@ class FeaturesBase(_FeaturesBase):
     def calc_md5(self):
         return self._calc_md5(vars(self))
 
-    def _calc_md5(self, params):
-        return hashlib.md5(json.dumps(params, sort_keys=True).encode("utf-8")).hexdigest()
-
     def run(self, train_data, test_data):
         train = train_data.copy()
         test = test_data.copy()
@@ -65,32 +65,37 @@ class FeaturesBase(_FeaturesBase):
         return res_train, res_test
 
     def _save(self, res_train, res_test):
-        if self.features_dir:
-            train_path = self.features_dir / self.return_flag() / "train.ftr"
-            train_path.parent.mkdir(exist_ok=True)
-            res_train.to_feather(train_path)
-            test_path = self.features_dir / self.return_flag() / "test.ftr"
-            res_test.to_feather(test_path)
+        if self.features_dir is None:
+            print("SaveFeatures is not used because features_dir is None.")
+            return
+        train_path = self.features_dir / self.return_flag() / "train.ftr"
+        train_path.parent.mkdir(parents=True, exist_ok=True)
+        res_train.to_feather(train_path)
+        test_path = self.features_dir / self.return_flag() / "test.ftr"
+        res_test.to_feather(test_path)
 
     def _load(self):
         res_train = None
         res_test = None
-        if self.features_dir:
-            train_path = self.features_dir / self.return_flag() / "train.ftr"
-            test_path = self.features_dir / self.return_flag() / "test.ftr"
-            if train_path.exists():
-                # あるなら読み込む
-                print(f"Loading {self.return_flag()} (train)...")
-                res_train = pd.read_feather(train_path)
-            if test_path.exists():
-                print(f"Loading {self.return_flag()} (test)...")
-                res_test = pd.read_feather(test_path)
+        if self.features_dir is None:
+            print("LoadFeatures is not used because features_dir is None.")
+            return res_train, res_test
+
+        train_path = self.features_dir / self.return_flag() / "train.ftr"
+        test_path = self.features_dir / self.return_flag() / "test.ftr"
+        if train_path.exists():
+            # あるなら読み込む
+            print(f"Loading {self.return_flag()} (train)...")
+            res_train = pd.read_feather(train_path)
+        if test_path.exists():
+            print(f"Loading {self.return_flag()} (test)...")
+            res_test = pd.read_feather(test_path)
 
         return res_train, res_test
 
     def _generate(self, train, test):
         # generatorのfitはtrain+testで行うことにする.
-        # testのtarget_colはNoneが入るはず
+        # trainのtarget_colは既に削除されている
         self.fit(pd.concat([test, train]).reset_index(drop=True))
         res_train = self.transform(train)
         res_test = self.transform(test)

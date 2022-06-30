@@ -7,4 +7,4 @@ class JobFactory(FactoryBase):
 
     def __init__(self, register_from=None):
         str2model = {"basic_seed": BasicSeedJob, "stacking": StackingJob}
-        super().__init__(str2model, register_from)
+        super().__init__(str2model=str2model, register_from=register_from)

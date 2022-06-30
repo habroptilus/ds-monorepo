@@ -1,5 +1,6 @@
 from lilac.core.factory_base import FactoryBase
 from lilac.ensemble.runners.classifiers.multi import AveragingMultiEnsemble, LgbmMultiEnsemble, LinearMultiEnsemble
+from lilac.ensemble.runners.regressors.mae import AveragingMaeEnsemble, LgbmMaeEnsemble
 from lilac.ensemble.runners.regressors.rmse import (
     AveragingRmseEnsemble,
     LgbmRmseEnsemble,
@@ -19,16 +20,18 @@ class EnsembleRunnerFactory(FactoryBase):
 
     def __init__(self, register_from=None):
         str2model = {
-            "lgbm_rmsle": LgbmRmsleEnsemble,
-            "linear_rmsle": LinearRmsleEnsemble,
-            "ridge_rmsle": RidgeRmsleEnsemble,
-            "avg_rmsle": AveragingRmsleEnsemble,
-            "lgbm_rmse": LgbmRmseEnsemble,
-            "linear_rmse": LinearRmseEnsemble,
-            "ridge_rmse": RidgeRmseEnsemble,
-            "avg_rmse": AveragingRmseEnsemble,
-            "lgbm_multi": LgbmMultiEnsemble,
             "lr_multi": LinearMultiEnsemble,
+            "lr_rmse": LinearRmseEnsemble,
+            "lr_rmsle": LinearRmsleEnsemble,
+            "lgbm_rmsle": LgbmRmsleEnsemble,
+            "lgbm_rmse": LgbmRmseEnsemble,
+            "lgbm_mae": LgbmMaeEnsemble,
+            "lgbm_multi": LgbmMultiEnsemble,
+            "ridge_rmsle": RidgeRmsleEnsemble,
+            "ridge_rmse": RidgeRmseEnsemble,
+            "avg_rmsle": AveragingRmsleEnsemble,
+            "avg_rmse": AveragingRmseEnsemble,
+            "avg_mae": AveragingMaeEnsemble,
             "avg_multi": AveragingMultiEnsemble,
         }
         super().__init__(str2model, register_from)
