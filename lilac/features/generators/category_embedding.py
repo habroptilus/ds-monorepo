@@ -3,6 +3,20 @@ from gensim.corpora.dictionary import Dictionary
 from gensim.models import LdaModel
 
 from lilac.features.generator_base import FeaturesBase
+from lilac.features.generators.combination_features import CategoryCombination
+from lilac.features.wrappers.features_pipeline import FeaturesPipeline
+
+
+class ConcatCategoriesLda(FeaturesPipeline):
+    """カテゴリを結合してLdaのsub_colに指定する."""
+
+    def __init__(self, num_topics, main_col, sub_cols, output_suffix="_cc", features_dir=None):
+        concatter = CategoryCombination(input_cols=sub_cols, output_suffix=output_suffix, features_dir=features_dir)
+        sub_col = "".join(sub_cols) + output_suffix
+        vectorizer = CategoriesLdaVectorizer(
+            num_topics=num_topics, main_col=main_col, sub_col=sub_col, features_dir=features_dir
+        )
+        super().__init__(feature_generators=[concatter, vectorizer], features_dir=features_dir)
 
 
 class CategoriesLdaVectorizer(FeaturesBase):

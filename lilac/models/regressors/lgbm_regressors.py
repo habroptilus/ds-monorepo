@@ -258,6 +258,9 @@ class LgbmDiffMaeRegressor(DiffRegressorBase):
         """lgbmのみ追加で実装している."""
         return self.model.get_importance()
 
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}
+
 
 class LgbmDiffRmseRegressor(DiffRegressorBase):
     """target_col-base_colに対してRMSEで最適化するLGBMモデル."""
@@ -338,3 +341,10 @@ class LgbmXentropyRegressor(XentropyRegressorBase):
                 min_child_samples=min_child_samples,
             ),
         )
+
+    def get_importance(self):
+        """lgbmのみ追加で実装している."""
+        return self.model.get_importance()
+
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}

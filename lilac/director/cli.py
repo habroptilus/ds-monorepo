@@ -67,10 +67,10 @@ def plot_importance(project_name, experiment_id, job_name="job1", data_dir="data
             raise Exception(
                 f"{job_name} is not in {experiment_id}. Please add '-j <job_name>'. You can use: {list(data['seed_jobs'].keys())}"
             )
-        additinal = job_result.get("additional")
-        if additinal is None or len(additinal) == 0:
+        additional = job_result.get("additional")
+        if additional is None or len(additional) == 0 or additional[0] is None:
             raise Exception(f"{job_name} in {experiment_id} doesn't have feature importance.")
-        importance = additinal[0].get("importance")
+        importance = additional[0].get("importance")
         if importance is None:
             raise Exception(f"{job_name} in {experiment_id} doesn't have feature importance.")
 

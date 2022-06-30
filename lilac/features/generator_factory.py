@@ -1,5 +1,5 @@
 from lilac.core.factory_base import FactoryBase
-from lilac.features.generators.category_embedding import CategoriesLdaVectorizer
+from lilac.features.generators.category_embedding import CategoriesLdaVectorizer, ConcatCategoriesLda
 from lilac.features.generators.category_encoding import CategoryEncoding
 from lilac.features.generators.clustering_features import ClusteringFeatures, StandardizedClustering
 from lilac.features.generators.combination_features import CategoryCombination, NumericCombination
@@ -39,6 +39,7 @@ class FeatureGeneratorsFactory(FactoryBase):
             "cat_combi": CategoryCombination,
             "num_combi": NumericCombination,
             "cat_lda": CategoriesLdaVectorizer,
+            "concat_cat_lda": ConcatCategoriesLda,
             "null_cols": NullColumnsNum,
         }
         shared_params = {"features_dir": features_dir}

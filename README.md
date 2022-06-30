@@ -47,6 +47,11 @@ export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 
 で指定した実験の詳細結果を表示する。
 
+### Plot importance
+
+`poetry run lilac plot -p <プロジェクト名> -e <実験番号(001など)> -n <plotする特徴量上位いくつか>`
+
+で、fold1のmodelがfeature_importanceを計算していれば上位n個のカラムを出力する.
 ## Development
 
 パッケージの追加は以下の通り.
