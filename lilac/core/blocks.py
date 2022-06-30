@@ -24,6 +24,7 @@ class ModelingBlock:
         target_enc_cols=None,
         seed=None,
         model_dir=None,
+        pred_only=False,
     ):
         folds_generator = FoldsGeneratorFactory().run(**folds_gen_factory_settings)
         trainer = TrainerFactory().run(**trainer_factory_settings)
@@ -44,14 +45,18 @@ class ModelingBlock:
             log_target_on_target_enc=log_target_on_target_enc,
             model_dir=model_dir,
         )
+        self.pred_only = pred_only
 
     def run(self, train, test):
         """target_encoding, run cv.
 
         Target encodingをした場合、元のカラムは削除される.
         """
-        # run cross validation and return prediction
-        output = self.cv_runner.run(train)
+        output = {}
+        if self.pred_only:
+            self.cv_runner.load_models()
+        else:
+            output = self.cv_runner.run(train)
         predictions = self.cv_runner.get_predictions(test)
         output["raw_pred"] = predictions.raw_pred
         output["pred"] = predictions.pred
@@ -95,6 +100,7 @@ class BlocksRunner:
         target_enc_cols=None,
         seed=None,
         model_dir=None,
+        pred_only=False,
     ):
         self.datagen_block = DatagenBlock(
             target_col, features_dir, register_from, extra_class_names, features_settings
@@ -110,6 +116,7 @@ class BlocksRunner:
             target_enc_cols=target_enc_cols,
             seed=seed,
             model_dir=model_dir,
+            pred_only=pred_only,
         )
 
     def run(self, train, test):

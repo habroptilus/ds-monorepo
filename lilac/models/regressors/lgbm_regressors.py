@@ -64,12 +64,6 @@ class LgbmRegressor(RegressorBase):
     def get_additional(self):
         return {"importance": self.model.get_importance()}
 
-    def save(self, filepath):
-        self.model.save(filepath)
-
-    def load(self, filepath):
-        self.model.load(filepath)
-
 
 class LgbmRmsleRegressor(LgbmRegressor):
     """目的関数がRMSLEのlgbm回帰モデル."""
@@ -268,12 +262,6 @@ class LgbmDiffRegressor(DiffRegressorBase):
     def get_additional(self):
         return {"importance": self.model.get_importance()}
 
-    def save(self, filepath):
-        self.model.save(filepath)
-
-    def load(self, filepath):
-        self.model.load(filepath)
-
 
 class LgbmDiffMaeRegressor(LgbmDiffRegressor):
     """target_col-base_colに対してMAEで最適化するLGBMモデル."""
@@ -397,9 +385,3 @@ class LgbmXentropyRegressor(XentropyRegressorBase):
 
     def get_additional(self):
         return {"importance": self.model.get_importance()}
-
-    def save(self, filepath):
-        self.model.save(filepath)
-
-    def load(self, filepath):
-        self.model.load(filepath)

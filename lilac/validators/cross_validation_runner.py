@@ -1,3 +1,5 @@
+import glob
+import pickle
 from pathlib import Path
 
 import numpy as np
@@ -5,6 +7,11 @@ import numpy as np
 from lilac.core.data import Predictions
 from lilac.features.target_encoders.target_encoder import TargetEncoder
 from lilac.models.model_base import BinaryClassifierBase, MultiClassifierBase, RegressorBase
+
+
+def load_model(model_path):
+    print(f"Loaded from {model_path}")
+    return pickle.load(open(model_path, "rb"))
 
 
 class CrossValidationRunner:
@@ -42,6 +49,8 @@ class CrossValidationRunner:
         self.seed = seed
         self.log_target_on_target_enc = log_target_on_target_enc
         self.model_dir = Path(model_dir) if model_dir is not None else None
+        self.models = None
+        self.encoders = None
 
     def run(self, df):
         self.models = []
@@ -98,7 +107,8 @@ class CrossValidationRunner:
             # save model
             if self.model_dir:
                 model.save(filepath=f"{self.model_dir}/fold{fold+1}.model")
-
+                if self.target_enc_cols:
+                    target_encoder.save(filepath=f"{self.model_dir}/fold{fold+1}.te")
         if pred_valid_df["oof_pred"].isnull().sum() > 0:
             raise Exception(pred_valid_df["oof_pred"].isnull().sum())
         output = {}
@@ -122,6 +132,33 @@ class CrossValidationRunner:
         output["score"] = self.evaluator.run(df[self.target_col], predictions)
         output["additional"] = additionals
         return output
+
+    def load_models(self):
+        """modelとtarget encoderをloadする"""
+        if self.models or self.encoders:
+            raise Exception("Trained model already exists.")
+        models_pathlist = glob.glob(f"{self.model_dir}/fold*.model")
+        models = []
+        for model_path in sorted(models_pathlist):
+            model = load_model(model_path)
+            models.append(model)
+        self.models = models
+
+        if not self.target_enc_cols:
+            return
+
+        encoders_pathlist = glob.glob(f"{self.model_dir}/fold*.te")
+        encoders = []
+        for encoder_path in sorted(encoders_pathlist):
+            encoder = TargetEncoder(
+                input_cols=self.target_enc_cols,
+                target_col=self.target_col,
+                random_state=self.seed,
+                log_target=self.log_target_on_target_enc,
+            )
+            encoder.load(encoder_path)
+            encoders.append(encoder)
+        self.encoders = encoders
 
     def raw_output(self, test_df):
         """予測値の元になるscoreを出力する.
