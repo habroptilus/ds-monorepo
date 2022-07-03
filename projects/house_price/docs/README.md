@@ -1,6 +1,44 @@
 # House price
 
 
+## submission draft
+
+### 3rd prize solution
+
+config/063.ymlが3位入賞の実験設定.
+
+* 前処理したdataはv5(変換はprocess_v1,v2,v4,v5を順に実行したもの)
+* 特徴量
+  * 集約特徴量(オリジナルと、logとったもの)
+  * 集約特徴量の差分/比率を再度集約したもの
+  * cityについてlayoutを結合して文章とみなしLDAにかけベクトル表現
+* target encoding
+* 目的変数の変更
+  * target-log(area+1)に対して予測する(diffモデル)
+* オリジナルlgbm_maeとそのdiffモデルの二種類をseed=42,43で学習し、4モデルを平均アンサンブル
+
+### procedure
+
+以下のコマンドにより、
+
+* 特徴量生成
+* モデル学習/評価
+* 学習済みモデルの保存
+* testに対する予測
+* アンサンブル
+
+を行い、最終的な出力を得る.
+
+`poetry run lilac run -p house_price -f submit.yml -s`
+
+上のコマンドだけでも最終的な予測を得られるが、モデルの学習に時間がかかるので、保存した学習済みモデルを読み込んで
+
+* testに対する予測
+* アンサンブル
+
+だけを実行するJupyter Notebook submit.ipynbを用意した.
+
+
 ## eda
 * 排反なカテゴリはorderedだけ
 * city_codeとcityは一対一

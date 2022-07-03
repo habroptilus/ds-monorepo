@@ -13,6 +13,8 @@ python -V
 ml_metricsのinstallでエラーが出るかもしれない。
 その時は以下のコマンドを実行した後、再度`poetry install`を実行すること。
 
+TODO :ここのこまんどは？？
+
 (ここ一発でいけるようにしたい)
 
 
@@ -25,6 +27,8 @@ lilacが上位ディレクトリにあるため、各projectからimportでき�
 ```
 export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 ```
+
+(ここもどうにかしたい)
 
 ## lilac commands
 

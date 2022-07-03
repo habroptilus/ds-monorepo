@@ -40,7 +40,7 @@ def run(
 
 def result_list(project_name, num=5, data_dir="data", output_dir="output"):
     output_path_list = glob.glob(f"projects/{project_name}/{data_dir}/{output_dir}/*.json")
-
+    num = min(len(output_path_list), num)
     for output_path in list(reversed(sorted(output_path_list)))[:num]:
         p = Path(output_path)
         with p.open("r") as f:
