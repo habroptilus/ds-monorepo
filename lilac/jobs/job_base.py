@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 import pandas as pd
 
 from lilac.core.blocks import BlocksRunner
+from lilac.core.utils import stop_watch
 from lilac.ensemble.stacking_runner import StackingRunner
 from lilac.models import consts
 
@@ -51,7 +52,7 @@ class BasicSeedJob:
         reg_lambda=consts.reg_alpha,
         subsample=consts.subsample,
         min_child_weight=consts.min_child_weight,
-        min_child_samples= consts.min_child_samples,
+        min_child_samples=consts.min_child_samples,
         n_estimators=consts.n_estimators,
         depth=consts.depth,
         seed=consts.seed,
@@ -133,6 +134,7 @@ class BasicSeedJob:
         self.train_path = train_path
         self.test_path = test_path
 
+    @stop_watch
     def run(self):
         train = pd.read_csv(self.train_path)
         test = pd.read_csv(self.test_path)

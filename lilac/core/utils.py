@@ -1,3 +1,7 @@
+import datetime
+import time
+from functools import wraps
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -11,6 +15,33 @@ def df_copy(func):
         return result
 
     return copy
+
+
+def stop_watch(func):
+    """時間計測デコレータ."""
+
+    @wraps(func)
+    def wrapper(*args, **kargs):
+        start = time.time()
+        result = func(*args, **kargs)
+        elapsed_time = time.time() - start
+        td = datetime.timedelta(seconds=elapsed_time)
+        hour, minute, second = get_h_m_s(td)
+        elapsed_time = f"{second}s"
+        if hour > 0:
+            elapsed_time = f"{hour}h{minute}m" + elapsed_time
+        elif minute > 0:
+            elapsed_time = f"{minute}m" + elapsed_time
+        print(f"Elapsed: {elapsed_time}")
+        return result
+
+    return wrapper
+
+
+def get_h_m_s(td):
+    m, s = divmod(td.seconds, 60)
+    h, m = divmod(m, 60)
+    return h, m, s
 
 
 def plot_feature_importance(df, path=None, max_n=20):
