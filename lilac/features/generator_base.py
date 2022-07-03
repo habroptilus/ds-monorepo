@@ -102,4 +102,4 @@ class FeaturesBase(_FeaturesBase):
         return res_train, res_test
 
     def return_flag(self):
-        return f"{self.__class__.__name__}_{self.md5}"
+        return f"{self.__class__.__name__}/{self.md5}"
