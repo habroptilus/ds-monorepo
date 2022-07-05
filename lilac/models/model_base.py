@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 
 
@@ -27,6 +29,9 @@ class ModelBase:
 
     def get_additional(self):
         return
+
+    def save(self, filepath):
+        pickle.dump(self, open(filepath, "wb"))
 
 
 class RegressorBase(ModelBase):

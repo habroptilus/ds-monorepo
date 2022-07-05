@@ -1,19 +1,9 @@
-from abc import ABCMeta, abstractmethod
-
 import pandas as pd
 
 from lilac.core.blocks import BlocksRunner
 from lilac.core.utils import stop_watch
 from lilac.ensemble.stacking_runner import StackingRunner
 from lilac.models import consts
-
-
-class SeedJobBase(metaclass=ABCMeta):
-    """SeedJobの基底クラス.学習データ生成とモデリング、評価を行い結果をdictで返す."""
-
-    @abstractmethod
-    def run(self, train, test):
-        pass
 
 
 class BasicSeedJob:
@@ -65,8 +55,9 @@ class BasicSeedJob:
         base_col=None,
         log_target_on_target_enc=False,
         target_enc_cols=None,
+        model_dir=None,
+        pred_only=False,
     ):
-
         features_settings = [] if features_settings is None else features_settings
         unused_cols = [] if unused_cols is None else unused_cols
 
@@ -129,6 +120,8 @@ class BasicSeedJob:
             log_target_on_target_enc=log_target_on_target_enc,
             target_enc_cols=target_enc_cols,
             seed=seed,
+            model_dir=model_dir,
+            pred_only=pred_only,
         )
 
         self.train_path = train_path

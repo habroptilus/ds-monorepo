@@ -1,3 +1,5 @@
+import pickle
+
 import lightgbm as lgb
 import numpy as np
 import pandas as pd
@@ -15,16 +17,21 @@ class LgbmBase:
         self.verbose_eval = verbose_eval
         self.early_stopping_rounds = early_stopping_rounds
         self.num_boost_round = n_estimators
-        self.encoder = OrdinalEncoder()
+        self.encoder = None
+        self.model = None
+
+    def get_object_cols(self, df):
+        return df.select_dtypes(include=[object]).columns
 
     def fit(self, train_x, train_y, valid_x, valid_y):
-        self.object_cols = train_x.select_dtypes(include=[object]).columns
-        train_x_cat = self.encoder.fit_transform(train_x[self.object_cols]).add_suffix("_enc")
-        valid_x_cat = self.encoder.transform(valid_x[self.object_cols]).add_suffix("_enc")
+        object_cols = self.get_object_cols(train_x)
+        self.encoder = OrdinalEncoder()
+        train_x_cat = self.encoder.fit_transform(train_x[object_cols]).add_suffix("_enc")
+        valid_x_cat = self.encoder.transform(valid_x[object_cols]).add_suffix("_enc")
         train_x = pd.concat([train_x, train_x_cat], axis=1)
         valid_x = pd.concat([valid_x, valid_x_cat], axis=1)
-        train_x = train_x.drop(self.object_cols, axis=1)
-        valid_x = valid_x.drop(self.object_cols, axis=1)
+        train_x = train_x.drop(object_cols, axis=1)
+        valid_x = valid_x.drop(object_cols, axis=1)
 
         self.cols = list(train_x.columns)
 
@@ -62,9 +69,10 @@ class LgbmClassifierBase(LgbmBase):
         super().__init__(verbose_eval, early_stopping_rounds, n_estimators, lgbm_params)
 
     def predict_proba(self, test):
-        test_cat = self.encoder.transform(test[self.object_cols]).add_suffix("_enc")
+        object_cols = self.get_object_cols(test)
+        test_cat = self.encoder.transform(test[object_cols]).add_suffix("_enc")
         test = pd.concat([test, test_cat], axis=1)
-        test = test.drop(self.object_cols, axis=1)
+        test = test.drop(object_cols, axis=1)
         # LightGBMのBoosterはpredict_probaがないのでこれで予測
         # binary classifierなら1次元(クラス1の予測確率)
         # multi classifierならN次元の予測確率なはず
@@ -106,9 +114,10 @@ class LgbmRegressorBase(LgbmBase):
     """ベースとなるLGBMの回帰モデル."""
 
     def predict(self, test):
-        test_cat = self.encoder.transform(test[self.object_cols]).add_suffix("_enc")
+        object_cols = self.get_object_cols(test)
+        test_cat = self.encoder.transform(test[object_cols]).add_suffix("_enc")
         test = pd.concat([test, test_cat], axis=1)
-        test = test.drop(self.object_cols, axis=1)
+        test = test.drop(object_cols, axis=1)
         raw_pred = self.model.predict(test)
         return raw_pred
 

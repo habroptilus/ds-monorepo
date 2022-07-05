@@ -13,6 +13,8 @@ python -V
 ml_metricsのinstallでエラーが出るかもしれない。
 その時は以下のコマンドを実行した後、再度`poetry install`を実行すること。
 
+TODO :ここのこまんどは？？
+
 (ここ一発でいけるようにしたい)
 
 
@@ -26,16 +28,18 @@ lilacが上位ディレクトリにあるため、各projectからimportでき�
 export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 ```
 
+(ここもどうにかしたい)
+
 ## lilac commands
 
 `poetry run lilac`コマンドをいくつか提供している。
 
 ### Run experiment
 
-`poetry run lilac run -p <プロジェクト名> -f <実験設定のyamlファイル名> `
+`poetry run lilac run -p <プロジェクト名> -f <実験設定のyamlファイル名> [-s] `
 で実験が実行され、CVが表示され、デフォルトだと`projects/<プロジェクト名>/data/output/<実験設定のyamlファイル名.json>`
 に結果ファイルが出力される.
-
+`-s` をつけるとモデルが保存される.
 ### List results
 
 `poetry run lilac list -p <プロジェクト名> -n <直近n回の実験結果を見る> `
