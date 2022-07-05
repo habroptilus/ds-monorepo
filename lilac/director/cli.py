@@ -26,16 +26,24 @@ def run(
     :model_dir: model出力先ディレクトリ
     :save_model: modelを保存するか.
     """
-    from lilac.director.experiment_director import ExperimentDirector
+    from lilac.director.experiment_director import ExperimentCliDirector
 
-    config_path = Path(f"projects/{project_name}/{input_dir}/{filename}")
-    output_path = f"projects/{project_name}/{data_dir}/{output_dir}/{config_path.stem}.json"
+    project_dir = Path(f"projects/{project_name}")
+    config_path = project_dir / f"{input_dir}/{filename}"
 
     with config_path.open("r") as yml:
         experiment_config = yaml.safe_load(yml)
-    model_dir = f"projects/{project_name}/{data_dir}/{model_dir}" if save_model else None
 
-    ExperimentDirector(output_path=output_path).run(experiment_config, model_dir)
+    model_dir = Path(f"{model_dir}/{config_path.stem}") if save_model else None
+    output_filename = f"{config_path.stem}.json"
+
+    ExperimentCliDirector(
+        project_dir=project_dir,
+        output_dir=output_dir,
+        data_dir=data_dir,
+        model_dir=model_dir,
+        output_filename=output_filename,
+    ).run(experiment_config)
 
 
 def result_list(project_name, num=5, data_dir="data", output_dir="output"):

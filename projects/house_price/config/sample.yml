@@ -2,9 +2,9 @@ meta:
   title: sample
 
 shared:
-  train_path: projects/house_price/data/train_v5.csv
-  test_path: projects/house_price/data/test_v5.csv
-  features_dir: projects/house_price/data/features/v5
+  train_path: data/train_v5.csv
+  test_path: data/test_v5.csv
+  features_dir: data/features/v5
   # register_from: projects.house_price.custom.feature_generators
   target_col: price_log
   base_col: area_log
