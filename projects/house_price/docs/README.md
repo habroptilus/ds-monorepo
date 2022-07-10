@@ -38,7 +38,39 @@ config/063.ymlが3位入賞の実験設定.
 
 だけを実行するJupyter Notebook submit.ipynbを用意した.
 
+計算結果が合わない...
 
+Title: 62にseed_average足した
+[1/4]
+Name: lgbm_diff_mae_43
+CV: 0.0714439611209046
+[2/4]
+Name: lgbm_mae_43
+CV: 0.07176836247099277
+[3/4]
+Name: lgbm_mae
+CV: 0.07162941056792117
+[4/4]
+Name: lgbm_diff_mae
+CV: 0.0713313395791979
+[Result]
+CV: 0.07017586998819401
+
+Title: 3rd_prize_solution
+[1/4]
+Name: lgbm_diff_mae_42
+CV: 0.07137423576127414
+[2/4]
+Name: lgbm_mae_42
+CV: 0.07167158598941105
+[3/4]
+Name: lgbm_diff_mae_43
+CV: 0.07144422200049601
+[4/4]
+Name: lgbm_mae_43
+CV: 0.07182483800428396
+[Result]
+CV: 0.0702050395725843
 ## eda
 * 排反なカテゴリはorderedだけ
 * city_codeとcityは一対一

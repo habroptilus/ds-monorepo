@@ -1,5 +1,5 @@
 meta:
-  title: 3rd_prize_solution
+  title: 3rd_prize_solution(n_estimators=40000)
 
 shared:
   train_path: data/train_v5.csv
@@ -11,7 +11,7 @@ shared:
   #seed: 42
   depth: 8
   min_child_samples: 200
-  n_estimators: 30000
+  # n_estimators: 30000 デフォルトを使う
   folds_gen_str: group
   group_key_col: ordered
   #model_str: lgbm_diff_mae

@@ -129,7 +129,10 @@ class CrossValidationRunner:
         output["evaluator"] = self.evaluator.return_flag()
         if df[self.target_col].isnull().sum() > 0:
             raise Exception(df[self.target_col].isnull().sum())
-        output["score"] = self.evaluator.run(df[self.target_col], predictions)
+
+        score = self.evaluator.run(df[self.target_col], predictions)
+        print(f"CV: {score}")
+        output["score"] = score
         output["additional"] = additionals
         return output
 
