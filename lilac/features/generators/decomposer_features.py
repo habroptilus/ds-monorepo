@@ -3,14 +3,14 @@ from sklearn.decomposition import NMF, PCA, TruncatedSVD
 from umap import UMAP
 
 from lilac.features.generator_base import FeaturesBase
-from lilac.features.wrappers.features_pipeline import FeaturesPipeline
 from lilac.features.generators.scaling_features import StandardScalingFeatures
+from lilac.features.wrappers.features_pipeline import FeaturesPipeline
 
 
 class StandardizedDecomposer(FeaturesPipeline):
     """標準化をしてからPCAやUMAPを用いて次元削減する."""
 
-    def __init__(self, decomposer_str, n_components, prefix, input_cols=None, random_state=None, features_dir=None):
+    def __init__(self, decomposer_str, n_components, prefix, input_cols=None, seed=None, features_dir=None):
         super().__init__(
             feature_generators=[
                 StandardScalingFeatures(input_cols=input_cols, features_dir=features_dir),
@@ -18,7 +18,7 @@ class StandardizedDecomposer(FeaturesPipeline):
                     decomposer_str=decomposer_str,
                     n_components=n_components,
                     prefix=prefix,
-                    random_state=random_state,
+                    seed=seed,
                     features_dir=features_dir,
                 ),
             ],
@@ -28,7 +28,7 @@ class StandardizedDecomposer(FeaturesPipeline):
 
 
 class DecompositionFeatures(FeaturesBase):
-    def __init__(self, decomposer_str, n_components, prefix, input_cols=None, random_state=None, features_dir=None):
+    def __init__(self, decomposer_str, n_components, prefix, input_cols=None, seed=None, features_dir=None):
         """PCAやUMAP,SVD, NMFを用いて次元削減する.
 
         :n_components: 削減先の次元数.
@@ -40,7 +40,7 @@ class DecompositionFeatures(FeaturesBase):
         self.decomposer_str = decomposer_str
         self.input_cols = input_cols
         self.n_components = n_components
-        self.random_state = random_state
+        self.seed = seed
         self.prefix = prefix
         super().__init__(features_dir)
 
@@ -50,7 +50,7 @@ class DecompositionFeatures(FeaturesBase):
         if model is None:
             raise Exception(f"Invalid decomposer_str: '{self.decomposer_str}'")
         input_cols = self.resolve_input_cols(df)
-        self.model = model(n_components=self.n_components, random_state=self.random_state)
+        self.model = model(n_components=self.n_components, random_state=self.seed)
         self.model.fit(df[input_cols])
         return self
 

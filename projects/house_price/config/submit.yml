@@ -4,7 +4,7 @@ meta:
 shared:
   train_path: data/train_v5.csv
   test_path: data/test_v5.csv
-  features_dir: data/features/v5
+  features_dir: data/features/v5_sub
   # register_from: projects.house_price.custom.feature_generators
   target_col: price_log
   base_col: area_log

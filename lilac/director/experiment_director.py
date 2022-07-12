@@ -56,7 +56,7 @@ class ExperimentCliDirector:
         model_dir=None,
     ):
         self.output_path = project_dir / data_dir / output_dir / output_filename
-        self.model_dir = project_dir / data_dir / model_dir
+        self.model_dir = project_dir / data_dir / model_dir if model_dir else None
         self.project_dir = project_dir
 
     def run(self, config):

@@ -1,5 +1,5 @@
 meta:
-  title: 3rd_prize_solution(n_estimators=40000)
+  title: 3rd_prize_solution_dev
 
 shared:
   train_path: data/train_v5.csv
@@ -11,7 +11,7 @@ shared:
   #seed: 42
   depth: 8
   min_child_samples: 200
-  # n_estimators: 30000 デフォルトを使う
+  n_estimators: 100
   folds_gen_str: group
   group_key_col: ordered
   #model_str: lgbm_diff_mae
@@ -49,6 +49,7 @@ shared:
       main_col: city
       sub_col: layout
       num_topics: 5
+      seed: 42
   - model_str: diff_group
     params:
       group_key: district
@@ -62,20 +63,6 @@ jobs:
     model_str: lgbm_diff_mae
     seed: 42
 
-- name: lgbm_mae_42
-  params: 
-    model_str: lgbm_mae
-    seed: 42
-
-- name: lgbm_diff_mae_43
-  params: 
-    model_str: lgbm_diff_mae
-    seed: 43
-
-- name: lgbm_mae_43
-  params: 
-    model_str: lgbm_mae
-    seed: 43
 
 
 stacking:
