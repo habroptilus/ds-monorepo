@@ -10,11 +10,11 @@ from lilac.features.wrappers.features_pipeline import FeaturesPipeline
 class ConcatCategoriesLda(FeaturesPipeline):
     """カテゴリを結合してLdaのsub_colに指定する."""
 
-    def __init__(self, num_topics, main_col, sub_cols, output_suffix="_cc", features_dir=None):
+    def __init__(self, num_topics, main_col, sub_cols, seed=None, output_suffix="_cc", features_dir=None):
         concatter = CategoryCombination(input_cols=sub_cols, output_suffix=output_suffix, features_dir=features_dir)
         sub_col = "".join(sub_cols) + output_suffix
         vectorizer = CategoriesLdaVectorizer(
-            num_topics=num_topics, main_col=main_col, sub_col=sub_col, features_dir=features_dir
+            num_topics=num_topics, main_col=main_col, sub_col=sub_col, seed=seed, features_dir=features_dir
         )
         super().__init__(feature_generators=[concatter, vectorizer], features_dir=features_dir)
 
@@ -25,10 +25,11 @@ class CategoriesLdaVectorizer(FeaturesBase):
     main_colの方が種類が少なくて、同じsub_colが複数種類のmain_colに出現するような時に使える.
     """
 
-    def __init__(self, num_topics, main_col, sub_col, features_dir=None):
+    def __init__(self, num_topics, main_col, sub_col, seed=None, features_dir=None):
         self.num_topics = num_topics
         self.main_col = main_col
         self.sub_col = sub_col
+        self.seed = seed
         super().__init__(features_dir=features_dir)
 
     def fit(self, df):
@@ -40,7 +41,7 @@ class CategoriesLdaVectorizer(FeaturesBase):
         docs = docs_df.values
         keys = docs_df.keys()
         docs = [doc.split(" ") for doc in docs]
-        data = LdaVectorizer(num_topics=self.num_topics).fit_transform(docs)
+        data = LdaVectorizer(num_topics=self.num_topics, seed=self.seed).fit_transform(docs)
         lda_df = pd.DataFrame(
             data, columns=[f"{self.main_col}_{self.sub_col}_lda_{self.num_topics}-{i}" for i in range(data.shape[1])]
         )
@@ -54,15 +55,13 @@ class CategoriesLdaVectorizer(FeaturesBase):
 
 
 class LdaVectorizer:
-    def __init__(self, num_topics):
+    def __init__(self, num_topics, seed=None):
         self.num_topics = num_topics
+        self.seed = seed
 
     def fit(self, docs):
         corpus = self.get_corpus(docs)
-        # トピック数を指定してモデルを学習
-        # TODO : seedを追加する!!!
-
-        self.lda = LdaModel(corpus, num_topics=self.num_topics)
+        self.lda = LdaModel(corpus, num_topics=self.num_topics, random_state=self.seed)
         return self
 
     def get_corpus(self, docs):
