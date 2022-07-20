@@ -2,18 +2,23 @@
 
 ## How to setup
 
-Python3.8を想定している。
-
 ```
 python -V
 3.8.11
+
+poetry -V
+Poetry version 1.1.12
 ```
+
+パッケージのインストールを行う.
+
 `poetry install`
 
-ml_metricsのinstallでエラーが出るかもしれない。
+その際、ml_metricsのinstallでエラーが出るかもしれない。
 その時は以下のコマンドを実行した後、再度`poetry install`を実行すること。
 
-TODO :ここのこまんどは？？
+`poetry run pip install -U "setuptools<58"`
+
 
 (ここ一発でいけるようにしたい)
 
@@ -32,7 +37,7 @@ export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 
 ## lilac commands
 
-`poetry run lilac`コマンドをいくつか提供している。
+`lilac`コマンドをいくつか提供している。
 
 ### Run experiment
 

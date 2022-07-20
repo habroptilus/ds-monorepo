@@ -1,21 +1,20 @@
 meta:
-  title: sample
+  title: 3rd_prize_solution_dev
 
 shared:
   train_path: data/train_v5.csv
   test_path: data/test_v5.csv
-  features_dir: data/features/v5_dev
+  features_dir: data/features/v5_sub
   # register_from: projects.house_price.custom.feature_generators
   target_col: price_log
   base_col: area_log
-  n_estimators: 100
-  fold_num: 2
-  seed: 42
+  #seed: 42
   depth: 8
   min_child_samples: 200
+  n_estimators: 100
   folds_gen_str: group
   group_key_col: ordered
-  model_str: lgbm_diff_mae
+  #model_str: lgbm_diff_mae
   evaluator_str: mae
   unused_cols: 
   - id 
@@ -41,14 +40,34 @@ shared:
       - built_year_seireki
       - area
       - nearest_min
+      - age
+      - area_log
+      - nearest_min_log
+      - age_log
+  - model_str: cat_lda
+    params:
+      main_col: city
+      sub_col: layout
+      num_topics: 5
+      seed: 42
+  - model_str: diff_group
+    params:
+      group_key: district
+      input_cols:
+      - built_year_seireki
+      - area_log
+      - nearest_min_log
 jobs:
-- params: 
+- name: lgbm_diff_mae_42
+  params: 
+    model_str: lgbm_diff_mae
     seed: 42
 
 
-#stacking:
-#  shared:
-#    "use_original_cols": False
-#  stacking_settings:
-#  - 
-#    - avg_mae
+
+stacking:
+  shared:
+    "use_original_cols": False
+  stacking_settings:
+  - 
+    - avg_mae

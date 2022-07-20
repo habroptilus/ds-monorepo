@@ -60,6 +60,8 @@ class LdaVectorizer:
     def fit(self, docs):
         corpus = self.get_corpus(docs)
         # トピック数を指定してモデルを学習
+        # TODO : seedを追加する!!!
+
         self.lda = LdaModel(corpus, num_topics=self.num_topics)
         return self
 

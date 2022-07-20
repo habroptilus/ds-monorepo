@@ -10,7 +10,7 @@ class StandardizedClustering(FeaturesPipeline):
     """標準化をしてからGMMやKmeansを用いてクラスタリングを行う."""
 
     def __init__(
-        self, model_str, input_cols, n_clusters, prefix, include_additional=False, random_state=None, features_dir=None
+        self, model_str, input_cols, n_clusters, prefix, include_additional=False, seed=None, features_dir=None
     ):
         super().__init__(
             feature_generators=[
@@ -19,7 +19,7 @@ class StandardizedClustering(FeaturesPipeline):
                     model_str=model_str,
                     n_clusters=n_clusters,
                     include_additional=include_additional,
-                    random_state=random_state,
+                    seed=seed,
                     features_dir=features_dir,
                     prefix=prefix,
                 ),
@@ -46,13 +46,13 @@ class ClusteringFeatures(FeaturesBase):
         prefix,
         input_cols=None,
         include_additional=False,
-        random_state=None,
+        seed=None,
         features_dir=None,
     ):
         self.input_cols = input_cols
         self.model_str = model_str
         self.n_clusters = n_clusters
-        self.random_state = random_state
+        self.seed = seed
         self.include_additional = include_additional
         self.prefix = prefix
         super().__init__(features_dir)
@@ -60,11 +60,9 @@ class ClusteringFeatures(FeaturesBase):
     def fit(self, df):
         self.input_cols = self.resolve_input_cols(df)
         if self.model_str == "kmeans":
-            self.model = cluster.KMeans(n_clusters=self.n_clusters, random_state=self.random_state)
+            self.model = cluster.KMeans(n_clusters=self.n_clusters, seed=self.seed)
         elif self.model_str == "gmm":
-            self.model = mixture.GaussianMixture(
-                n_components=self.n_clusters, covariance_type="full", random_state=self.random_state
-            )
+            self.model = mixture.GaussianMixture(n_components=self.n_clusters, covariance_type="full", seed=self.seed)
         else:
             raise Exception(f"Invalid model_str '{self.model_str}'")
         df = df[self.input_cols].drop_duplicates()
