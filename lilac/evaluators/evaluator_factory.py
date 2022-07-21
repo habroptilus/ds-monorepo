@@ -4,6 +4,7 @@ from lilac.evaluators.evaluator_base import (
     AucEvaluator,
     MacroF1Evaluator,
     MaeEvaluator,
+    PrAucEvaluator,
     RmseEvaluator,
     RmsleEvaluator,
 )
@@ -18,5 +19,6 @@ class EvaluatorFactory(FactoryBase):
             "auc": AucEvaluator,
             "accuracy": AccuracyEvaluator,
             "f1_macro": MacroF1Evaluator,
+            "prauc": PrAucEvaluator,
         }
         super().__init__(str2model, register_from)

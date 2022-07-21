@@ -4,10 +4,12 @@ from typing import List
 import numpy as np
 from sklearn.metrics import (
     accuracy_score,
+    auc,
     f1_score,
     mean_absolute_error,
     mean_squared_error,
     mean_squared_log_error,
+    precision_recall_curve,
     roc_auc_score,
 )
 
@@ -62,7 +64,7 @@ class MaeEvaluator(EvaluatorBase):
 
 
 class AucEvaluator(EvaluatorBase):
-    """AUCで評価する."""
+    """AUCで評価する.ROC曲線のAUCの方."""
 
     direction = "maximize"
     flag = "auc"
@@ -89,3 +91,14 @@ class MacroF1Evaluator(EvaluatorBase):
 
     def run(self, y, predictions):
         return f1_score(y, predictions.pred, average="macro")
+
+
+class PrAucEvaluator(EvaluatorBase):
+    """PR AUCで評価する."""
+
+    direction = "maximaize"
+    flag = "prauc"
+
+    def run(self, y: List, predictions: Predictions):
+        precision, recall, _ = precision_recall_curve(y, predictions.raw_pred)
+        return auc(recall, precision)
