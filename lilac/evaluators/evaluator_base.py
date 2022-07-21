@@ -102,3 +102,23 @@ class PrAucEvaluator(EvaluatorBase):
     def run(self, y: List, predictions: Predictions):
         precision, recall, _ = precision_recall_curve(y, predictions.raw_pred)
         return auc(recall, precision)
+
+
+class MapeEvaluator(EvaluatorBase):
+    """MAPEで評価する."""
+
+    direction = "minimize"
+    flag = "mape"
+
+    def run(self, y: List, predictions: Predictions):
+        return np.mean(np.abs((predictions.pred - y) / y)) * 100
+
+
+class RmspeEvaluator(EvaluatorBase):
+    """RMS`PEで評価する."""
+
+    direction = "minimize"
+    flag = "rmspe"
+
+    def run(self, y: List, predictions: Predictions):
+        return np.sqrt(np.mean(((predictions.pred - y) / y) ** 2)) * 100
