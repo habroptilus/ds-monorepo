@@ -17,12 +17,13 @@ class FactoryBase(metaclass=ABCMeta):
     継承して利用する場合は__init__をオーバーライドするだけ.
     """
 
-    def __init__(self, str2model, register_from, extra_class_names=None, shared_params=None):
+    def __init__(self, str2model, register_from=None, extra_class_names=None, shared_params=None):
         """str2modelを引数にすることを強制する.
 
         :params
         str2model: モデルフラグ->モデルのmapping(dict)
-        custom_members: 追加でカスタムモデルを追加登録する(dictから一括で登録可能)
+        register_from: モデルを追加したい場合のsource. dict or filepathを指定可能.dictの場合はextra_class_namesが必要.
+        extra_class_names: 追加でカスタムモデルを追加登録する(dictから一括で登録可能)
         shared_params: どのモデルに与えるパラメータにも共通で渡したいものはこちらにセットする.
         """
         self.str2model = str2model
