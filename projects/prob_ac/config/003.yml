@@ -17,23 +17,30 @@ shared:
   model_str: lgbm_bin # catb_bin
   evaluator_str: accuracy
   #min_child_samples: 10
-  class_weight: balanced
+  #class_weight: balanced
   unused_cols: 
   - id 
   - title
   - abstract
   - keywords
+  - year
   features_settings:
     - model_str: keywords_length_feature
     - model_str: keywords_average_year
     - model_str: keywords_average_count
     - model_str: text_length
       params:
-        target_col: title
+        input_col: title
     - model_str: text_length
       params:
-        target_col: abstract
-
+        input_col: abstract
+    - model_str: sv_dec
+      params: 
+        input_col: abstract
+        vectorizer_str: bow
+        decomposer_str: svd
+        n_components: 20
+        seed: 42
         
       
 

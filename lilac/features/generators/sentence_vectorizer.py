@@ -96,7 +96,7 @@ class DecomposedSentenceVectoizer(FeaturesPipeline):
         model_name="bert-base-uncased",
         max_len=128,
         standardize=False,
-        random_state=None,
+        seed=None,
         features_dir=None,
     ):
         if vectorizer_str == "bert":
@@ -121,7 +121,7 @@ class DecomposedSentenceVectoizer(FeaturesPipeline):
         decomposer = decomposer(
             decomposer_str=decomposer_str,
             n_components=n_components,
-            random_state=random_state,
+            seed=seed,
             features_dir=features_dir,
             prefix=prefix,
         )

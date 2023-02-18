@@ -14,7 +14,11 @@ if __name__ == "__main__":
     with open(f"projects/prob_ac/data/output/{args.exp}.json", "r") as f:
         result = json.load(f)
 
+    import numpy as np
+
     raw_pred = result["output"]["raw_pred"]
+    oof_pred = result["output"]["oof_pred"]
+    print(f"Predicted as positive in oof: {sum(np.array(oof_pred) == 1)}")
     pred = [1 if value >= args.threshold else 0 for value in raw_pred]
 
     submit_df = pd.DataFrame({"y": pred})

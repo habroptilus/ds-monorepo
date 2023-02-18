@@ -59,6 +59,7 @@ def plot_feature_importance(df, path=None, max_n=20):
     plt.barh(range(n_features), f_importance_plot, align="center")
     cols_plot = df_plot.index  # 特徴量の取得
     plt.yticks(np.arange(n_features), cols_plot)  # x軸,y軸の値の設定
+    plt.tight_layout()
     plt.xlabel("Importance")  # x軸のタイトル
     plt.ylabel("Feature")
     if path is None:

@@ -49,7 +49,7 @@ class LgbmBase:
         )
         return self
 
-    def get_dataset(train_x, train_y, valid_x, valid_y):
+    def get_dataset(self, train_x, train_y, valid_x, valid_y):
         lgb_train = lgb.Dataset(train_x, train_y)
         lgb_valid = lgb.Dataset(valid_x, valid_y, reference=lgb_train)
         return lgb_train, lgb_valid
