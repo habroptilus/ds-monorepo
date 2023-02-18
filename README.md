@@ -8,6 +8,14 @@ python -V
 
 poetry -V
 Poetry version 1.3.2
+
+brew --version
+Homebrew 4.0.1
+```
+
+
+```
+brew install libomp
 ```
 
 パッケージのインストールを行う.
@@ -76,6 +84,20 @@ export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 `poetry run lilac plot -p <プロジェクト名> -e <実験番号(001など)> -n <plotする特徴量上位いくつか>`
 
 で、fold1のmodelがfeature_importanceを計算していれば上位n個のカラムを出力する.
+
+## How to add your custom feature models
+
+```
+register_from: projects/<project_name>/custom
+extra_class_names: 
+    - ModelNameYouWantToAdd
+features_settings:
+    - model_str: model_name_you_want_to_add
+```
+
+のようにするとFactoryクラスに追加してくれる.
+
+
 ## Development
 
 パッケージの追加は以下の通り.
