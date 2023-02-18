@@ -12,3 +12,6 @@ class TextVectorizerBase:
 
     def fit(self, docs):
         raise Exception("Not implemented.")
+
+    def return_flag(self):
+        raise Exception("Not implemented.")

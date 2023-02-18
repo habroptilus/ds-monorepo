@@ -11,6 +11,7 @@ class WordVectorBasedVectorizer(TextVectorizerBase):
         self.sep = sep
         self.vector_size = word_vector_size
         self.how_to_aggregate = how_to_aggregate
+        self.word_vectorizer_str = word_vectorizer_str
         params = {"vector_size": word_vector_size, "seed": seed, "sep": self.sep}
         self.word_vectorizer = WordVectorizerFactory().run(model_str=word_vectorizer_str, params=params)
 
@@ -39,6 +40,9 @@ class WordVectorBasedVectorizer(TextVectorizerBase):
                 raise Exception(f"Invalid aggregation option: {self.how_to_aggregate}")
             data.append(mean_vec)
         return np.array(data)
+
+    def return_flag(self):
+        return f"{self.word_vectorizer_str}_{self.how_to_aggregate}"
 
     def save(self, path):
         self.word_vectorizer.save(path)

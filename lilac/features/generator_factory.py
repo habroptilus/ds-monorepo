@@ -10,11 +10,7 @@ from lilac.features.generators.group_features import GroupFeatures, MeanDiffRati
 from lilac.features.generators.lag_features import LagFeatures
 from lilac.features.generators.rowwise_features import NullColumnsNum
 from lilac.features.generators.scaling_features import StandardScalingFeatures
-from lilac.features.generators.sentence_vectorizer import (
-    BertVectorizer,
-    DecomposedSentenceVectoizer,
-    WordCountVectorizer,
-)
+from lilac.features.generators.sentence_vectorizer import DecomposedSentenceVector, SentenceVectorFeature
 from lilac.features.generators.text_rule_based_features import TextLengthFeature
 
 
@@ -34,9 +30,8 @@ class FeatureGeneratorsFactory(FactoryBase):
             "std_dec": StandardizedDecomposer,
             "cluster": ClusteringFeatures,
             "std_cluster": StandardizedClustering,
-            "sv_dec": DecomposedSentenceVectoizer,
-            "word_count": WordCountVectorizer,
-            "bert": BertVectorizer,
+            "sentence_vector_dec": DecomposedSentenceVector,
+            "sentence_vector": SentenceVectorFeature,
             "cat_combi": CategoryCombination,
             "num_combi": NumericCombination,
             "cat_lda": CategoriesLdaVectorizer,
