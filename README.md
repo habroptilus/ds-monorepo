@@ -43,6 +43,9 @@ export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 ## lilac commands
 
 `lilac`コマンドをいくつか提供している。
+以下は仮想環境に入っていない場合のコマンド例となっている。
+
+`poetry shell`を実行して仮想環境に入った場合は`poerty run`を除いて実行可能。
 
 ### Init project
 
