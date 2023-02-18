@@ -3,7 +3,7 @@ from lilac.core.factory_base import FactoryBase
 from .classifiers.averaging_classifiers import AveragingBinaryClassifier, AveragingMultiClassifier
 from .classifiers.catb_classifiers import CatbBinaryClassifier, CatbMultiClassifier
 from .classifiers.lgbm_classifiers import LgbmBinaryClassifier, LgbmMultiClassifier
-from .classifiers.logistic_regression import LrMultiClassifier
+from .classifiers.logistic_regression import LrBinaryClassifier, LrMultiClassifier
 from .regressors.averaging_regressors import AveragingRegressor
 from .regressors.catb_regressors import (
     CatbDiffMaeRegressor,
@@ -47,6 +47,7 @@ class ModelFactory(FactoryBase):
             "catb_diff_rmse": CatbDiffRmseRegressor,
             "lr_rmsle": LinearRmsle,
             "lr_rmse": LinearModel,
+            "lr_bin": LrBinaryClassifier,
             "lr_multi": LrMultiClassifier,
             "ridge_rmse": RidgeRmse,
             "ridge_rmsle": RidgeRmsle,

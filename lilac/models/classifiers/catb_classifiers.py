@@ -41,7 +41,7 @@ class CatbBinaryClassifier(BinaryClassifierBase):
 
     def _predict_proba(self, test_df):
         """test_dfにtarget_colが入っていても大丈夫."""
-        return self.model.predict_proba(test_df)
+        return self.model.predict_proba(test_df)[:, 1]
 
     def return_flag(self):
         return self.model.return_flag()

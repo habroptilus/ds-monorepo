@@ -39,7 +39,7 @@ class BasicSeedJob:
         early_stopping_rounds=consts.early_stopping_rounds,
         colsample_bytree=consts.colsample_bytree,
         reg_alpha=consts.reg_alpha,
-        reg_lambda=consts.reg_alpha,
+        reg_lambda=consts.reg_lambda,
         subsample=consts.subsample,
         min_child_weight=consts.min_child_weight,
         min_child_samples=consts.min_child_samples,

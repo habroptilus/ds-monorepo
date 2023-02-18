@@ -1,0 +1,35 @@
+meta:
+  title: keywordsから特徴量を作る
+  description: 同じ
+shared:
+  train_path: data/train_data.csv
+  test_path: data/test_data.csv
+  features_dir: data/features
+  register_from: projects/prob_ac/custom
+  extra_class_names: 
+    - KeywordsLengthFeature
+    - KeywordsAverageYear
+    - KeywordsAverageCount
+  target_col: y
+  fold_num: 3
+  seed: 42
+  folds_gen_str: kfold
+  model_str: lgbm_bin # catb_bin
+  evaluator_str: accuracy
+  unused_cols: 
+  - id 
+  - title
+  - abstract
+  - year
+  - keywords
+  class_weight: balanced
+  features_settings:
+    - model_str: keywords_length_feature
+    - model_str: keywords_average_year
+    - model_str: keywords_average_count
+
+jobs:
+- name: seed42
+  params: 
+    seed: 42
+
