@@ -13,10 +13,8 @@ class PipelineComponent(FeaturesBase):
         super().__init__(features_dir)
 
     def run(self, train_data, test_data):
-        train_data = train_data.copy()
-        test_data = test_data.copy()
-
         train_features, test_features = self.generator_first.run(train_data, test_data)
+
         train_data = self.concat_or_not(train_data, train_features)
         test_data = self.concat_or_not(test_data, test_features)
 

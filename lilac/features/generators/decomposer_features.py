@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.decomposition import NMF, PCA, TruncatedSVD
-from umap import UMAP
 
 from lilac.features.generator_base import FeaturesBase
 from lilac.features.generators.scaling_features import StandardScalingFeatures
@@ -29,7 +28,7 @@ class StandardizedDecomposer(FeaturesPipeline):
 
 class DecompositionFeatures(FeaturesBase):
     def __init__(self, decomposer_str, n_components, prefix, input_cols=None, seed=None, features_dir=None):
-        """PCAやUMAP,SVD, NMFを用いて次元削減する.
+        """PCA, SVD, NMFを用いて次元削減する.
 
         :n_components: 削減先の次元数.
         :input_cols: 適用するカラム.指定しないと全カラムになる.
@@ -45,7 +44,7 @@ class DecompositionFeatures(FeaturesBase):
         super().__init__(features_dir)
 
     def fit(self, df):
-        models = {"pca": PCA, "umap": UMAP, "svd": TruncatedSVD, "nmf": NMF}
+        models = {"pca": PCA, "svd": TruncatedSVD, "nmf": NMF}
         model = models.get(self.decomposer_str)
         if model is None:
             raise Exception(f"Invalid decomposer_str: '{self.decomposer_str}'")

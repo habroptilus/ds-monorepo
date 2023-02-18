@@ -21,7 +21,6 @@ torch = "^1.11.0"
 transformers = "^4.17.0"
 xfeat = "^0.1.1"
 bhtsne = "^0.1.9"
-umap-learn = "^0.5.2"
 fire = "^0.4.0"
 gensim = "^4.2.0"
 
