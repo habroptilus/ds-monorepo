@@ -12,13 +12,28 @@ class PipelineComponent(FeaturesBase):
         self.use_prev_only = use_prev_only
         super().__init__(features_dir)
 
-    def run(self, train_data, test_data):
-        train_features, test_features = self.generator_first.run(train_data, test_data)
+    def run(self, train, test):
+        # 自分の出力があればloadする
+        train_features, test_features = self._load()
 
-        train_data = self.concat_or_not(train_data, train_features)
-        test_data = self.concat_or_not(test_data, test_features)
+        if train_features is not None:
+            return train_features, test_features
 
-        train_features, test_features = self.generator_second.run(train_data, test_data)
+        # ない場合
+        print(f"Generating {self.return_flag()}...")
+
+        # 一個目のgeneratorをrun. saveされる
+        train_features, test_features = self.generator_first.run(train, test)
+
+        train = self.concat_or_not(train, train_features)
+        test = self.concat_or_not(test, test_features)
+
+        # 二個目のgeneratorをfit_transform. saveされない
+        train_features = self.generator_second.fit_transform(train)
+        test_features = self.generator_second.fit_transform(test)
+
+        # 自分自身の出力をsave
+        self._save(train_features, test_features)
 
         return train_features, test_features
 
@@ -45,7 +60,7 @@ class PipelineComponent(FeaturesBase):
         )
 
     def return_flag(self):
-        return f"{self.generator_second.__class__.__name__}_{self.md5}"
+        return f"{self.generator_second.__class__.__name__}/{self.md5}"
 
     def concat_or_not(self, original, diff):
         original = original.copy()
@@ -82,26 +97,28 @@ class FeaturesPipeline(_FeaturesBase):
         self.pipeline = self.get_nested_components(feature_generators)
         self.md5 = self.pipeline.md5
 
-    def get_nested_components(self, feature_generators):
+    def get_nested_components(self, feature_generators) -> PipelineComponent:
         """feature_generatorsを二つずつ再起的に取り出してPipelineComponentを作っていき、最後のPipelineComponentを返す."""
-        prev = None
-        for i, gen in enumerate(feature_generators):
-            if prev is None:
-                prev = gen
+        second = None
+        for i, first in enumerate(feature_generators[::-1]):
+            if first.features_dir is None:
+                raise Exception(f"{first} doesn't have features_dir.")
+            if second is None:
+                second = first
                 continue
-            prev = PipelineComponent(
-                generator_first=prev,
-                generator_second=gen,
-                use_prev_only=self.use_prev_only_list[i - 1],
+            second = PipelineComponent(
+                generator_first=first,
+                generator_second=second,
+                use_prev_only=self.use_prev_only_list[-i],
                 features_dir=self.features_dir,
             )
-        return prev
+        return second
 
     def run(self, train, test):
         return self.pipeline.run(train, test)
 
     def fit(self, df):
-        self.pipeline.fit_transform(df)
+        self.pipeline.fit(df)
         return self
 
     def transform(self, df):

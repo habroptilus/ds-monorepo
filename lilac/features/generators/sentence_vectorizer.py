@@ -46,7 +46,11 @@ class DecomposedSentenceVector(FeaturesPipeline):
         features_dir=None,
     ):
         vectorizer = SentenceVectorFeature(
-            input_col=input_col, vectorizer_str=vectorizer_str, vectorizer_params=vectorizer_params
+            input_col=input_col,
+            vectorizer_str=vectorizer_str,
+            vectorizer_params=vectorizer_params,
+            # これを忘れてしまう...
+            features_dir=features_dir,
         )
 
         if standardize:
