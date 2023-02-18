@@ -1,6 +1,5 @@
 meta:
-  title: keywordsから特徴量を作る
-  description: 同じ
+  title: 004にtitleのembedding追加
 shared:
   train_path: data/train_data.csv
   test_path: data/test_data.csv
@@ -17,6 +16,7 @@ shared:
   model_str: lgbm_bin # catb_bin
   evaluator_str: accuracy
   #min_child_samples: 10
+  class_weight: balanced
   unused_cols: 
   - id 
   - title
@@ -45,6 +45,25 @@ shared:
     - model_str: sentence_vector_dec
       params: 
         input_col: abstract
+        vectorizer_str: word_based_text_vec
+        vectorizer_params:
+          word_vectorizer_str: w2v
+          word_vector_size: 200 
+        decomposer_str: svd
+        n_components: 20
+        seed: 42
+    - model_str: sentence_vector_dec
+      params: 
+        input_col: title
+        vectorizer_str: word_count
+        vectorizer_params:
+          vectorizer_str: bow 
+        decomposer_str: svd
+        n_components: 20
+        seed: 42
+    - model_str: sentence_vector_dec
+      params: 
+        input_col: title
         vectorizer_str: word_based_text_vec
         vectorizer_params:
           word_vectorizer_str: w2v

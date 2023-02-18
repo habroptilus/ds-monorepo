@@ -17,7 +17,7 @@ shared:
   model_str: lgbm_bin # catb_bin
   evaluator_str: accuracy
   #min_child_samples: 10
-  #class_weight: balanced
+  class_weight: balanced
   unused_cols: 
   - id 
   - title
