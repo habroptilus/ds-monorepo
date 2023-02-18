@@ -35,9 +35,7 @@ class LgbmBase:
 
         self.cols = list(train_x.columns)
 
-        lgb_train = lgb.Dataset(train_x, train_y)
-        lgb_valid = lgb.Dataset(valid_x, valid_y, reference=lgb_train)
-
+        lgb_train, lgb_valid = self.get_dataset(train_x, train_y, valid_x, valid_y)
         self.model = lgb.train(
             params=self.lgbm_params,
             train_set=lgb_train,
@@ -50,6 +48,11 @@ class LgbmBase:
             ],
         )
         return self
+
+    def get_dataset(train_x, train_y, valid_x, valid_y):
+        lgb_train = lgb.Dataset(train_x, train_y)
+        lgb_valid = lgb.Dataset(valid_x, valid_y, reference=lgb_train)
+        return lgb_train, lgb_valid
 
     def get_importance(self):
         """特徴量の重要度を出力する."""
@@ -65,8 +68,25 @@ class LgbmClassifierBase(LgbmBase):
     """ベースとなるLGBMのclassifierモデル."""
 
     def __init__(self, verbose_eval, early_stopping_rounds, n_estimators, lgbm_params, class_weight):
-        lgbm_params["class_weight"] = class_weight
+        self.class_weight = class_weight
         super().__init__(verbose_eval, early_stopping_rounds, n_estimators, lgbm_params)
+
+    def get_dataset(self, train_x, train_y, valid_x, valid_y):
+        """lgb.train()のparamsにはclass_weightを入れられないみたいなので、Datasetにinstanceごとのweightを自前で計算して入れる."""
+
+        def get_weight(y):
+            class_weight = len(y) / np.bincount(y) * len(set(y))
+            return [class_weight[e] for e in y]
+
+        if self.class_weight is None:
+            return super().get_dataset(train_x, train_y, valid_x, valid_y)
+
+        if self.class_weight == "balanced":
+            lgb_train = lgb.Dataset(train_x, train_y, weight=get_weight(train_y))
+            lgb_valid = lgb.Dataset(valid_x, valid_y, weight=get_weight(valid_y), reference=lgb_train)
+            return lgb_train, lgb_valid
+        else:
+            raise Exception(f"Invalid class_weight: {self.class_weight}")
 
     def predict_proba(self, test):
         object_cols = self.get_object_cols(test)

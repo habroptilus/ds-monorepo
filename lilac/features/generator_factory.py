@@ -15,6 +15,7 @@ from lilac.features.generators.sentence_vectorizer import (
     DecomposedSentenceVectoizer,
     WordCountVectorizer,
 )
+from lilac.features.generators.text_rule_based_features import TextLengthFeature
 
 
 class FeatureGeneratorsFactory(FactoryBase):
@@ -41,6 +42,7 @@ class FeatureGeneratorsFactory(FactoryBase):
             "cat_lda": CategoriesLdaVectorizer,
             "concat_cat_lda": ConcatCategoriesLda,
             "null_cols": NullColumnsNum,
+            "text_length": TextLengthFeature,
         }
         shared_params = {"features_dir": features_dir}
         super().__init__(

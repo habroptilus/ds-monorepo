@@ -27,6 +27,15 @@ shared:
     - model_str: keywords_length_feature
     - model_str: keywords_average_year
     - model_str: keywords_average_count
+    - model_str: text_length
+      params:
+        target_col: title
+    - model_str: text_length
+      params:
+        target_col: abstract
+        
+        
+      
 
 jobs:
 - name: seed42

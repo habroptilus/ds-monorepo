@@ -82,7 +82,7 @@ class CatbClassifierBase(CatbBase):
         if self.class_weight == "balanced":
             class_weight = len(y) / np.bincount(y) * len(set(y))
         else:
-            raise Exception(f"Invalid argument class_weight : {class_weight}")
+            raise Exception(f"Invalid argument class_weight : {self.class_weight}")
 
         return [class_weight[c] for c in y]
 
