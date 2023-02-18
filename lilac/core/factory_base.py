@@ -22,7 +22,7 @@ class FactoryBase(metaclass=ABCMeta):
 
         :params
         str2model: モデルフラグ->モデルのmapping(dict)
-        register_from: モデルを追加したい場合のsource. dict or filepathを指定可能.dictの場合はextra_class_namesが必要.
+        register_from: モデルを追加したい場合のsource. dict or filepathを指定可能.filepathの場合はextra_class_namesが必要.
         extra_class_names: 追加でカスタムモデルを追加登録する(dictから一括で登録可能)
         shared_params: どのモデルに与えるパラメータにも共通で渡したいものはこちらにセットする.
         """
@@ -56,15 +56,21 @@ class FactoryBase(metaclass=ABCMeta):
         result = {}
 
         file_path_list = glob.glob(f"{src_dir}/**/*.py", recursive=True)
+        print(f"Target filepath list for registration: {file_path_list}")
+        if len(file_path_list) == 0:
+            print(f"[WARINIG] Registration path is set as {src_dir}, but No filepath are found.")
+            return result
         for filepath in file_path_list:
             # スラッシュ形式から.に変換してimport用の文字列に変換
             filepath = ".".join(os.path.splitext(filepath)[0].split("/"))
+            print(f"Registering from {filepath}...")
             imported = import_module(filepath)
             for k, v in vars(imported).items():
                 if k in class_names:
                     # クラス名をスネークケースにしてキーとして登録
                     camel_key = re.sub("([A-Z])", lambda x: "_" + x.group(1).lower(), k)[1:]
                     result[camel_key] = v
+        print(f"Registered: {result.keys()}")
         assert len(result) == len(class_names), result
         return result
 

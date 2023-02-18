@@ -56,6 +56,9 @@ class LgbmBinaryClassifier(BinaryClassifierBase):
         """lgbmのみ追加で実装している."""
         return self.model.get_importance()
 
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}
+
 
 class LgbmMultiClassifier(MultiClassifierBase):
     """目的関数がLoglossのlgbm多値分類モデル."""
@@ -108,6 +111,9 @@ class LgbmMultiClassifier(MultiClassifierBase):
     def get_importance(self):
         """lgbmのみ追加で実装している."""
         return self.model.get_importance()
+
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}
 
 
 class LgbmXentropyClassifier(BinaryClassifierBase):
@@ -162,3 +168,6 @@ class LgbmXentropyClassifier(BinaryClassifierBase):
     def get_importance(self):
         """lgbmのみ追加で実装している."""
         return self.model.get_importance()
+
+    def get_additional(self):
+        return {"importance": self.model.get_importance()}

@@ -88,5 +88,7 @@ class ExperimentCliDirector:
         return result
 
     def dump_result(self, result):
+        if not self.output_path.parent.exists():
+            self.output_path.parent.mkdir(parents=True)
         with self.output_path.open("w") as f:
             json.dump(result, f)

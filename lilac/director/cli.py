@@ -90,7 +90,7 @@ def plot_importance(project_name, experiment_id, job_name="job1", data_dir="data
             )
         additional = job_result.get("additional")
         if additional is None or len(additional) == 0 or additional[0] is None:
-            raise Exception(f"{job_name} in {experiment_id} doesn't have feature importance.")
+            raise Exception(f"{job_name} in {experiment_id} doesn't have any additional info.")
         importance = additional[0].get("importance")
         if importance is None:
             raise Exception(f"{job_name} in {experiment_id} doesn't have feature importance.")
