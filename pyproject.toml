@@ -6,7 +6,7 @@ authors = ["habroptilus <x7deed53bc9k8@softbank.ne.jp>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-setuptools = "57.0.0"
+setuptools = "^57.0.0"
 pandas = "^1.4.1"
 lightgbm = "^3.3.2"
 catboost = "^1.0.4"
