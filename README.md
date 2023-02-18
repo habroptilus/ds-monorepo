@@ -44,6 +44,13 @@ export PYTHONPATH="<ds-monorepoまでのフルパス>:$PYTHONPATH"
 
 `lilac`コマンドをいくつか提供している。
 
+### Init project
+
+`poetry run lilac init -p <プロジェクト名>`
+
+を実行するとprojects以下にプロジェクトが初期化される。
+すでに存在する場合はエラーになる。
+
 ### Run experiment
 
 `poetry run lilac run -p <プロジェクト名> -f <実験設定のyamlファイル名> [-s] `

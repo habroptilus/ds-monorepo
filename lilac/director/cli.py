@@ -98,5 +98,14 @@ def plot_importance(project_name, experiment_id, job_name="job1", data_dir="data
         plot_feature_importance(pd.DataFrame(importance), max_n=num)
 
 
+def init_project(project_name, data_dir="data", config_dir="config", output_dir="output"):
+    project_dir = Path(f"projects/{project_name}")
+    for dir in [data_dir, config_dir, output_dir]:
+        target_dir = project_dir / dir
+        target_dir.mkdir()
+
+
 def main():
-    fire.Fire({"run": run, "list": result_list, "detail": result_detail, "plot": plot_importance})
+    fire.Fire(
+        {"run": run, "list": result_list, "detail": result_detail, "plot": plot_importance, "init": init_project}
+    )
