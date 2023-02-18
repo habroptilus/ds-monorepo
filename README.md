@@ -4,10 +4,10 @@
 
 ```
 python -V
-3.8.11
+3.8.16
 
 poetry -V
-Poetry version 1.1.12
+Poetry version 1.3.2
 ```
 
 パッケージのインストールを行う.
