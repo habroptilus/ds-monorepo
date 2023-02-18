@@ -17,8 +17,10 @@ Poetry version 1.1.12
 その際、ml_metricsのinstallでエラーが出るかもしれない。
 その時は以下のコマンドを実行した後、再度`poetry install`を実行すること。
 
-`poetry run pip install -U "setuptools<58"`
-`poetry run pip install xfeat bhtsne`
+```
+poetry run pip install -U "setuptools<58"
+poetry run pip install xfeat bhtsne
+```
 
 See https://github.com/pfnet-research/xfeat/issues/9.
 
