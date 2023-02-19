@@ -102,7 +102,7 @@ def init_project(project_name, data_dir="data", config_dir="config", output_dir=
     project_dir = Path(f"projects/{project_name}")
     for dir in [data_dir, config_dir, output_dir]:
         target_dir = project_dir / dir
-        target_dir.mkdir()
+        target_dir.mkdir(parents=True)
 
 
 def main():
