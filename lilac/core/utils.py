@@ -66,3 +66,21 @@ def plot_feature_importance(df, path=None, max_n=20):
         plt.show()
     else:
         plt.savefig(path, bbox_inches="tight")
+
+
+def plot_numeric_feature_hist_for_cls(train_df, test_df, feature_name, label_name):
+    """ある数値特徴量の分布をtrain/test,ラベル種別にplotする."""
+    plt.suptitle(feature_name)
+    plt.subplot(121, title="train vs test")
+
+    plt.hist(train_df[feature_name], density=True, alpha=0.6, label="train")
+    plt.hist(test_df[feature_name], density=True, alpha=0.4, label="test")
+    plt.legend()
+
+    plt.subplot(122, title=f"{label_name} in train")
+    labels = sorted(train_df[label_name].unique())
+    for label in labels:
+        plt.hist(train_df[train_df[label_name] == label][feature_name], density=True, alpha=0.5, label=str(label))
+
+    plt.legend()
+    plt.show()

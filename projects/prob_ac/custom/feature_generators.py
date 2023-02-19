@@ -37,6 +37,24 @@ class KeywordsAverageYear(FeaturesBase):
         return df[["diff_years_keywords_avg_and_actual"]]
 
 
+class KeywordsFirstYear(FeaturesBase):
+    """キーワードの初登場時期の平均と、実際の時期の差分を計算する."""
+
+    def fit(self, df):
+        df = preprocess_keywords(df)
+        keywords_flattened = flatten_keywords(df)
+        self.keywords_first_year_dict = keywords_flattened.groupby("keyword").min("year").to_dict()["year"]
+        return self
+
+    def transform(self, df):
+        df = preprocess_keywords(df)
+        df["keywords_first_year"] = df["keywords"].apply(
+            apply_mapping_to_keywords, target_mapping=self.keywords_first_year_dict
+        )
+        df["diff_years_keywords_first_and_actual"] = df["year"] - df["keywords_first_year"]
+        return df[["diff_years_keywords_first_and_actual"]]
+
+
 class KeywordsAverageCount(FeaturesBase):
     """キーワードの平均登場回数."""
 

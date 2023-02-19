@@ -1,0 +1,43 @@
+meta:
+  title: 004のkeywords_average_yearをfirstに変更
+  description: 同じ
+shared:
+  train_path: data/train_data.csv
+  test_path: data/test_data.csv
+  features_dir: data/features
+  register_from: projects/prob_ac/custom
+  extra_class_names: 
+    - KeywordsLengthFeature
+    - KeywordsAverageYear
+    - KeywordsAverageCount
+    - KeywordsFirstYear
+  target_col: y
+  fold_num: 5
+  seed: 42
+  folds_gen_str: stratified
+  model_str: lgbm_bin # catb_bin
+  evaluator_str: accuracy
+  #min_child_samples: 10
+  #class_weight: balanced
+  unused_cols: 
+  - id 
+  - title
+  - abstract
+  - keywords
+  - year
+  features_settings:
+    - model_str: keywords_length_feature
+    - model_str: keywords_first_year
+    - model_str: keywords_average_count
+    - model_str: text_length
+      params:
+        input_col: title
+    
+        
+      
+
+jobs:
+- name: seed42
+  params: 
+    seed: 42
+
